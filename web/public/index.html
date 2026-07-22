@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Escritório NextAssist — automação de conteúdo</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-logo">🏢</span>
+      <div>
+        <h1>Escritório NextAssist</h1>
+        <p id="topic-line">Aguardando o próximo tema...</p>
+      </div>
+    </div>
+    <button id="run-btn">▶ Rodar pipeline agora</button>
+  </header>
+
+  <main class="office">
+    <div class="floor" id="floor">
+      <!-- mesas inseridas via JS -->
+    </div>
+  </main>
+
+  <aside class="history-panel">
+    <h2>Posts publicados</h2>
+    <ul id="history-list"><li class="empty">Nenhum post publicado ainda.</li></ul>
+  </aside>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
