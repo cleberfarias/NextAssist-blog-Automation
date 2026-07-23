@@ -1,5 +1,90 @@
 [
   {
+    "id": "2026-07-23T15:28:08.921Z",
+    "origem": "action",
+    "iniciadoEm": "2026-07-23T15:28:08.921Z",
+    "finalizadoEm": "2026-07-23T15:31:11.544Z",
+    "tema": "Como fidelizar clientes em uma assistência técnica de celular",
+    "status": "publicado",
+    "slug": "fidelizacao-assistencia-tecnica-cliente-some",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como fidelizar clientes em uma assistência técnica de celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-07-23T15:28:08.935Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "## Análise de mercado — \"Fidelização de clientes em assistência técnica de celular\"\n\n- **GestãoClick (concorrente direto) traz o ângulo mais afiado do momento**: em vez do genérico \"atenda bem\", o artigo parte da dor específica de que \n\"cli",
+        "timestamp": "2026-07-23T15:28:36.441Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-07-23T15:28:36.441Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Fidelização em Assistência Técnica: Por que o Cliente Some Depois do Conserto?",
+        "timestamp": "2026-07-23T15:28:47.136Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-07-23T15:28:47.136Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "O paradoxo da satisfação: por que o cliente elogia mas não retorna\n\nVocê já deve ter passado por isso: trocou a tela de um iPhone, o cliente pagou R$ 350, saiu elogiando o serviço, disse que ia indica...",
+        "timestamp": "2026-07-23T15:29:29.572Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-07-23T15:29:29.572Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: fidelizacao-assistencia-tecnica-cliente-some · Tags: fidelização de clientes, assistência técnica, histórico de OS, garantia de peças, retenção de clientes",
+        "timestamp": "2026-07-23T15:30:10.609Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-07-23T15:30:10.609Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/fidelizacao-assistencia-tecnica-cliente-some",
+        "timestamp": "2026-07-23T15:31:07.037Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-07-23T15:31:07.037Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-07-23T15:31:11.542Z"
+      }
+    ]
+  },
+  {
     "id": "2026-07-23T14:28:16.035Z",
     "origem": "action",
     "iniciadoEm": "2026-07-23T14:28:16.035Z",
