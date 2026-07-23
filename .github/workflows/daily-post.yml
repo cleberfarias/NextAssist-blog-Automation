@@ -32,6 +32,13 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
+      - name: DEBUG - conferir integridade do secret (remover depois)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          echo "len: ${#ANTHROPIC_API_KEY}"
+          echo "sha256: $(printf '%s' "$ANTHROPIC_API_KEY" | sha256sum | cut -d' ' -f1)"
+
       - name: Rodar pipeline (gera e publica o post do dia)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
