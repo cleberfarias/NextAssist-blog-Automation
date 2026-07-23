@@ -1,5 +1,30 @@
 [
   {
+    "id": "2026-07-23T14:03:53.274Z",
+    "origem": "action",
+    "iniciadoEm": "2026-07-23T14:03:53.274Z",
+    "finalizadoEm": "2026-07-23T14:03:53.545Z",
+    "tema": "Erros mais comuns na gestão de estoque de peças de celular",
+    "status": "falhou",
+    "slug": null,
+    "erro": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011CdK7cSDUs1wzsHMGZHAQn\"}",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Erros mais comuns na gestão de estoque de peças de celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-07-23T14:03:53.290Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011CdK7cSDUs1wzsHMGZHAQn\"}",
+        "timestamp": "2026-07-23T14:03:53.544Z"
+      }
+    ]
+  },
+  {
     "id": "2026-07-23T13:49:46.196Z",
     "origem": "action",
     "iniciadoEm": "2026-07-23T13:49:46.196Z",
