@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { runPipeline, type PipelineEvent } from "./pipeline.js";
 import { getHistory } from "./history.js";
+import { getPerformance, refreshPerformance } from "./performance.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4173;
@@ -59,6 +60,27 @@ app.post("/api/run", express.json(), async (_req, res) => {
 
 app.get("/api/history", async (_req, res) => {
   res.json(await getHistory());
+});
+
+app.get("/api/performance", async (_req, res) => {
+  res.json(await getPerformance());
+});
+
+let refreshingPerf = false;
+app.post("/api/performance/refresh", express.json(), async (_req, res) => {
+  if (refreshingPerf) {
+    res.status(409).json({ error: "Já estou atualizando as métricas." });
+    return;
+  }
+  refreshingPerf = true;
+  try {
+    const report = await refreshPerformance();
+    res.json(report);
+  } catch (err) {
+    res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+  } finally {
+    refreshingPerf = false;
+  }
 });
 
 app.listen(PORT, () => {

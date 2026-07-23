@@ -29,6 +29,33 @@
     <ul id="history-list"><li class="empty">Nenhum post publicado ainda.</li></ul>
   </aside>
 
+  <section class="performance-panel">
+    <div class="perf-header">
+      <h2>Desempenho no Google</h2>
+      <div class="perf-meta">
+        <span id="perf-updated">Nunca atualizado</span>
+        <button id="refresh-perf-btn">↻ Atualizar métricas</button>
+      </div>
+    </div>
+    <div class="perf-table-wrap">
+      <table id="perf-table">
+        <thead>
+          <tr>
+            <th>Post</th>
+            <th>Indexado</th>
+            <th>Cliques</th>
+            <th>Impressões</th>
+            <th>CTR</th>
+            <th>Posição</th>
+          </tr>
+        </thead>
+        <tbody id="perf-body">
+          <tr class="empty"><td colspan="6">Sem dados ainda. Clique em "Atualizar métricas".</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <div id="toast" class="toast hidden"></div>
 
   <script src="app.js"></script>

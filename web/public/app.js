@@ -4,6 +4,7 @@ const AGENTS = [
   { id: "redator", name: "Carla", role: "Redação", emoji: "✍️" },
   { id: "editor-seo", name: "Diego", role: "Editor / SEO", emoji: "🧐" },
   { id: "publicador", name: "Elis", role: "Publicação", emoji: "🚀" },
+  { id: "indexador", name: "Fábio", role: "Indexação / Google", emoji: "📈" },
 ];
 
 const floor = document.getElementById("floor");
@@ -11,6 +12,9 @@ const runBtn = document.getElementById("run-btn");
 const topicLine = document.getElementById("topic-line");
 const historyList = document.getElementById("history-list");
 const toast = document.getElementById("toast");
+const perfBody = document.getElementById("perf-body");
+const perfUpdated = document.getElementById("perf-updated");
+const refreshPerfBtn = document.getElementById("refresh-perf-btn");
 
 function buildDesks() {
   for (const agent of AGENTS) {
@@ -70,6 +74,55 @@ async function loadHistory() {
   renderHistory(await res.json());
 }
 
+function renderPerformance(report) {
+  if (!report || !report.posts || !report.posts.length) {
+    perfBody.innerHTML = `<tr class="empty"><td colspan="6">Sem dados ainda. Clique em "Atualizar métricas".</td></tr>`;
+    perfUpdated.textContent = "Nunca atualizado";
+    return;
+  }
+  perfUpdated.textContent = `Atualizado ${new Date(report.atualizadoEm).toLocaleString("pt-BR")} · período ${report.periodo.inicio} a ${report.periodo.fim}`;
+  perfBody.innerHTML = report.posts
+    .map((p) => {
+      const badge = p.erro
+        ? `<span class="idx idx-err" title="${p.erro}">erro</span>`
+        : p.indexado
+        ? `<span class="idx idx-ok" title="${p.coverageState}">sim</span>`
+        : `<span class="idx idx-no" title="${p.coverageState}">não</span>`;
+      return `
+      <tr>
+        <td><a href="${p.url}" target="_blank" rel="noopener">${p.titulo}</a></td>
+        <td>${badge}</td>
+        <td>${p.clicks}</td>
+        <td>${p.impressions}</td>
+        <td>${(p.ctr * 100).toFixed(1)}%</td>
+        <td>${p.position ? p.position.toFixed(1) : "—"}</td>
+      </tr>`;
+    })
+    .join("");
+}
+
+async function loadPerformance() {
+  const res = await fetch("/api/performance");
+  renderPerformance(await res.json());
+}
+
+refreshPerfBtn.addEventListener("click", async () => {
+  refreshPerfBtn.disabled = true;
+  refreshPerfBtn.textContent = "⏳ Consultando o Google...";
+  try {
+    const res = await fetch("/api/performance/refresh", { method: "POST" });
+    const data = await res.json();
+    if (!res.ok) {
+      showToast(data.error ?? "Falha ao atualizar métricas.");
+    } else {
+      renderPerformance(data);
+    }
+  } finally {
+    refreshPerfBtn.disabled = false;
+    refreshPerfBtn.textContent = "↻ Atualizar métricas";
+  }
+});
+
 async function loadStatus() {
   const res = await fetch("/api/status");
   const data = await res.json();
@@ -100,6 +153,8 @@ function connectEvents() {
 
     if (event.agent === "publicador" && event.status === "done") {
       showToast("Post publicado! 🎉");
+    }
+    if (event.agent === "indexador" && event.status === "done") {
       loadHistory();
       setRunning(false);
     }
@@ -116,4 +171,5 @@ function connectEvents() {
 buildDesks();
 loadHistory();
 loadStatus();
+loadPerformance();
 connectEvents();

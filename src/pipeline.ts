@@ -4,6 +4,7 @@ import { planTopic } from "./agents/topicPlanner.js";
 import { writeArticle } from "./agents/writer.js";
 import { editAndFinalize } from "./agents/editorSeo.js";
 import { publishPost } from "./agents/publisher.js";
+import { indexPublishedPost } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
 
 export type AgentId =
@@ -11,7 +12,8 @@ export type AgentId =
   | "pesquisa-pauta"
   | "redator"
   | "editor-seo"
-  | "publicador";
+  | "publicador"
+  | "indexador";
 
 export type AgentStatus = "idle" | "working" | "done" | "error";
 
@@ -67,6 +69,10 @@ export async function runPipeline(onEvent?: OnEvent): Promise<PipelineResult | n
     emit(onEvent, { agent: "publicador", status: "working", message: "Gerando capa e publicando no blog..." });
     const publishedSlug = await publishPost(finalPost);
     emit(onEvent, { agent: "publicador", status: "done", message: `Publicado em /blog/${publishedSlug}` });
+
+    emit(onEvent, { agent: "indexador", status: "working", message: "Notificando o Google e reenviando o sitemap..." });
+    const indexResult = await indexPublishedPost(publishedSlug);
+    emit(onEvent, { agent: "indexador", status: "done", message: indexResult.detalhes });
 
     await markTopicPublished(topic.tema);
     await appendHistory({
