@@ -56,5 +56,25 @@ jobs:
             echo "Nada mudou no estado — nenhum commit necessário."
           else
             git commit -m "chore: registro de execução do pipeline [skip ci]"
-            git push
+
+            # A main pode receber outro commit enquanto o pipeline roda.
+            # Sincroniza o commit gerado e repete se houver uma corrida entre
+            # o rebase e o push.
+            for tentativa in 1 2 3; do
+              echo "Tentativa ${tentativa} de publicar o estado..."
+
+              if git pull --rebase origin main; then
+                if git push origin HEAD:main; then
+                  exit 0
+                fi
+              else
+                # Limpa um possível rebase com conflito antes de repetir.
+                git rebase --abort || true
+              fi
+
+              sleep 5
+            done
+
+            echo "Não foi possível publicar o estado após 3 tentativas."
+            exit 1
           fi
