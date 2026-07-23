@@ -47,7 +47,10 @@ Meta description planejada: ${plan.metaDescription}
 
 Rascunho HTML:
 ${draftHtml}`,
-    maxTokens: 4500,
+    // O editor devolve o artigo HTML inteiro embutido num JSON, então
+    // precisa de mais folga que o redator (4000) — senão a resposta é
+    // cortada no meio de uma string e o JSON.parse falha.
+    maxTokens: 8000,
   });
   return extractJson<FinalPost>(raw);
 }
