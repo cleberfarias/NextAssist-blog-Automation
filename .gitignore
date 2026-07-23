@@ -15,9 +15,6 @@ dist/
 build/
 *.tsbuildinfo
 
-# --- Estado gerado em runtime ---
-post-history.json
-
 # --- Logs ---
 *.log
 npm-debug.log*
