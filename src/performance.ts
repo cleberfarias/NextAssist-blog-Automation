@@ -2,8 +2,10 @@ import { readFile, writeFile } from "node:fs/promises";
 import { postUrl } from "./agents/indexer.js";
 import { config } from "./config.js";
 import { getUrlMetrics, getIndexStatus } from "./lib/searchConsole.js";
+import { readStoredStateJson, writeStateJson } from "./lib/storage.js";
 
 const PERFORMANCE_PATH = new URL("../post-performance.json", import.meta.url);
+const PERFORMANCE_FILE = "post-performance.json";
 
 export interface PostPerformance {
   slug: string;
@@ -123,13 +125,23 @@ export async function refreshPerformance(
     periodo: { inicio, fim },
     posts,
   };
-  await writeFile(PERFORMANCE_PATH, JSON.stringify(report, null, 2) + "\n");
+  if (config.dataSource === "github") {
+    await writeStateJson(PERFORMANCE_FILE, report);
+  } else {
+    await writeFile(PERFORMANCE_PATH, JSON.stringify(report, null, 2) + "\n");
+  }
   return report;
 }
 
 /** Lê o último relatório salvo (ou null se ainda não foi gerado). */
 export async function getPerformance(): Promise<PerformanceReport | null> {
   try {
+    if (config.dataSource === "github") {
+      return await readStoredStateJson<PerformanceReport | null>(
+        PERFORMANCE_FILE,
+        null,
+      );
+    }
     const raw = await readFile(PERFORMANCE_PATH, "utf-8");
     return JSON.parse(raw) as PerformanceReport;
   } catch {

@@ -6,6 +6,7 @@
 serviceAccount*.json
 *.pem
 *.key
+gha-creds-*.json
 
 # --- Dependências ---
 node_modules/

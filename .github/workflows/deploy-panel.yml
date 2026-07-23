@@ -1,0 +1,74 @@
+name: Deploy do painel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "web/public/**"
+      - "Dockerfile"
+      - ".dockerignore"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.json"
+      - ".github/workflows/deploy-panel.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-panel-production
+  cancel-in-progress: true
+
+env:
+  GCP_PROJECT_ID: rr-infocell
+  CLOUD_RUN_SERVICE: nextassist-blog-panel
+  CLOUD_RUN_REGION: southamerica-east1
+
+jobs:
+  deploy:
+    name: Validar e publicar
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Validar build
+        run: npm run build
+
+      - name: Autenticar no Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - name: Publicar no Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          service: ${{ env.CLOUD_RUN_SERVICE }}
+          region: ${{ env.CLOUD_RUN_REGION }}
+          source: .
+          env_vars: DATA_SOURCE=github
+          env_vars_update_strategy: merge
+          flags: >-
+            --allow-unauthenticated
+            --memory=512Mi
+
+      - name: Exibir URL publicada
+        run: echo "Painel publicado em ${{ steps.deploy.outputs.url }}"

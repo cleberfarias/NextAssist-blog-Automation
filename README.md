@@ -91,7 +91,10 @@ Abaixo do escritório há duas seções de acompanhamento:
   são hidratadas com o estado da última execução real ao abrir a página.
 - **Desempenho no Google** — tabela por post (indexado ou não, cliques,
   impressões, CTR e posição média) com botão "Atualizar métricas" que
-  consulta o Search Console na hora.
+  consulta o Search Console na hora. No painel hospedado, o último relatório
+  fica persistido no Firebase Storage em
+  `panel-state/post-performance.json`, sobrevivendo ao encerramento ou à
+  recriação da instância.
 
 Cada execução do pipeline grava um registro detalhado em
 `runs-history.json`, que a Action commita de volta (inclusive quando
@@ -121,6 +124,18 @@ Build, Artifact Registry e Secret Manager habilitadas.
 ```powershell
 .\deploy-cloudrun.ps1
 ```
+
+O workflow `.github/workflows/deploy-panel.yml` também publica o painel
+automaticamente quando código relevante chega à branch `main`. Configure no
+environment `production` do GitHub os secrets:
+
+- `GCP_WORKLOAD_IDENTITY_PROVIDER`: nome completo do provider do Workload
+  Identity Federation.
+- `GCP_DEPLOY_SERVICE_ACCOUNT`: e-mail da service account usada no deploy.
+
+O workflow valida o build antes de publicar e também pode ser executado
+manualmente pela aba Actions. Alterações feitas apenas nos arquivos de
+histórico não disparam um novo deploy.
 
 Notas:
 
