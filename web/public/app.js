@@ -15,10 +15,24 @@ const toast = document.getElementById("toast");
 const perfBody = document.getElementById("perf-body");
 const perfUpdated = document.getElementById("perf-updated");
 const refreshPerfBtn = document.getElementById("refresh-perf-btn");
+const perfStart = document.getElementById("perf-start");
+const perfEnd = document.getElementById("perf-end");
 const runsList = document.getElementById("runs-list");
 const runsUpdated = document.getElementById("runs-updated");
 
 let liveRunActive = false; // durante uma execução manual, não sobrescreve as mesas
+
+function isoDateWithOffset(offsetDays) {
+  const date = new Date();
+  date.setUTCDate(date.getUTCDate() + offsetDays);
+  return date.toISOString().slice(0, 10);
+}
+
+const today = isoDateWithOffset(0);
+perfStart.value = isoDateWithOffset(-28);
+perfEnd.value = today;
+perfStart.max = today;
+perfEnd.max = today;
 
 function buildDesks() {
   for (const agent of AGENTS) {
@@ -85,6 +99,8 @@ function renderPerformance(report) {
     return;
   }
   perfUpdated.textContent = `Atualizado ${new Date(report.atualizadoEm).toLocaleString("pt-BR")} · período ${report.periodo.inicio} a ${report.periodo.fim}`;
+  perfStart.value = report.periodo.inicio;
+  perfEnd.value = report.periodo.fim;
   perfBody.innerHTML = report.posts
     .map((p) => {
       const badge = p.erro
@@ -111,16 +127,31 @@ async function loadPerformance() {
 }
 
 refreshPerfBtn.addEventListener("click", async () => {
+  if (!perfStart.value || !perfEnd.value) {
+    showToast("Informe as datas de início e fim.");
+    return;
+  }
+  if (perfStart.value > perfEnd.value) {
+    showToast("A data inicial não pode ser posterior à data final.");
+    return;
+  }
+
   refreshPerfBtn.disabled = true;
   refreshPerfBtn.textContent = "⏳ Consultando o Google...";
   try {
-    const res = await fetch("/api/performance/refresh", { method: "POST" });
+    const res = await fetch("/api/performance/refresh", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ inicio: perfStart.value, fim: perfEnd.value }),
+    });
     const data = await res.json();
     if (!res.ok) {
       showToast(data.error ?? "Falha ao atualizar métricas.");
     } else {
       renderPerformance(data);
     }
+  } catch {
+    showToast("Não foi possível consultar o Google.");
   } finally {
     refreshPerfBtn.disabled = false;
     refreshPerfBtn.textContent = "↻ Atualizar métricas";
