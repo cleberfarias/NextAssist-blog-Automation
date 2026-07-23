@@ -1,15 +1,41 @@
 import express from "express";
+import { timingSafeEqual } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { runPipeline, type PipelineEvent } from "./pipeline.js";
 import { getHistory } from "./history.js";
 import { getRuns } from "./runsHistory.js";
 import { getPerformance, refreshPerformance } from "./performance.js";
+import { config } from "./config.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4173;
 
+// No modo hospedado, a publicação deve passar só pela Action para evitar
+// posts duplicados; por isso o botão manual fica desligado.
+const runEnabled = config.dataSource !== "github";
+
 const app = express();
+
+// Proteção por senha (Basic Auth). Ativa só se PANEL_PASSWORD estiver definida.
+if (config.panelPassword) {
+  app.use((req, res, next) => {
+    const [scheme, encoded] = (req.headers.authorization ?? "").split(" ");
+    if (scheme?.toLowerCase() === "basic" && encoded) {
+      const credentials = Buffer.from(encoded, "base64").toString("utf8");
+      const separator = credentials.indexOf(":");
+      const receivedPassword = separator >= 0 ? credentials.slice(separator + 1) : "";
+      const received = Buffer.from(receivedPassword);
+      const expected = Buffer.from(config.panelPassword);
+      if (received.length === expected.length && timingSafeEqual(received, expected)) {
+        return next();
+      }
+    }
+    res.set("WWW-Authenticate", 'Basic realm="Escritorio NextAssist"');
+    res.status(401).send("Autenticação necessária.");
+  });
+}
+
 app.use(express.static(path.join(__dirname, "../web/public")));
 
 let running = false;
@@ -39,10 +65,14 @@ app.get("/api/events", (req, res) => {
 });
 
 app.get("/api/status", (_req, res) => {
-  res.json({ running, lastEvents });
+  res.json({ running, lastEvents, runEnabled });
 });
 
 app.post("/api/run", express.json(), async (_req, res) => {
+  if (!runEnabled) {
+    res.status(403).json({ error: "Execução manual desabilitada neste ambiente — a publicação roda pela GitHub Action." });
+    return;
+  }
   if (running) {
     res.status(409).json({ error: "O pipeline já está rodando." });
     return;

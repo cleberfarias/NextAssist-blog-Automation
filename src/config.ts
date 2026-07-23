@@ -46,4 +46,7 @@ export const config = {
   // Token de leitura (contents:read). Necessário se o repositório for
   // privado; opcional (só evita rate limit) se for público.
   githubToken: process.env.PANEL_GITHUB_TOKEN ?? process.env.GITHUB_TOKEN ?? "",
+  // Senha do painel (Basic Auth). Vazio = sem proteção (ok localmente).
+  // Defina ao hospedar publicamente.
+  panelPassword: process.env.PANEL_PASSWORD ?? "",
 };
