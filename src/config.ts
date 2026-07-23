@@ -21,7 +21,7 @@ export const config = {
   // Propriedade cadastrada no Google Search Console. Prefixo de URL
   // (ex: "https://www.nextassist-app.com.br/") ou domínio ("sc-domain:...").
   searchConsoleSiteUrl:
-    process.env.SEARCH_CONSOLE_SITE_URL ?? "https://www.nextassist-app.com.br/",
+    process.env.SEARCH_CONSOLE_SITE_URL ?? "sc-domain:nextassist-app.com.br",
   // URL do sitemap (reenviado ao Search Console após cada publicação).
   sitemapUrl:
     process.env.SITEMAP_URL ?? "https://www.nextassist-app.com.br/sitemap.xml",
