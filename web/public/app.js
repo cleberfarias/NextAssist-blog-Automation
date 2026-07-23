@@ -295,7 +295,12 @@ async function loadStatus() {
   const res = await fetch("/api/status");
   const data = await res.json();
   for (const event of data.lastEvents) updateDesk(event);
-  setRunning(data.running);
+  // Painel hospedado: execução manual desligada (publicação roda pela Action).
+  if (data.runEnabled === false) {
+    runBtn.hidden = true;
+  } else {
+    setRunning(data.running);
+  }
 }
 
 function setRunning(running) {

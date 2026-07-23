@@ -106,12 +106,34 @@ servidor para que ele leia os arquivos de estado (`runs-history.json`,
 publicações diárias sem precisar de `git pull`. Localmente, deixe
 `DATA_SOURCE=local` (padrão).
 
-Como o repositório é **privado**, o painel hospedado precisa de um token de
-leitura em `PANEL_GITHUB_TOKEN`. Gere um *fine-grained personal access
-token* com permissão **Contents: Read-only** restrito a este repositório
-(nunca commite esse token — cadastre-o como variável de ambiente do
-serviço de hospedagem). Se um dia tornar o repositório público, o token
-deixa de ser obrigatório.
+Como o repositório é público, `PANEL_GITHUB_TOKEN` é opcional. Ele só é
+necessário para evitar limites baixos da API do GitHub ou se o repositório
+voltar a ser privado.
+
+### Deploy no Cloud Run
+
+Há um `Dockerfile` e um script PowerShell prontos. O script atualiza o serviço
+existente `nextassist-blog-panel`, grava somente `PANEL_PASSWORD` no Secret
+Manager e preserva os demais segredos já vinculados ao Cloud Run. Pré-requisitos:
+`gcloud` autenticado no projeto, billing ativo e as APIs Cloud Run, Cloud
+Build, Artifact Registry e Secret Manager habilitadas.
+
+```powershell
+.\deploy-cloudrun.ps1
+```
+
+Notas:
+
+- **Senha:** defina `PANEL_PASSWORD` no `.env` antes de subir — a URL do
+  Cloud Run é pública e o painel exige Basic Auth (qualquer usuário + essa
+  senha). Sem ela, o painel fica aberto.
+- **Execução manual desligada no ar:** no modo hospedado o botão "Rodar
+  pipeline agora" some. A publicação roda só pela GitHub Action (fonte
+  única da verdade) — rodar manualmente no host geraria post duplicado,
+  já que o estado atualizado não é commitado de volta.
+- **Seções "Execuções" e "Posts publicados":** só populam se o
+  `PANEL_GITHUB_TOKEN` estiver configurado (repo privado). O "Desempenho no
+  Google" funciona sem token (usa a API do blog + Search Console).
 
 Esse servidor roda a mesma lógica do `npm run run` (`src/pipeline.ts`),
 só que via HTTP em vez de CLI. Bom para rodar localmente enquanto você

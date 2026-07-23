@@ -27,4 +27,5 @@ RUN chown node:node /app /app/content-calendar.json /app/post-history.json
 USER node
 EXPOSE 8080
 
-CMD ["npm", "start"]
+# Sobe o painel (servidor HTTP), não o pipeline CLI. O Cloud Run injeta PORT.
+CMD ["node", "dist/server.js"]
