@@ -6,17 +6,23 @@ export function postUrl(slug: string): string {
   return `${config.siteBaseUrl}/blog/${slug}`;
 }
 
-/**
- * Notifica a Google Indexing API que a URL foi criada/atualizada, para
- * acelerar o rastreamento. Observação honesta: oficialmente o Google só
- * suporta a Indexing API para JobPosting/BroadcastEvent — para posts de
- * blog costuma funcionar como um empurrão, mas não é garantido.
- */
-async function notifyIndexingApi(url: string): Promise<void> {
-  await googleFetch("https://indexing.googleapis.com/v3/urlNotifications:publish", {
-    method: "POST",
-    body: { url, type: "URL_UPDATED" },
-  });
+async function validatePublishedUrl(url: string): Promise<void> {
+  const response = await fetch(url, { redirect: "follow" });
+  if (!response.ok) {
+    throw new Error(`URL pública respondeu HTTP ${response.status}`);
+  }
+}
+
+async function validateUrlInSitemap(url: string): Promise<void> {
+  const response = await fetch(config.sitemapUrl, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(`sitemap respondeu HTTP ${response.status}`);
+  }
+
+  const sitemap = await response.text();
+  if (!sitemap.includes(`<loc>${url}</loc>`)) {
+    throw new Error("URL publicada ainda não aparece no sitemap");
+  }
 }
 
 /**
@@ -35,37 +41,57 @@ async function resubmitSitemap(): Promise<void> {
 
 export interface IndexResult {
   url: string;
-  indexingApiOk: boolean;
+  urlPublicaOk: boolean;
+  sitemapContemUrl: boolean;
   sitemapOk: boolean;
   detalhes: string;
 }
 
 /**
- * Roda os dois nudges de indexação para o post recém-publicado. Não lança
- * erro: indexação é "melhor esforço" e não deve derrubar o pipeline se o
- * post já foi publicado com sucesso — apenas reporta o que deu certo.
+ * Confirma que o post está público e presente no sitemap antes de reenviá-lo
+ * ao Search Console. Não promete indexação imediata: o Google decide quando
+ * rastrear e indexar cada URL.
  */
 export async function indexPublishedPost(slug: string): Promise<IndexResult> {
   const url = postUrl(slug);
-  const result: IndexResult = { url, indexingApiOk: false, sitemapOk: false, detalhes: "" };
+  const result: IndexResult = {
+    url,
+    urlPublicaOk: false,
+    sitemapContemUrl: false,
+    sitemapOk: false,
+    detalhes: "",
+  };
   const notas: string[] = [];
 
   try {
-    await notifyIndexingApi(url);
-    result.indexingApiOk = true;
-    notas.push("Indexing API: notificada");
+    await validatePublishedUrl(url);
+    result.urlPublicaOk = true;
+    notas.push("URL pública: confirmada");
   } catch (err) {
-    notas.push(`Indexing API falhou: ${err instanceof Error ? err.message : String(err)}`);
+    notas.push(`validação da URL falhou: ${err instanceof Error ? err.message : String(err)}`);
   }
 
-  try {
-    await resubmitSitemap();
-    result.sitemapOk = true;
-    notas.push("sitemap reenviado");
-  } catch (err) {
-    notas.push(`sitemap falhou: ${err instanceof Error ? err.message : String(err)}`);
+  if (result.urlPublicaOk) {
+    try {
+      await validateUrlInSitemap(url);
+      result.sitemapContemUrl = true;
+      notas.push("URL no sitemap: confirmada");
+    } catch (err) {
+      notas.push(`validação do sitemap falhou: ${err instanceof Error ? err.message : String(err)}`);
+    }
   }
 
+  if (result.sitemapContemUrl) {
+    try {
+      await resubmitSitemap();
+      result.sitemapOk = true;
+      notas.push("sitemap enviado ao Search Console");
+    } catch (err) {
+      notas.push(`envio do sitemap falhou: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  notas.push("indexação: aguardando decisão do Google");
   result.detalhes = notas.join(" · ");
   return result;
 }
