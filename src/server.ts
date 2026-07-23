@@ -72,17 +72,22 @@ app.get("/api/performance", async (_req, res) => {
 });
 
 let refreshingPerf = false;
-app.post("/api/performance/refresh", express.json(), async (_req, res) => {
+app.post("/api/performance/refresh", express.json(), async (req, res) => {
   if (refreshingPerf) {
     res.status(409).json({ error: "Já estou atualizando as métricas." });
     return;
   }
   refreshingPerf = true;
   try {
-    const report = await refreshPerformance();
+    const report = await refreshPerformance(req.body?.inicio, req.body?.fim);
     res.json(report);
   } catch (err) {
-    res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    const message = err instanceof Error ? err.message : String(err);
+    const invalidPeriod =
+      message.includes("data inicial") ||
+      message.includes("data final") ||
+      message.includes("formato AAAA-MM-DD");
+    res.status(invalidPeriod ? 400 : 500).json({ error: message });
   } finally {
     refreshingPerf = false;
   }

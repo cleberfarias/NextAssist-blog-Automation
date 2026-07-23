@@ -202,8 +202,20 @@ body {
   margin-bottom: 14px;
 }
 .perf-header h2 { font-size: 15px; margin: 0; }
-.perf-meta { display: flex; align-items: center; gap: 12px; }
+.perf-meta { display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
 #perf-updated { font-size: 12px; color: #778; }
+.perf-period { display: flex; align-items: center; gap: 6px; }
+.perf-period label { font-size: 12px; color: #667; }
+.perf-period input {
+  border: 1px solid #d8dde8;
+  border-radius: 7px;
+  padding: 6px 8px;
+  color: #223;
+  background: white;
+  font: inherit;
+  font-size: 12px;
+}
+.perf-period input:focus { outline: 2px solid #b7c3e0; border-color: #7a8caf; }
 #refresh-perf-btn {
   background: #1c2b4a;
   color: white;
@@ -254,4 +266,5 @@ body {
   body { grid-template-columns: 1fr; }
   .history-panel { border-left: none; border-top: 1px solid #e2e6ee; }
   .floor { flex-direction: column; align-items: stretch; }
+  .perf-meta { align-items: flex-start; justify-content: flex-start; }
 }

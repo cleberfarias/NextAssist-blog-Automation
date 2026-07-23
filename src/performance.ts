@@ -25,10 +25,30 @@ export interface PerformanceReport {
   posts: PostPerformance[];
 }
 
-function isoDate(offsetDays: number): string {
+export function isoDate(offsetDays: number): string {
   const d = new Date();
   d.setUTCDate(d.getUTCDate() + offsetDays);
   return d.toISOString().slice(0, 10);
+}
+
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+function isValidIsoDate(value: string): boolean {
+  if (!ISO_DATE_PATTERN.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+export function validatePerformancePeriod(inicio: string, fim: string): void {
+  if (!isValidIsoDate(inicio) || !isValidIsoDate(fim)) {
+    throw new Error("Informe as datas de início e fim no formato AAAA-MM-DD.");
+  }
+  if (inicio > fim) {
+    throw new Error("A data inicial não pode ser posterior à data final.");
+  }
+  if (fim > isoDate(0)) {
+    throw new Error("A data final não pode estar no futuro.");
+  }
 }
 
 /**
@@ -36,10 +56,12 @@ function isoDate(offsetDays: number): string {
  * em `post-performance.json`. Falhas por post são registradas no campo `erro`
  * sem interromper os demais.
  */
-export async function refreshPerformance(): Promise<PerformanceReport> {
+export async function refreshPerformance(
+  inicio = isoDate(-28),
+  fim = isoDate(0),
+): Promise<PerformanceReport> {
+  validatePerformancePeriod(inicio, fim);
   const history = await getHistory();
-  const fim = isoDate(0);
-  const inicio = isoDate(-28);
 
   const posts: PostPerformance[] = [];
   for (const entry of history) {
