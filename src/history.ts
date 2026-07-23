@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { readStateJson } from "./lib/dataSource.js";
 
 const HISTORY_PATH = new URL("../post-history.json", import.meta.url);
 
@@ -24,6 +25,10 @@ export async function appendHistory(entry: HistoryEntry): Promise<void> {
   await writeFile(HISTORY_PATH, JSON.stringify(history.slice(0, 200), null, 2) + "\n");
 }
 
+/**
+ * Lê o histórico para exibição. Usa a fonte configurada (local ou GitHub),
+ * para o painel hospedado enxergar os posts publicados pela Action.
+ */
 export async function getHistory(): Promise<HistoryEntry[]> {
-  return loadHistory();
+  return readStateJson<HistoryEntry[]>("post-history.json", []);
 }

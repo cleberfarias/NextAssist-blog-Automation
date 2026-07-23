@@ -81,10 +81,37 @@ tipo simulador: cada agente aparece numa mesa, muda de "ocioso" pra
 mostra um resumo do que produziu em uma bolha de fala, e a lateral
 lista os posts publicados. O botão "Rodar pipeline agora" dispara uma
 execução manual — dá pra acompanhar o trabalho de verdade dos agentes,
-não é só decoração. Embaixo há uma seção **"Desempenho no Google"** com
-uma tabela por post (indexado ou não, cliques, impressões, CTR e posição
-média) e um botão "Atualizar métricas" que consulta o Search Console na
-hora.
+não é só decoração.
+
+Abaixo do escritório há duas seções de acompanhamento:
+
+- **Execuções recentes** — cada rodada do pipeline (automática da Action
+  ou manual) vira um cartão com status (publicado / falhou), origem, data,
+  link pro post e o resultado de cada agente. As mesas do escritório também
+  são hidratadas com o estado da última execução real ao abrir a página.
+- **Desempenho no Google** — tabela por post (indexado ou não, cliques,
+  impressões, CTR e posição média) com botão "Atualizar métricas" que
+  consulta o Search Console na hora.
+
+Cada execução do pipeline grava um registro detalhado em
+`runs-history.json`, que a Action commita de volta (inclusive quando
+falha) — é assim que o painel confirma o que a automação realmente fez.
+
+### Hospedando o painel sempre online
+
+Se rodar o painel num serviço (Cloud Run, Render etc.), ele não recebe os
+commits da Action diretamente. Defina `DATA_SOURCE=github` no ambiente do
+servidor para que ele leia os arquivos de estado (`runs-history.json`,
+`post-history.json`) via API do GitHub — assim o painel reflete as
+publicações diárias sem precisar de `git pull`. Localmente, deixe
+`DATA_SOURCE=local` (padrão).
+
+Como o repositório é **privado**, o painel hospedado precisa de um token de
+leitura em `PANEL_GITHUB_TOKEN`. Gere um *fine-grained personal access
+token* com permissão **Contents: Read-only** restrito a este repositório
+(nunca commite esse token — cadastre-o como variável de ambiente do
+serviço de hospedagem). Se um dia tornar o repositório público, o token
+deixa de ser obrigatório.
 
 Esse servidor roda a mesma lógica do `npm run run` (`src/pipeline.ts`),
 só que via HTTP em vez de CLI. Bom para rodar localmente enquanto você

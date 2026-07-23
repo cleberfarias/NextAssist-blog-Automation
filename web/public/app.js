@@ -15,6 +15,10 @@ const toast = document.getElementById("toast");
 const perfBody = document.getElementById("perf-body");
 const perfUpdated = document.getElementById("perf-updated");
 const refreshPerfBtn = document.getElementById("refresh-perf-btn");
+const runsList = document.getElementById("runs-list");
+const runsUpdated = document.getElementById("runs-updated");
+
+let liveRunActive = false; // durante uma execução manual, não sobrescreve as mesas
 
 function buildDesks() {
   for (const agent of AGENTS) {
@@ -123,6 +127,73 @@ refreshPerfBtn.addEventListener("click", async () => {
   }
 });
 
+const RUN_STATUS = {
+  publicado: { label: "Publicado", cls: "run-ok" },
+  falhou: { label: "Falhou", cls: "run-err" },
+  "sem-tema": { label: "Sem tema", cls: "run-neutral" },
+};
+
+/** Último status de cada agente dentro de uma execução. */
+function agentFinalStatus(run, agentId) {
+  let last = null;
+  for (const ev of run.eventos ?? []) if (ev.agent === agentId) last = ev;
+  return last;
+}
+
+function renderRuns(runs) {
+  if (!runs || !runs.length) {
+    runsList.innerHTML = `<li class="empty">Nenhuma execução registrada ainda.</li>`;
+    return;
+  }
+  runsUpdated.textContent = `${runs.length} execução(ões) registradas`;
+  runsList.innerHTML = runs
+    .slice(0, 20)
+    .map((run) => {
+      const st = RUN_STATUS[run.status] ?? { label: run.status, cls: "run-neutral" };
+      const quando = new Date(run.finalizadoEm || run.iniciadoEm).toLocaleString("pt-BR");
+      const origem = run.origem === "action" ? "🤖 Action" : "🖐️ Manual";
+      const chips = AGENTS.map((a) => {
+        const ev = agentFinalStatus(run, a.id);
+        const status = ev?.status ?? "idle";
+        return `<span class="chip chip-${status}" title="${(ev?.message ?? "").replace(/"/g, "&quot;")}">${a.emoji} ${a.role}</span>`;
+      }).join("");
+      const link = run.slug
+        ? `<a href="https://www.nextassist-app.com.br/blog/${run.slug}" target="_blank" rel="noopener">ver post ↗</a>`
+        : "";
+      const erro = run.erro ? `<div class="run-error">⚠️ ${run.erro}</div>` : "";
+      return `
+      <li class="run-item">
+        <div class="run-top">
+          <span class="run-badge ${st.cls}">${st.label}</span>
+          <span class="run-origin">${origem}</span>
+          <span class="run-when">${quando}</span>
+          ${link}
+        </div>
+        <div class="run-topic">${run.tema ?? "—"}</div>
+        <div class="run-chips">${chips}</div>
+        ${erro}
+      </li>`;
+    })
+    .join("");
+}
+
+function hydrateFloorFromLatest(runs) {
+  if (liveRunActive || !runs || !runs.length) return;
+  const latest = runs[0];
+  if (latest.tema) topicLine.textContent = `Último tema: ${latest.tema}`;
+  for (const agent of AGENTS) {
+    const ev = agentFinalStatus(latest, agent.id);
+    if (ev) updateDesk(ev);
+  }
+}
+
+async function loadRuns() {
+  const res = await fetch("/api/runs");
+  const runs = await res.json();
+  renderRuns(runs);
+  hydrateFloorFromLatest(runs);
+}
+
 async function loadStatus() {
   const res = await fetch("/api/status");
   const data = await res.json();
@@ -137,6 +208,7 @@ function setRunning(running) {
 
 runBtn.addEventListener("click", async () => {
   setRunning(true);
+  liveRunActive = true;
   const res = await fetch("/api/run", { method: "POST" });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
@@ -155,11 +227,15 @@ function connectEvents() {
       showToast("Post publicado! 🎉");
     }
     if (event.agent === "indexador" && event.status === "done") {
+      liveRunActive = false;
       loadHistory();
+      loadRuns();
       setRunning(false);
     }
     if (event.status === "error") {
       showToast(`Erro no agente ${event.agent}: ${event.message ?? ""}`);
+      liveRunActive = false;
+      loadRuns();
       setRunning(false);
     }
   };
@@ -170,6 +246,11 @@ function connectEvents() {
 
 buildDesks();
 loadHistory();
+loadRuns();
 loadStatus();
 loadPerformance();
 connectEvents();
+
+// Painel hospedado: recarrega as execuções periodicamente para pegar novas
+// publicações da Action sem precisar dar refresh na página.
+setInterval(loadRuns, 60000);

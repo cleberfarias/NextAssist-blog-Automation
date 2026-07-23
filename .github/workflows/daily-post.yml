@@ -44,14 +44,17 @@ jobs:
           IMAGE_GEN_PROVIDER: openai
         run: npm run run
 
-      - name: Commitar estado atualizado (calendário e histórico)
+      # Roda mesmo se o pipeline falhar, para registrar a execução (com o
+      # erro) em runs-history.json e o painel conseguir mostrar a falha.
+      - name: Commitar estado atualizado (calendário, histórico e execuções)
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add content-calendar.json post-history.json
+          git add content-calendar.json post-history.json runs-history.json
           if git diff --staged --quiet; then
             echo "Nada mudou no estado — nenhum commit necessário."
           else
-            git commit -m "chore: post diário publicado [skip ci]"
+            git commit -m "chore: registro de execução do pipeline [skip ci]"
             git push
           fi

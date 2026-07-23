@@ -35,4 +35,15 @@ export const config = {
 
   imageGenProvider: process.env.IMAGE_GEN_PROVIDER ?? "openai",
   imageGenApiKey: process.env.IMAGE_GEN_API_KEY ?? "",
+
+  // De onde o painel lê os arquivos de estado (histórico, execuções):
+  //  - "local": lê do disco (rodando na sua máquina após um git pull)
+  //  - "github": busca os arquivos crus do repositório (painel hospedado,
+  //    que não recebe os commits da Action diretamente)
+  dataSource: (process.env.DATA_SOURCE ?? "local") as "local" | "github",
+  githubRepo: process.env.GITHUB_REPO ?? "cleberfarias/NextAssist-blog-Automation",
+  githubBranch: process.env.GITHUB_BRANCH ?? "main",
+  // Token de leitura (contents:read). Necessário se o repositório for
+  // privado; opcional (só evita rate limit) se for público.
+  githubToken: process.env.PANEL_GITHUB_TOKEN ?? process.env.GITHUB_TOKEN ?? "",
 };

@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { runPipeline, type PipelineEvent } from "./pipeline.js";
 import { getHistory } from "./history.js";
+import { getRuns } from "./runsHistory.js";
 import { getPerformance, refreshPerformance } from "./performance.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -60,6 +61,10 @@ app.post("/api/run", express.json(), async (_req, res) => {
 
 app.get("/api/history", async (_req, res) => {
   res.json(await getHistory());
+});
+
+app.get("/api/runs", async (_req, res) => {
+  res.json(await getRuns());
 });
 
 app.get("/api/performance", async (_req, res) => {
