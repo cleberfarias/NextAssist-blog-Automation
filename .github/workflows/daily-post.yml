@@ -2,8 +2,8 @@ name: Post diário do blog
 
 on:
   schedule:
-    # 12:00 UTC = 09:00 no horário de Brasília (UTC-3)
-    - cron: "0 12 * * *"
+          # 13:18 UTC = 10:18 no horario de Brasilia (UTC-3)
+          - cron: "18 13 * * *" # Executa as 10:18 BRT
   workflow_dispatch: {} # permite disparar manualmente pela aba Actions
 
 # Necessário para o passo final conseguir commitar de volta os arquivos
