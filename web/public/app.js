@@ -98,7 +98,7 @@ function renderPerformance(report) {
     perfUpdated.textContent = "Nunca atualizado";
     return;
   }
-  perfUpdated.textContent = `Atualizado ${new Date(report.atualizadoEm).toLocaleString("pt-BR")} · período ${report.periodo.inicio} a ${report.periodo.fim}`;
+  perfUpdated.textContent = `Atualizado ${new Date(report.atualizadoEm).toLocaleString("pt-BR")} · período ${report.periodo.inicio} a ${report.periodo.fim} · ${report.posts.length} posts`;
   perfStart.value = report.periodo.inicio;
   perfEnd.value = report.periodo.fim;
   perfBody.innerHTML = report.posts

@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { getHistory } from "./history.js";
 import { postUrl } from "./agents/indexer.js";
+import { config } from "./config.js";
 import { getUrlMetrics, getIndexStatus } from "./lib/searchConsole.js";
 
 const PERFORMANCE_PATH = new URL("../post-performance.json", import.meta.url);
@@ -23,6 +23,28 @@ export interface PerformanceReport {
   atualizadoEm: string;
   periodo: { inicio: string; fim: string };
   posts: PostPerformance[];
+}
+
+interface PublishedBlogPost {
+  slug: string;
+  titulo: string;
+}
+
+async function getPublishedBlogPosts(): Promise<PublishedBlogPost[]> {
+  const response = await fetch(`${config.blogApiUrl}/blog/posts`, {
+    headers: { Accept: "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error(`API do blog respondeu HTTP ${response.status}`);
+  }
+
+  const payload = (await response.json()) as { data?: PublishedBlogPost[] };
+  if (!Array.isArray(payload.data)) {
+    throw new Error("API do blog retornou uma lista de posts inválida.");
+  }
+
+  // Slugs duplicados apontam para a mesma URL e não devem repetir métricas.
+  return [...new Map(payload.data.map((post) => [post.slug, post])).values()];
 }
 
 export function isoDate(offsetDays: number): string {
@@ -52,7 +74,7 @@ export function validatePerformancePeriod(inicio: string, fim: string): void {
 }
 
 /**
- * Consulta o Search Console para cada post do histórico e grava um relatório
+ * Consulta o Search Console para cada post publicado na API do blog e grava um relatório
  * em `post-performance.json`. Falhas por post são registradas no campo `erro`
  * sem interromper os demais.
  */
@@ -61,10 +83,9 @@ export async function refreshPerformance(
   fim = isoDate(0),
 ): Promise<PerformanceReport> {
   validatePerformancePeriod(inicio, fim);
-  const history = await getHistory();
+  const publishedPosts = await getPublishedBlogPosts();
 
-  const posts: PostPerformance[] = [];
-  for (const entry of history) {
+  const posts = await Promise.all(publishedPosts.map(async (entry): Promise<PostPerformance> => {
     const url = postUrl(entry.slug);
     const base = { slug: entry.slug, titulo: entry.titulo, url };
     try {
@@ -72,7 +93,7 @@ export async function refreshPerformance(
         getIndexStatus(url),
         getUrlMetrics(url, inicio, fim),
       ]);
-      posts.push({
+      return {
         ...base,
         indexado: status.verdict === "PASS",
         coverageState: status.coverageState,
@@ -81,9 +102,9 @@ export async function refreshPerformance(
         impressions: metrics.impressions,
         ctr: metrics.ctr,
         position: metrics.position,
-      });
+      };
     } catch (err) {
-      posts.push({
+      return {
         ...base,
         indexado: false,
         coverageState: "Erro",
@@ -93,9 +114,9 @@ export async function refreshPerformance(
         ctr: 0,
         position: 0,
         erro: err instanceof Error ? err.message : String(err),
-      });
+      };
     }
-  }
+  }));
 
   const report: PerformanceReport = {
     atualizadoEm: new Date().toISOString(),
