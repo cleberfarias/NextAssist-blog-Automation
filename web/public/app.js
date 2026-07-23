@@ -19,6 +19,10 @@ const perfStart = document.getElementById("perf-start");
 const perfEnd = document.getElementById("perf-end");
 const runsList = document.getElementById("runs-list");
 const runsUpdated = document.getElementById("runs-updated");
+const perfKpis = document.getElementById("perf-kpis");
+const perfChart = document.getElementById("perf-chart");
+
+const nf = new Intl.NumberFormat("pt-BR");
 
 let liveRunActive = false; // durante uma execução manual, não sobrescreve as mesas
 
@@ -92,12 +96,74 @@ async function loadHistory() {
   renderHistory(await res.json());
 }
 
+function kpiTile(label, value, sub) {
+  return `
+    <div class="kpi">
+      <div class="kpi-label">${label}</div>
+      <div class="kpi-value">${value}</div>
+      ${sub ? `<div class="kpi-sub">${sub}</div>` : ""}
+    </div>`;
+}
+
+function renderKpis(posts) {
+  const totalClicks = posts.reduce((s, p) => s + (p.clicks || 0), 0);
+  const totalImpr = posts.reduce((s, p) => s + (p.impressions || 0), 0);
+  const ctr = totalImpr > 0 ? (totalClicks / totalImpr) * 100 : 0;
+  // Posição média ponderada por impressões (só posts que já apareceram na busca).
+  const comPos = posts.filter((p) => p.position > 0 && p.impressions > 0);
+  const somaImpr = comPos.reduce((s, p) => s + p.impressions, 0);
+  const posMedia = somaImpr > 0
+    ? comPos.reduce((s, p) => s + p.position * p.impressions, 0) / somaImpr
+    : 0;
+  const indexados = posts.filter((p) => p.indexado).length;
+
+  perfKpis.innerHTML = [
+    kpiTile("Cliques", nf.format(totalClicks)),
+    kpiTile("Impressões", nf.format(totalImpr)),
+    kpiTile("CTR médio", `${ctr.toFixed(1)}%`),
+    kpiTile("Posição média", posMedia > 0 ? posMedia.toFixed(1) : "—"),
+    kpiTile("Indexados", `${indexados}<span class="kpi-of">/${posts.length}</span>`),
+  ].join("");
+}
+
+function renderChart(posts) {
+  const top = posts
+    .filter((p) => p.impressions > 0)
+    .sort((a, b) => b.impressions - a.impressions)
+    .slice(0, 8);
+
+  if (!top.length) {
+    perfChart.innerHTML = `<div class="chart-empty">Nenhuma impressão registrada no período ainda — os dados aparecem alguns dias após a publicação.</div>`;
+    return;
+  }
+
+  const max = top[0].impressions;
+  perfChart.innerHTML = top
+    .map((p) => {
+      const pct = Math.max(2, (p.impressions / max) * 100);
+      const titulo = p.titulo.replace(/"/g, "&quot;");
+      return `
+      <div class="bar-row" title="${titulo} — ${nf.format(p.impressions)} impressões · ${p.clicks} cliques">
+        <div class="bar-label"><a href="${p.url}" target="_blank" rel="noopener">${p.titulo}</a></div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%"></div>
+          <span class="bar-value">${nf.format(p.impressions)}</span>
+        </div>
+      </div>`;
+    })
+    .join("");
+}
+
 function renderPerformance(report) {
   if (!report || !report.posts || !report.posts.length) {
     perfBody.innerHTML = `<tr class="empty"><td colspan="6">Sem dados ainda. Clique em "Atualizar métricas".</td></tr>`;
     perfUpdated.textContent = "Nunca atualizado";
+    perfKpis.innerHTML = "";
+    perfChart.innerHTML = `<div class="chart-empty">Sem dados ainda.</div>`;
     return;
   }
+  renderKpis(report.posts);
+  renderChart(report.posts);
   perfUpdated.textContent = `Atualizado ${new Date(report.atualizadoEm).toLocaleString("pt-BR")} · período ${report.periodo.inicio} a ${report.periodo.fim} · ${report.posts.length} posts`;
   perfStart.value = report.periodo.inicio;
   perfEnd.value = report.periodo.fim;
