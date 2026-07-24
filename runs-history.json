@@ -1,5 +1,90 @@
 [
   {
+    "id": "2026-07-24T15:11:02.621Z",
+    "origem": "action",
+    "iniciadoEm": "2026-07-24T15:11:02.621Z",
+    "finalizadoEm": "2026-07-24T15:14:19.178Z",
+    "tema": "Checklist completo de abertura de ordem de serviço",
+    "status": "publicado",
+    "slug": "checklist-abertura-os-evidencia-fotografica-lgpd",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Checklist completo de abertura de ordem de serviço",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-07-24T15:11:02.629Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "Com base na pesquisa, eis o resumo competitivo sobre \"Checklist completo de abertura de OS\":\n\n- **MarkupEmpresa** publicou um artigo dedicado ao tema com estrutura em 3 etapas (recebimento → diagnóstico → entrega). O ângulo central é a falh",
+        "timestamp": "2026-07-24T15:11:24.807Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-07-24T15:11:24.807Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Checklist de Abertura de OS: o Guia Definitivo com Evidência Fotográfica e Conformidade LGPD",
+        "timestamp": "2026-07-24T15:11:36.005Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-07-24T15:11:36.005Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Se você tem uma assistência técnica, já sabe: o cliente que volta uma semana depois dizendo \"essa risquinho na tela não tinha quando eu deixei o aparelho\" é praticamente um rito de passagem no ramo. E...",
+        "timestamp": "2026-07-24T15:12:27.814Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-07-24T15:12:27.814Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: checklist-abertura-os-evidencia-fotografica-lgpd · Tags: checklist de OS, LGPD, assistência técnica, gestão de assistência técnica, evidência fotográfica",
+        "timestamp": "2026-07-24T15:13:22.499Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-07-24T15:13:22.499Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/checklist-abertura-os-evidencia-fotografica-lgpd",
+        "timestamp": "2026-07-24T15:14:14.430Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-07-24T15:14:14.430Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-07-24T15:14:19.174Z"
+      }
+    ]
+  },
+  {
     "id": "2026-07-23T15:28:08.921Z",
     "origem": "action",
     "iniciadoEm": "2026-07-23T15:28:08.921Z",
