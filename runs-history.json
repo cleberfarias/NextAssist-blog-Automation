@@ -1,5 +1,42 @@
 [
   {
+    "id": "2026-07-26T14:45:43.832Z",
+    "origem": "action",
+    "iniciadoEm": "2026-07-26T14:45:43.832Z",
+    "finalizadoEm": "2026-07-26T14:46:23.490Z",
+    "tema": "Garantia em conserto de celular: o que a lei exige e como se proteger",
+    "status": "falhou",
+    "slug": null,
+    "erro": "Expected double-quoted property name in JSON at position 294 (line 3 column 177)",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Garantia em conserto de celular: o que a lei exige e como se proteger",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-07-26T14:45:44.080Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "# Análise de Concorrência — \"Garantia em conserto de celular\"\n\nCom base na pesquisa, aqui está o panorama do que já existe publicado:\n\n- **MarkupEmpresa** aborda o tema de forma técnica e estruturada, com formato de FAQ direto (Sim/Não). De",
+        "timestamp": "2026-07-26T14:46:11.281Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-07-26T14:46:11.281Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "Expected double-quoted property name in JSON at position 294 (line 3 column 177)",
+        "timestamp": "2026-07-26T14:46:23.490Z"
+      }
+    ]
+  },
+  {
     "id": "2026-07-25T14:43:04.981Z",
     "origem": "action",
     "iniciadoEm": "2026-07-25T14:43:04.981Z",
