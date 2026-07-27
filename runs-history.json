@@ -1,5 +1,99 @@
 [
   {
+    "id": "2026-07-27T15:55:43.653Z",
+    "origem": "action",
+    "iniciadoEm": "2026-07-27T15:55:43.653Z",
+    "finalizadoEm": "2026-07-27T15:59:04.588Z",
+    "tema": "Garantia em conserto de celular: o que a lei exige e como se proteger",
+    "status": "publicado",
+    "slug": "garantia-conserto-celular-lei-laudo-os",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Garantia em conserto de celular: o que a lei exige e como se proteger",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-07-27T15:55:43.669Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "Aqui está o que encontrei sobre a cobertura atual do mercado sobre garantia em conserto de celular:\n\n**1. MarkupEmpresa já tem artigo direto no mesmo ângulo jurídico-operacional.** O concorrente publicou um artigo estruturado em formato de ",
+        "timestamp": "2026-07-27T15:56:09.770Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-07-27T15:56:09.770Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Garantia em Conserto de Celular: o Que Diz a Lei e Como Provar que Você Cumpriu (com Laudo e OS)",
+        "timestamp": "2026-07-27T15:56:19.489Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-07-27T15:56:19.489Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "O que o Código de Defesa do Consumidor exige na garantia de conserto de celular\n\nSe você conserta celular, presta serviço. E serviço, pelo CDC, tem prazo de garantia legal de 90 dias — é o que diz o a...",
+        "timestamp": "2026-07-27T15:57:08.965Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-07-27T15:57:08.965Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: garantia-conserto-celular-lei-laudo-os · Tags: garantia, cdc, assistencia-tecnica, laudo-tecnico, ordem-de-servico",
+        "timestamp": "2026-07-27T15:58:08.584Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-07-27T15:58:08.584Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/garantia-conserto-celular-lei-laudo-os",
+        "timestamp": "2026-07-27T15:58:59.611Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-07-27T15:58:59.611Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-07-27T15:59:04.586Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 55217,
+      "outputTokens": 13224,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0.27267399999999997
+    }
+  },
+  {
     "id": "2026-07-26T14:45:43.832Z",
     "origem": "action",
     "iniciadoEm": "2026-07-26T14:45:43.832Z",
