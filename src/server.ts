@@ -97,6 +97,40 @@ app.get("/api/runs", async (_req, res) => {
   res.json(await getRuns());
 });
 
+app.get("/api/usage", async (_req, res) => {
+  const runs = await getRuns();
+  const tracked = runs.filter((run) => run.usage);
+  const now = new Date();
+  const monthStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
+  const published = tracked.filter((run) => run.status === "publicado");
+  const monthRuns = tracked.filter(
+    (run) => new Date(run.finalizadoEm || run.iniciadoEm).getTime() >= monthStart,
+  );
+  const sum = (
+    items: typeof tracked,
+    field: "estimatedUsd" | "inputTokens" | "outputTokens" | "webSearchRequests",
+  ) => items.reduce((total, run) => total + (run.usage?.[field] ?? 0), 0);
+
+  res.json({
+    trackedRuns: tracked.length,
+    month: {
+      estimatedUsd: sum(monthRuns, "estimatedUsd"),
+      inputTokens: sum(monthRuns, "inputTokens"),
+      outputTokens: sum(monthRuns, "outputTokens"),
+      webSearchRequests: sum(monthRuns, "webSearchRequests"),
+    },
+    total: {
+      estimatedUsd: sum(tracked, "estimatedUsd"),
+      inputTokens: sum(tracked, "inputTokens"),
+      outputTokens: sum(tracked, "outputTokens"),
+      webSearchRequests: sum(tracked, "webSearchRequests"),
+    },
+    averagePublishedUsd: published.length
+      ? sum(published, "estimatedUsd") / published.length
+      : 0,
+  });
+});
+
 app.get("/api/performance", async (_req, res) => {
   res.json(await getPerformance());
 });

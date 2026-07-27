@@ -176,6 +176,7 @@ body {
 .run-neutral { background: #e7e9ee; color: #666; }
 .run-origin { font-weight: 600; }
 .run-when { color: #99a; }
+.run-cost { color: #5d3a9b; background: #f0e9fb; border-radius: 999px; padding: 3px 8px; font-weight: 700; }
 .run-top a { margin-left: auto; color: #1c2b4a; font-weight: 600; text-decoration: none; }
 .run-top a:hover { text-decoration: underline; }
 .run-topic { font-weight: 600; font-size: 14px; margin: 8px 0; color: #223; }
@@ -186,6 +187,24 @@ body {
 .chip-error { background: #fbdcdc; color: #a32d2d; }
 .chip-idle { background: #eef1f6; color: #99a; }
 .run-error { margin-top: 8px; font-size: 12px; color: #a32d2d; background: #fdeeee; border-radius: 8px; padding: 8px 10px; }
+
+.usage-panel {
+  grid-column: 1 / -1;
+  background: #f8f5ff;
+  padding: 20px 28px;
+  border-top: 1px solid #e2e6ee;
+}
+.usage-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.usage-header h2 { font-size: 15px; margin: 0 0 4px; }
+.usage-header p { font-size: 12px; color: #667; margin: 0; }
+#usage-updated { font-size: 12px; color: #778; }
 
 .performance-panel {
   grid-column: 1 / -1;

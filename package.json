@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "run": "tsx src/index.ts",
+    "update:seo": "tsx src/scripts/update-post-seo.ts",
     "office": "tsx src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"

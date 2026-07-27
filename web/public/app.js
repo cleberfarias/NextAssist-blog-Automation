@@ -21,8 +21,11 @@ const runsList = document.getElementById("runs-list");
 const runsUpdated = document.getElementById("runs-updated");
 const perfKpis = document.getElementById("perf-kpis");
 const perfChart = document.getElementById("perf-chart");
+const usageKpis = document.getElementById("usage-kpis");
+const usageUpdated = document.getElementById("usage-updated");
 
 const nf = new Intl.NumberFormat("pt-BR");
+const usd = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "USD" });
 
 let liveRunActive = false; // durante uma execução manual, não sobrescreve as mesas
 
@@ -257,6 +260,9 @@ function renderRuns(runs) {
       const link = run.slug
         ? `<a href="https://www.nextassist-app.com.br/blog/${run.slug}" target="_blank" rel="noopener">ver post ↗</a>`
         : "";
+      const cost = run.usage
+        ? `<span class="run-cost" title="${nf.format(run.usage.inputTokens)} tokens de entrada · ${nf.format(run.usage.outputTokens)} tokens de saída">${usd.format(run.usage.estimatedUsd)}</span>`
+        : "";
       const erro = run.erro ? `<div class="run-error">⚠️ ${run.erro}</div>` : "";
       return `
       <li class="run-item">
@@ -264,6 +270,7 @@ function renderRuns(runs) {
           <span class="run-badge ${st.cls}">${st.label}</span>
           <span class="run-origin">${origem}</span>
           <span class="run-when">${quando}</span>
+          ${cost}
           ${link}
         </div>
         <div class="run-topic">${run.tema ?? "—"}</div>
@@ -289,6 +296,25 @@ async function loadRuns() {
   const runs = await res.json();
   renderRuns(runs);
   hydrateFloorFromLatest(runs);
+}
+
+function renderUsage(report) {
+  usageKpis.innerHTML = [
+    kpiTile("Gasto neste mês", usd.format(report.month.estimatedUsd)),
+    kpiTile("Custo médio / post", usd.format(report.averagePublishedUsd)),
+    kpiTile("Tokens de entrada", nf.format(report.month.inputTokens)),
+    kpiTile("Tokens de saída", nf.format(report.month.outputTokens)),
+    kpiTile("Pesquisas web", nf.format(report.month.webSearchRequests)),
+    kpiTile("Total registrado", usd.format(report.total.estimatedUsd)),
+  ].join("");
+  usageUpdated.textContent = report.trackedRuns
+    ? `${report.trackedRuns} execução(ões) medidas · não representa o saldo restante`
+    : "Aguardando a primeira execução com medição";
+}
+
+async function loadUsage() {
+  const res = await fetch("/api/usage");
+  renderUsage(await res.json());
 }
 
 async function loadStatus() {
@@ -333,12 +359,14 @@ function connectEvents() {
       loadHistory();
       loadRuns();
       setRunning(false);
+      loadUsage();
     }
     if (event.status === "error") {
       showToast(`Erro no agente ${event.agent}: ${event.message ?? ""}`);
       liveRunActive = false;
       loadRuns();
       setRunning(false);
+      loadUsage();
     }
   };
   source.onerror = () => {
@@ -350,9 +378,11 @@ buildDesks();
 loadHistory();
 loadRuns();
 loadStatus();
+loadUsage();
 loadPerformance();
 connectEvents();
 
 // Painel hospedado: recarrega as execuções periodicamente para pegar novas
 // publicações da Action sem precisar dar refresh na página.
 setInterval(loadRuns, 60000);
+setInterval(loadUsage, 60000);

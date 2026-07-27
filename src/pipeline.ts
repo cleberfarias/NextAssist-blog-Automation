@@ -6,6 +6,7 @@ import { editAndFinalize } from "./agents/editorSeo.js";
 import { publishPost } from "./agents/publisher.js";
 import { indexPublishedPost } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
+import { resetAnthropicUsage } from "./lib/anthropic.js";
 
 export type AgentId =
   | "pesquisa-mercado"
@@ -43,6 +44,7 @@ export interface PipelineResult {
  * (o servidor web usa isso pra alimentar o "escritório").
  */
 export async function runPipeline(onEvent?: OnEvent): Promise<PipelineResult | null> {
+  resetAnthropicUsage();
   const topic = await getNextTopic();
   if (!topic) {
     emit(onEvent, { agent: "pesquisa-pauta", status: "error", message: "Nenhum tópico pendente no calendário." });

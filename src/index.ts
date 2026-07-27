@@ -1,5 +1,6 @@
 import { runPipeline, type PipelineEvent } from "./pipeline.js";
 import { appendRun, type RunRecord, type RunStatus } from "./runsHistory.js";
+import { getAnthropicUsage } from "./lib/anthropic.js";
 
 /**
  * Entrada da CLI (usada pelo GitHub Actions). Além de rodar o pipeline,
@@ -22,6 +23,7 @@ function finalize(status: RunStatus, tema: string | null, slug: string | null, e
     slug,
     erro,
     eventos,
+    usage: getAnthropicUsage(),
   };
   return appendRun(record);
 }

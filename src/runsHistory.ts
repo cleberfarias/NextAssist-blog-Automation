@@ -1,6 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { readStateJson } from "./lib/dataSource.js";
 import type { PipelineEvent } from "./pipeline.js";
+import type { AnthropicUsage } from "./lib/anthropic.js";
 
 const RUNS_PATH = new URL("../runs-history.json", import.meta.url);
 const MAX_RUNS = 100;
@@ -17,6 +18,7 @@ export interface RunRecord {
   slug: string | null;
   erro: string | null;
   eventos: PipelineEvent[];
+  usage?: AnthropicUsage;
 }
 
 async function loadLocal(): Promise<RunRecord[]> {
