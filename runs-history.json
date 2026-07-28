@@ -1,5 +1,39 @@
 [
   {
+    "id": "2026-07-28T15:37:55.447Z",
+    "origem": "action",
+    "iniciadoEm": "2026-07-28T15:37:55.447Z",
+    "finalizadoEm": "2026-07-28T15:37:55.725Z",
+    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+    "status": "falhou",
+    "slug": null,
+    "erro": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011CdUhpvQTBME5FpcGCVvgY\"}",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-07-28T15:37:55.468Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011CdUhpvQTBME5FpcGCVvgY\"}",
+        "timestamp": "2026-07-28T15:37:55.725Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0
+    }
+  },
+  {
     "id": "2026-07-27T15:55:43.653Z",
     "origem": "action",
     "iniciadoEm": "2026-07-27T15:55:43.653Z",
