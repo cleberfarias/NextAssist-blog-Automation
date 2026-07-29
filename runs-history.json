@@ -1,5 +1,41 @@
 [
   {
+    "id": "2026-07-29T18:39:18.323Z",
+    "origem": "action",
+    "iniciadoEm": "2026-07-29T18:39:18.323Z",
+    "finalizadoEm": "2026-07-29T18:39:18.346Z",
+    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+    "status": "falhou",
+    "slug": null,
+    "erro": "Cannot convert argument to a ByteString because the character at index 7 has a value of 65279 which is greater than 255.",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-07-29T18:39:18.333Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "Cannot convert argument to a ByteString because the character at index 7 has a value of 65279 which is greater than 255.",
+        "timestamp": "2026-07-29T18:39:18.345Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-07-29T18:14:53.732Z",
     "origem": "manual",
     "iniciadoEm": "2026-07-29T18:14:53.732Z",
