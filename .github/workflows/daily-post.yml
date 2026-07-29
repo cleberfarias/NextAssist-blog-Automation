@@ -42,6 +42,8 @@ jobs:
           FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
           IMAGE_GEN_API_KEY: ${{ secrets.IMAGE_GEN_API_KEY }}
           IMAGE_GEN_PROVIDER: openai
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
         run: npm run run
 
       # Roda mesmo se o pipeline falhar, para registrar a execução (com o

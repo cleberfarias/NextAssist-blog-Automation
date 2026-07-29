@@ -12,10 +12,15 @@ NextAssist, sem intervenção manual.
 3. **Redator** (`src/agents/writer.ts`) — escreve o artigo em HTML
 4. **Editor/SEO** (`src/agents/editorSeo.ts`) — adiciona FAQ schema,
    links internos, tags, slug e finaliza os campos
-5. **Publicador** (`src/agents/publisher.ts`) — gera a imagem de capa,
-   sobe pro Firebase Storage, autentica no Firebase Auth e publica via
-   `POST /blog/admin/posts`
-6. **Indexador** (`src/agents/indexer.ts`) — notifica a Google Indexing
+5. **Publicador** (`src/agents/publisher.ts`) — gera a imagem de capa
+   (JPEG), sobe pro Firebase Storage, autentica no Firebase Auth e publica
+   via `POST /blog/admin/posts`
+6. **Instagram** (`src/agents/instagramPublisher.ts`) — reaproveita a capa
+   já gerada e publica no feed do Instagram via Graph API da Meta (título +
+   resumo + link + hashtags a partir das tags). É melhor esforço: se falhar
+   ou não estiver configurado, não derruba o pipeline (o post do blog já
+   saiu). Só roda se `IG_USER_ID` e `IG_ACCESS_TOKEN` estiverem definidos.
+7. **Indexador** (`src/agents/indexer.ts`) — notifica a Google Indexing
    API sobre a nova URL e reenvia o sitemap ao Search Console, para
    acelerar o rastreamento (melhor esforço; não derruba o pipeline se
    falhar, já que o post já foi publicado)
@@ -46,6 +51,8 @@ npm run run
 | `SITE_BASE_URL` | Domínio público do blog (ex: `https://www.nextassist-app.com.br`) |
 | `SEARCH_CONSOLE_SITE_URL` | Propriedade no Search Console (prefixo de URL ou `sc-domain:...`) |
 | `SITEMAP_URL` | URL do sitemap reenviado ao Google |
+| `IG_USER_ID` *(opcional)* | ID da conta Instagram Business/Creator (ver seção Instagram) |
+| `IG_ACCESS_TOKEN` *(opcional)* | Token de longa duração da Graph API da Meta |
 
 **Nunca commite o `.env`** — ele já está coberto por `.gitignore`.
 
@@ -68,6 +75,34 @@ faça uma vez no Google Cloud / Search Console:
 > como um empurrão no rastreamento, mas não é garantida — o caminho
 > confiável continua sendo o sitemap. Métricas via Search Analytics API
 > aparecem com 2-3 dias de atraso.
+
+### Publicação no Instagram
+
+O passo do Instagram usa a **Graph API da Meta** (caminho oficial). Pré-requisitos
+que só se resolvem no lado da Meta (uma vez):
+
+1. A conta do Instagram precisa ser **Business** ou **Creator** e estar
+   conectada a uma **Página do Facebook**.
+2. Crie um app em [developers.facebook.com](https://developers.facebook.com)
+   e adicione o produto **Instagram Graph API**.
+3. Gere um **token de acesso de longa duração** com as permissões
+   `instagram_basic`, `instagram_content_publish` e `pages_read_engagement`.
+4. Descubra o **IG Business Account ID** (não é o @usuário):
+   - `GET /me/accounts` → pegue o `id` da Página
+   - `GET /{page-id}?fields=instagram_business_account` → o `id` retornado é o
+     `IG_USER_ID`.
+
+Preencha `IG_USER_ID` e `IG_ACCESS_TOKEN` no `.env` (ou nos secrets da Action).
+Se qualquer um faltar, o passo é simplesmente ignorado.
+
+> Notas honestas:
+> - A API só aceita imagens **JPEG** — por isso a capa passou a ser gerada em
+>   JPEG (serve para o blog e para o Instagram, mesma URL).
+> - Só é possível publicar de contas **Business/Creator**. Contas pessoais não
+>   têm API; bibliotecas não-oficiais violam os termos e arriscam banir a conta.
+> - O token de longa duração **expira** (tipicamente ~60 dias). Quando expirar,
+>   gere um novo e atualize o secret — o passo é melhor esforço, então uma
+>   falha aqui não impede a publicação do blog, mas o post não vai ao Instagram.
 
 ## Painel visual — o "escritório"
 

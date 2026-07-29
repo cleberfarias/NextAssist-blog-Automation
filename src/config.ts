@@ -36,6 +36,17 @@ export const config = {
   imageGenProvider: process.env.IMAGE_GEN_PROVIDER ?? "openai",
   imageGenApiKey: process.env.IMAGE_GEN_API_KEY ?? "",
 
+  // Instagram (Graph API da Meta). Requer conta Business/Creator conectada a
+  // uma Página do Facebook. Se userId ou accessToken estiverem vazios, o passo
+  // do Instagram é ignorado (melhor esforço — não derruba o post do blog).
+  instagram: {
+    // ID da conta do Instagram (IG Business Account ID), não o @usuário.
+    userId: process.env.IG_USER_ID ?? "",
+    // Token de acesso de longa duração da Página/app da Meta.
+    accessToken: process.env.IG_ACCESS_TOKEN ?? "",
+    apiVersion: process.env.IG_API_VERSION ?? "v21.0",
+  },
+
   // De onde o painel lê os arquivos de estado (histórico, execuções):
   //  - "local": lê do disco (rodando na sua máquina após um git pull)
   //  - "github": busca os arquivos crus do repositório (painel hospedado,
@@ -49,4 +60,6 @@ export const config = {
   // Senha do painel (Basic Auth). Vazio = sem proteção (ok localmente).
   // Defina ao hospedar publicamente.
   panelPassword: process.env.PANEL_PASSWORD ?? "",
+  requireApproval: process.env.REQUIRE_APPROVAL === "true",
+  demoPath: process.env.DEMO_PATH ?? "/demo",
 };

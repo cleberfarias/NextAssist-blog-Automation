@@ -4,9 +4,12 @@ import { planTopic } from "./agents/topicPlanner.js";
 import { writeArticle } from "./agents/writer.js";
 import { editAndFinalize } from "./agents/editorSeo.js";
 import { publishPost } from "./agents/publisher.js";
-import { indexPublishedPost } from "./agents/indexer.js";
+import { publishToInstagram } from "./agents/instagramPublisher.js";
+import { indexPublishedPost, postUrl } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
+import { config } from "./config.js";
 import { resetAnthropicUsage } from "./lib/anthropic.js";
+import { validateFinalPost } from "./lib/contentQuality.js";
 
 export type AgentId =
   | "pesquisa-mercado"
@@ -14,6 +17,7 @@ export type AgentId =
   | "redator"
   | "editor-seo"
   | "publicador"
+  | "instagram"
   | "indexador";
 
 export type AgentStatus = "idle" | "working" | "done" | "error";
@@ -27,6 +31,13 @@ export interface PipelineEvent {
 }
 
 export type OnEvent = (event: PipelineEvent) => void;
+
+async function getPublishedSlugs(): Promise<string[]> {
+  const response = await fetch(`${config.blogApiUrl}/blog/posts`, { headers: { Accept: "application/json" } });
+  if (!response.ok) throw new Error(`Não foi possível carregar posts existentes: HTTP ${response.status}`);
+  const payload = (await response.json()) as { data?: Array<{ slug?: string }> };
+  return (payload.data ?? []).map((post) => post.slug).filter((slug): slug is string => Boolean(slug));
+}
 
 function emit(onEvent: OnEvent | undefined, event: Omit<PipelineEvent, "timestamp">) {
   onEvent?.({ ...event, timestamp: new Date().toISOString() });
@@ -65,18 +76,45 @@ export async function runPipeline(onEvent?: OnEvent): Promise<PipelineResult | n
     emit(onEvent, { agent: "redator", status: "done", message: `${draftHtml.replace(/<[^>]+>/g, "").slice(0, 200)}...` });
 
     emit(onEvent, { agent: "editor-seo", status: "working", message: "Revisando, adicionando schema e links internos..." });
-    const finalPost = await editAndFinalize(plan, draftHtml);
+    const publishedSlugs = await getPublishedSlugs();
+    const finalPost = await editAndFinalize(plan, draftHtml, {
+      palavraChaveAlvo: topic.palavraChaveAlvo,
+      slugsPublicados: publishedSlugs,
+      demoPath: config.demoPath,
+    });
+    validateFinalPost(finalPost, publishedSlugs);
     emit(onEvent, { agent: "editor-seo", status: "done", message: `Slug: ${finalPost.slug} · Tags: ${finalPost.tags.join(", ")}` });
 
     emit(onEvent, { agent: "publicador", status: "working", message: "Gerando capa e publicando no blog..." });
-    const publishedSlug = await publishPost(finalPost);
-    emit(onEvent, { agent: "publicador", status: "done", message: `Publicado em /blog/${publishedSlug}` });
+    const published = await publishPost(finalPost);
+    const publishedSlug = published.slug;
+    emit(onEvent, {
+      agent: "publicador",
+      status: "done",
+      message: published.publicado
+        ? `Publicado em /blog/${publishedSlug}`
+        : `Rascunho criado em /blog/${publishedSlug} — aguardando aprovação`,
+    });
+
+    // Instagram — melhor esforço: reaproveita a capa e nunca derruba o pipeline
+    // (o post do blog já foi publicado neste ponto).
+    if (config.instagram.userId && config.instagram.accessToken) {
+      emit(onEvent, { agent: "instagram", status: "working", message: "Publicando no Instagram..." });
+      const igResult = await publishToInstagram(finalPost, published.imagemCapa, postUrl(publishedSlug));
+      emit(onEvent, { agent: "instagram", status: igResult.ok ? "done" : "error", message: igResult.detalhes });
+    } else {
+      emit(onEvent, { agent: "instagram", status: "done", message: "Instagram não configurado — passo ignorado." });
+    }
 
     emit(onEvent, { agent: "indexador", status: "working", message: "Notificando o Google e reenviando o sitemap..." });
-    const indexResult = await indexPublishedPost(publishedSlug);
-    emit(onEvent, { agent: "indexador", status: "done", message: indexResult.detalhes });
+    if (published.publicado) {
+      const indexResult = await indexPublishedPost(publishedSlug);
+      emit(onEvent, { agent: "indexador", status: "done", message: indexResult.detalhes });
+    } else {
+      emit(onEvent, { agent: "indexador", status: "done", message: "Indexação aguardará a aprovação do rascunho." });
+    }
 
-    await markTopicPublished(topic.tema);
+    if (published.publicado) await markTopicPublished(topic.tema);
     await appendHistory({
       tema: topic.tema,
       titulo: finalPost.titulo,

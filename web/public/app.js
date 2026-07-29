@@ -4,6 +4,7 @@ const AGENTS = [
   { id: "redator", name: "Carla", role: "Redação", emoji: "✍️" },
   { id: "editor-seo", name: "Diego", role: "Editor / SEO", emoji: "🧐" },
   { id: "publicador", name: "Elis", role: "Publicação", emoji: "🚀" },
+  { id: "instagram", name: "Gabi", role: "Instagram", emoji: "📸" },
   { id: "indexador", name: "Fábio", role: "Indexação / Google", emoji: "📈" },
 ];
 
@@ -23,6 +24,8 @@ const perfKpis = document.getElementById("perf-kpis");
 const perfChart = document.getElementById("perf-chart");
 const usageKpis = document.getElementById("usage-kpis");
 const usageUpdated = document.getElementById("usage-updated");
+const conversionKpis = document.getElementById("conversion-kpis");
+const conversionUpdated = document.getElementById("conversion-updated");
 
 const nf = new Intl.NumberFormat("pt-BR");
 const usd = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "USD" });
@@ -317,6 +320,20 @@ async function loadUsage() {
   renderUsage(await res.json());
 }
 
+async function loadConversions() {
+  const res = await fetch("/api/conversions");
+  if (!res.ok) return;
+  const data = await res.json();
+  conversionKpis.innerHTML = [
+    kpiTile("Visitas à demo", nf.format(data.demoViews)),
+    kpiTile("Testes iniciados", nf.format(data.demoSubmits)),
+    kpiTile("Contatos enviados", nf.format(data.contactSubmits)),
+    kpiTile("Cliques WhatsApp", nf.format(data.whatsappClicks)),
+    kpiTile("Conversão", `${(data.demoRate * 100).toFixed(1)}%`),
+  ].join("");
+  conversionUpdated.textContent = `Atualizado ${new Date(data.updatedAt).toLocaleString("pt-BR")}`;
+}
+
 async function loadStatus() {
   const res = await fetch("/api/status");
   const data = await res.json();
@@ -354,19 +371,22 @@ function connectEvents() {
     if (event.agent === "publicador" && event.status === "done") {
       showToast("Post publicado! 🎉");
     }
+    if (event.agent === "instagram" && event.status === "done" && !/ignorado/.test(event.message ?? "")) {
+      showToast("Publicado no Instagram! 📸");
+    }
     if (event.agent === "indexador" && event.status === "done") {
       liveRunActive = false;
       loadHistory();
       loadRuns();
-      setRunning(false);
       loadUsage();
+      setRunning(false);
     }
     if (event.status === "error") {
       showToast(`Erro no agente ${event.agent}: ${event.message ?? ""}`);
       liveRunActive = false;
       loadRuns();
-      setRunning(false);
       loadUsage();
+      setRunning(false);
     }
   };
   source.onerror = () => {
@@ -377,8 +397,9 @@ function connectEvents() {
 buildDesks();
 loadHistory();
 loadRuns();
-loadStatus();
 loadUsage();
+loadConversions();
+loadStatus();
 loadPerformance();
 connectEvents();
 
