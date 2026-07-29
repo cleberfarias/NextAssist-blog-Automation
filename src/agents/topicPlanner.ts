@@ -20,11 +20,19 @@ export interface ContentPlan {
 
 export async function planTopic(
   tema: string,
+  palavraChaveAlvo: string,
   marketResearch: string,
 ): Promise<ContentPlan> {
   const raw = await runAgent({
     system: SYSTEM,
-    prompt: `Tema: "${tema}"\n\nPesquisa de mercado:\n${marketResearch}`,
+    prompt: `Tema: "${tema}"
+Palavra-chave principal: "${palavraChaveAlvo}"
+
+O título e a meta description devem conter a palavra-chave principal de forma natural.
+Priorize a intenção de busca de um dono de assistência técnica que precisa resolver esse problema e inclua H2s úteis para a decisão, não apenas definições.
+
+Pesquisa de mercado:
+${marketResearch}`,
     maxTokens: 1000,
   });
   return extractJson<ContentPlan>(raw);

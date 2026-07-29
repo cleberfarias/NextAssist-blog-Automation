@@ -56,8 +56,11 @@ Rascunho HTML:
 ${draftHtml}
 
 Regras obrigatórias adicionais: use somente os slugs listados no contexto; não invente links.
-Inclua /#funcionalidades e pelo menos dois links para ${context.demoPath ?? "/demo"}?utm_source=blog&utm_medium=article&utm_campaign=content&utm_content=cta,
-com texto de benefício e menção ao teste grátis de 7 dias.`,
+Palavra-chave principal: "${context.palavraChaveAlvo ?? ""}". Ela deve aparecer naturalmente no título e na meta description.
+Inclua /#funcionalidades e dois links para o teste grátis de 7 dias. Em ambos, use ${context.demoPath ?? "/demo"}?utm_source=blog&utm_medium=article&utm_campaign=SLUG_DO_ARTIGO e identifique a posição:
+- CTA no meio do artigo: utm_content=cta-inline
+- CTA ao final do artigo: utm_content=cta-final
+Substitua SLUG_DO_ARTIGO pelo mesmo slug devolvido no JSON.`,
     // O editor devolve o artigo HTML inteiro embutido num JSON, então
     // precisa de mais folga que o redator (4000) — senão a resposta é
     // cortada no meio de uma string e o JSON.parse falha.

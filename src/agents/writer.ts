@@ -14,12 +14,14 @@ título já vai em outro campo).`;
 
 export async function writeArticle(
   tema: string,
+  palavraChaveAlvo: string,
   plan: ContentPlan,
   marketResearch: string,
 ): Promise<string> {
   return runAgent({
     system: SYSTEM,
     prompt: `Tema: "${tema}"
+Palavra-chave principal: "${palavraChaveAlvo}" (use naturalmente na introdução e em pelo menos um H2; não repita de forma artificial)
 Ângulo editorial: ${plan.anguloEditorial}
 Estrutura de H2s a seguir: ${plan.h2s.join(" | ")}
 

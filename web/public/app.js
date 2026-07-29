@@ -26,9 +26,17 @@ const usageKpis = document.getElementById("usage-kpis");
 const usageUpdated = document.getElementById("usage-updated");
 const conversionKpis = document.getElementById("conversion-kpis");
 const conversionUpdated = document.getElementById("conversion-updated");
+const conversionAttribution = document.getElementById("conversion-attribution");
 
 const nf = new Intl.NumberFormat("pt-BR");
 const usd = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "USD" });
+
+function escapeHtml(value) {
+  return String(value).replace(
+    /[&<>"']/g,
+    (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character],
+  );
+}
 
 let liveRunActive = false; // durante uma execução manual, não sobrescreve as mesas
 
@@ -331,6 +339,27 @@ async function loadConversions() {
     kpiTile("Cliques WhatsApp", nf.format(data.whatsappClicks)),
     kpiTile("Conversão", `${(data.demoRate * 100).toFixed(1)}%`),
   ].join("");
+  const campaigns = (data.byCampaign ?? []).filter((row) => row.campaign !== "(não informado)").slice(0, 5);
+  const positions = (data.byContent ?? []).filter((row) => row.content !== "(não informado)").slice(0, 5);
+  const rows = [
+    ...campaigns.map((row) => ({
+      origem: `Artigo: ${row.campaign}`,
+      views: row.demoViews,
+      leads: row.leads,
+      rate: row.demoRate,
+    })),
+    ...positions.map((row) => ({
+      origem: `Posição: ${row.content}`,
+      views: row.demoViews,
+      leads: row.leads,
+      rate: row.demoRate,
+    })),
+  ];
+  conversionAttribution.innerHTML = rows.length
+    ? `<div class="perf-table-wrap"><table><thead><tr><th>Origem</th><th>Visitas à demo</th><th>Leads</th><th>Conversão</th></tr></thead><tbody>${rows
+        .map((row) => `<tr><td>${escapeHtml(row.origem)}</td><td>${nf.format(row.views)}</td><td>${nf.format(row.leads)}</td><td>${(row.rate * 100).toFixed(1)}%</td></tr>`)
+        .join("")}</tbody></table></div>`
+    : "";
   conversionUpdated.textContent = `Atualizado ${new Date(data.updatedAt).toLocaleString("pt-BR")}`;
 }
 

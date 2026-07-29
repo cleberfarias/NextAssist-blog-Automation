@@ -43,7 +43,14 @@ app.use((req, res, next) => { res.header("Access-Control-Allow-Origin", config.s
 app.post("/api/conversions", express.json(), async (req, res) => {
   const allowed: ConversionEventName[] = ["demo_view", "demo_submit", "contact_submit", "whatsapp_click"];
   if (!allowed.includes(req.body?.name)) { res.status(400).json({ error: "Evento inválido" }); return; }
-  await recordConversion({ name: req.body.name, path: String(req.body.path ?? "").slice(0, 200), source: String(req.body.source ?? "").slice(0, 80), medium: String(req.body.medium ?? "").slice(0, 80), campaign: String(req.body.campaign ?? "").slice(0, 80), content: String(req.body.content ?? "").slice(0, 80) });
+  const campaign = String(req.body.campaign ?? "").slice(0, 80);
+  const content = String(req.body.content ?? "").slice(0, 80);
+  const utmValue = /^[a-z0-9-]*$/;
+  if (!utmValue.test(campaign) || !utmValue.test(content)) {
+    res.status(400).json({ error: "Parâmetros UTM inválidos" });
+    return;
+  }
+  await recordConversion({ name: req.body.name, path: String(req.body.path ?? "").slice(0, 200), source: String(req.body.source ?? "").slice(0, 80), medium: String(req.body.medium ?? "").slice(0, 80), campaign, content });
   res.status(204).end();
 });
 

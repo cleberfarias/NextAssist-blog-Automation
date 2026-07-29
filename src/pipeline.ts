@@ -68,11 +68,11 @@ export async function runPipeline(onEvent?: OnEvent): Promise<PipelineResult | n
     emit(onEvent, { agent: "pesquisa-mercado", status: "done", message: marketResearch.slice(0, 240) });
 
     emit(onEvent, { agent: "pesquisa-pauta", status: "working", message: "Definindo título, ângulo e estrutura..." });
-    const plan = await planTopic(topic.tema, marketResearch);
+    const plan = await planTopic(topic.tema, topic.palavraChaveAlvo, marketResearch);
     emit(onEvent, { agent: "pesquisa-pauta", status: "done", message: `Título: ${plan.titulo}` });
 
     emit(onEvent, { agent: "redator", status: "working", message: "Escrevendo o rascunho..." });
-    const draftHtml = await writeArticle(topic.tema, plan, marketResearch);
+    const draftHtml = await writeArticle(topic.tema, topic.palavraChaveAlvo, plan, marketResearch);
     emit(onEvent, { agent: "redator", status: "done", message: `${draftHtml.replace(/<[^>]+>/g, "").slice(0, 200)}...` });
 
     emit(onEvent, { agent: "editor-seo", status: "working", message: "Revisando, adicionando schema e links internos..." });
@@ -82,7 +82,10 @@ export async function runPipeline(onEvent?: OnEvent): Promise<PipelineResult | n
       slugsPublicados: publishedSlugs,
       demoPath: config.demoPath,
     });
-    validateFinalPost(finalPost, publishedSlugs);
+    validateFinalPost(finalPost, publishedSlugs, {
+      palavraChaveAlvo: topic.palavraChaveAlvo,
+      demoPath: config.demoPath,
+    });
     emit(onEvent, { agent: "editor-seo", status: "done", message: `Slug: ${finalPost.slug} · Tags: ${finalPost.tags.join(", ")}` });
 
     emit(onEvent, { agent: "publicador", status: "working", message: "Gerando capa e publicando no blog..." });

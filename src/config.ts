@@ -8,8 +8,20 @@ function required(name: string): string {
   return value;
 }
 
+function aiProvider(): "openai" | "anthropic" {
+  const value = process.env.AI_PROVIDER_PRIMARY ?? "openai";
+  if (value !== "openai" && value !== "anthropic") {
+    throw new Error("AI_PROVIDER_PRIMARY deve ser 'openai' ou 'anthropic'");
+  }
+  return value;
+}
+
 export const config = {
-  anthropicApiKey: required("ANTHROPIC_API_KEY"),
+  aiPrimaryProvider: aiProvider(),
+  openaiApiKey: process.env.OPENAI_API_KEY ?? "",
+  openaiModel: process.env.OPENAI_MODEL ?? "gpt-5.6",
+  anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? "",
+  anthropicModel: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-5",
 
   blogApiUrl: process.env.BLOG_API_URL ??
     "https://rr-infocell-api-91248386036.southamerica-east1.run.app",

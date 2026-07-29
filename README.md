@@ -42,7 +42,11 @@ npm run run
 
 | Variável | Onde conseguir |
 |---|---|
-| `ANTHROPIC_API_KEY` | console.anthropic.com |
+| `OPENAI_API_KEY` | OpenAI Platform — provedor principal dos agentes de texto |
+| `ANTHROPIC_API_KEY` | Anthropic Console — fallback para falhas recuperáveis |
+| `AI_PROVIDER_PRIMARY` | `openai` (padrão) ou `anthropic` |
+| `OPENAI_MODEL` | Modelo de texto da OpenAI (padrão: `gpt-5.6`) |
+| `ANTHROPIC_MODEL` | Modelo de texto da Anthropic (padrão: `claude-sonnet-5`) |
 | `FIREBASE_WEB_API_KEY` | Console Firebase → Configurações do projeto → Geral |
 | `FIREBASE_ADMIN_EMAIL` / `FIREBASE_ADMIN_PASSWORD` | Usuário admin já usado no painel `/admin/blog` |
 | `FIREBASE_SERVICE_ACCOUNT_JSON` | Console Firebase → Contas de serviço → Gerar nova chave privada (colar o JSON inteiro em uma linha) |
@@ -130,6 +134,10 @@ Abaixo do escritório há duas seções de acompanhamento:
   fica persistido no Firebase Storage em
   `panel-state/post-performance.json`, sobrevivendo ao encerramento ou à
   recriação da instância.
+- **Conversões do blog** — mostra visitas à demonstração, testes iniciados,
+  contatos e cliques no WhatsApp. Os novos artigos identificam o slug e a
+  posição de cada CTA nos parâmetros `utm_campaign` e `utm_content`, permitindo
+  comparar quais pautas e chamadas realmente geram leads.
 
 Cada execução do pipeline grava um registro detalhado em
 `runs-history.json`, que a Action commita de volta (inclusive quando
