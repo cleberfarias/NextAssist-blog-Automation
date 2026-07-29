@@ -11,7 +11,14 @@ peças organizadas, visual limpo e profissional, sem texto ou logotipos
 na imagem.`;
 }
 
-export async function publishPost(post: FinalPost): Promise<string> {
+export interface PublishResult {
+  slug: string;
+  publicado: boolean;
+  /** URL pública da imagem de capa (reaproveitada na publicação do Instagram). */
+  imagemCapa: string;
+}
+
+export async function publishPost(post: FinalPost): Promise<PublishResult> {
   const imageBuffer = await generateCoverImage(buildImagePrompt(post.titulo));
   const imagemCapa = await uploadCoverImage(imageBuffer, post.slug);
 
@@ -31,7 +38,7 @@ export async function publishPost(post: FinalPost): Promise<string> {
       imagemCapa,
       autor: config.blogAutor,
       tags: post.tags,
-      publicado: true,
+      publicado: !config.requireApproval,
       metaTitle: post.metaTitle,
       metaDescription: post.metaDescription,
     }),
@@ -45,5 +52,5 @@ export async function publishPost(post: FinalPost): Promise<string> {
   }
 
   const data = (await res.json()) as { data: { id: string; slug: string } };
-  return data.data.slug;
+  return { slug: data.data.slug, publicado: !config.requireApproval, imagemCapa };
 }

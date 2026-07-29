@@ -1,9 +1,12 @@
 import { config } from "../config.js";
 
 /**
- * Gera uma imagem de capa a partir de um prompt e devolve os bytes (PNG).
+ * Gera uma imagem de capa a partir de um prompt e devolve os bytes (JPEG).
  * Implementado para o provider "openai" (gpt-image-1). Para trocar de
  * provider, adicione um novo `case` aqui — o restante do pipeline não muda.
+ *
+ * O formato precisa ser JPEG: a mesma capa é reaproveitada na publicação do
+ * Instagram, e a Graph API da Meta só aceita imagens JPEG.
  */
 export async function generateCoverImage(prompt: string): Promise<Buffer> {
   if (!config.imageGenApiKey) {
@@ -33,6 +36,10 @@ async function generateWithOpenAi(prompt: string): Promise<Buffer> {
       model: "gpt-image-1",
       prompt,
       size: "1536x1024",
+      // JPEG para compatibilidade com a Graph API do Instagram (não aceita PNG).
+      // 1536x1024 (proporção 1.5:1) fica dentro da faixa aceita no feed.
+      output_format: "jpeg",
+      output_compression: 90,
       n: 1,
     }),
   });

@@ -57,11 +57,13 @@ export async function uploadCoverImage(
   slug: string,
 ): Promise<string> {
   const bucket = getStorageBucket();
-  const filePath = `blog-covers/${slug}-${Date.now()}.png`;
+  // JPEG: a capa é reaproveitada na publicação do Instagram, cuja API só aceita
+  // esse formato (ver src/lib/imageGen.ts).
+  const filePath = `blog-covers/${slug}-${Date.now()}.jpg`;
   const file = bucket.file(filePath);
 
   await file.save(imageBuffer, {
-    metadata: { contentType: "image/png" },
+    metadata: { contentType: "image/jpeg" },
   });
 
   // Token de acesso longo em vez de ACL pública — evita depender de

@@ -7,6 +7,7 @@ import { getHistory } from "./history.js";
 import { getRuns } from "./runsHistory.js";
 import { getPerformance, refreshPerformance } from "./performance.js";
 import { config } from "./config.js";
+import { getConversionSummary, recordConversion, type ConversionEventName } from "./conversions.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4173;
@@ -37,6 +38,16 @@ if (config.panelPassword) {
 }
 
 app.use(express.static(path.join(__dirname, "../web/public")));
+app.use((req, res, next) => { res.header("Access-Control-Allow-Origin", config.siteBaseUrl); next(); });
+
+app.post("/api/conversions", express.json(), async (req, res) => {
+  const allowed: ConversionEventName[] = ["demo_view", "demo_submit", "contact_submit", "whatsapp_click"];
+  if (!allowed.includes(req.body?.name)) { res.status(400).json({ error: "Evento inválido" }); return; }
+  await recordConversion({ name: req.body.name, path: String(req.body.path ?? "").slice(0, 200), source: String(req.body.source ?? "").slice(0, 80), medium: String(req.body.medium ?? "").slice(0, 80), campaign: String(req.body.campaign ?? "").slice(0, 80), content: String(req.body.content ?? "").slice(0, 80) });
+  res.status(204).end();
+});
+
+app.get("/api/conversions", async (_req, res) => res.json(await getConversionSummary()));
 
 let running = false;
 let lastEvents: PipelineEvent[] = [];

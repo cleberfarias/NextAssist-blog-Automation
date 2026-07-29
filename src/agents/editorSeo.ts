@@ -36,9 +36,16 @@ export interface FinalPost {
   metaDescription: string;
 }
 
+export interface EditorialContext {
+  palavraChaveAlvo?: string;
+  slugsPublicados: string[];
+  demoPath?: string;
+}
+
 export async function editAndFinalize(
   plan: ContentPlan,
   draftHtml: string,
+  context: EditorialContext = { slugsPublicados: [] },
 ): Promise<FinalPost> {
   const raw = await runAgent({
     system: SYSTEM,
@@ -46,7 +53,11 @@ export async function editAndFinalize(
 Meta description planejada: ${plan.metaDescription}
 
 Rascunho HTML:
-${draftHtml}`,
+${draftHtml}
+
+Regras obrigatórias adicionais: use somente os slugs listados no contexto; não invente links.
+Inclua /#funcionalidades e pelo menos dois links para ${context.demoPath ?? "/demo"}?utm_source=blog&utm_medium=article&utm_campaign=content&utm_content=cta,
+com texto de benefício e menção ao teste grátis de 7 dias.`,
     // O editor devolve o artigo HTML inteiro embutido num JSON, então
     // precisa de mais folga que o redator (4000) — senão a resposta é
     // cortada no meio de uma string e o JSON.parse falha.
