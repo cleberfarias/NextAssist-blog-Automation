@@ -1,5 +1,75 @@
 [
   {
+    "id": "2026-07-29T15:22:48.234Z",
+    "origem": "action",
+    "iniciadoEm": "2026-07-29T15:22:48.234Z",
+    "finalizadoEm": "2026-07-29T15:25:16.940Z",
+    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+    "status": "falhou",
+    "slug": null,
+    "erro": "Título fora do intervalo recomendado de 20 a 70 caracteres.",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-07-29T15:22:48.241Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "Aqui está o resumo da varredura sobre o tema **\"Planilha vs sistema de gestão: quando vale a pena migrar\"**:\n\n- **GestãoClick já tem conteúdo dedicado exatamente a esse comparativo** (não para assistência técnica, mas para microempresas em ",
+        "timestamp": "2026-07-29T15:23:10.568Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-07-29T15:23:10.568Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Planilha vs Sistema de Gestão: o Número Exato de OS/Mês que Indica a Hora de Migrar",
+        "timestamp": "2026-07-29T15:23:24.223Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-07-29T15:23:24.223Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "O mito da planilha \"grátis\": o custo invisível que ninguém calcula\nToda assistência técnica começa do mesmo jeito: uma planilha no Excel ou Google Sheets, feita às pressas para não perder o controle d...",
+        "timestamp": "2026-07-29T15:24:14.320Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-07-29T15:24:14.320Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "Título fora do intervalo recomendado de 20 a 70 caracteres.",
+        "timestamp": "2026-07-29T15:25:16.940Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 30267,
+      "outputTokens": 12784,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 2,
+      "estimatedUsd": 0.208374
+    }
+  },
+  {
     "id": "2026-07-28T15:37:55.447Z",
     "origem": "action",
     "iniciadoEm": "2026-07-28T15:37:55.447Z",
