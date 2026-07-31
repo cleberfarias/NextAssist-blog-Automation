@@ -1,5 +1,53 @@
 [
   {
+    "id": "2026-07-31T15:31:32.044Z",
+    "origem": "action",
+    "iniciadoEm": "2026-07-31T15:31:32.044Z",
+    "finalizadoEm": "2026-07-31T15:32:18.105Z",
+    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+    "status": "falhou",
+    "slug": null,
+    "erro": "Unterminated string in JSON at position 621 (line 9 column 47)",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-07-31T15:31:32.055Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **O consenso é: planilha funciona no início, mas perde eficiência com volume e equipe.** A MarkupEmpresa aponta como gatilhos o aumento das OS, acesso por mais de uma pessoa, financeiro confuso, reclamações por atraso e tempo perdido proc",
+        "timestamp": "2026-07-31T15:32:05.699Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-07-31T15:32:05.699Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "Unterminated string in JSON at position 621 (line 9 column 47)",
+        "timestamp": "2026-07-31T15:32:18.105Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 30909,
+      "outputTokens": 2295,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-07-30T15:26:11.895Z",
     "origem": "action",
     "iniciadoEm": "2026-07-30T15:26:11.895Z",
