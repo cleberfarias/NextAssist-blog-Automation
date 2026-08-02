@@ -1,5 +1,41 @@
 [
   {
+    "id": "2026-08-02T14:43:56.037Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-02T14:43:56.037Z",
+    "finalizadoEm": "2026-08-02T14:44:07.300Z",
+    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+    "status": "falhou",
+    "slug": null,
+    "erro": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011Cde6mXCaGQDsemUi8LRfG\"}",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-02T14:43:56.054Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011Cde6mXCaGQDsemUi8LRfG\"}",
+        "timestamp": "2026-08-02T14:44:07.300Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-01T14:41:29.265Z",
     "origem": "action",
     "iniciadoEm": "2026-08-01T14:41:29.265Z",
