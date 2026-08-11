@@ -1,5 +1,77 @@
 [
   {
+    "id": "2026-08-11T19:06:57.988Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-11T19:06:57.988Z",
+    "finalizadoEm": "2026-08-11T19:09:50.404Z",
+    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+    "status": "falhou",
+    "slug": null,
+    "erro": "Título fora do intervalo recomendado de 20 a 70 caracteres.",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-11T19:06:57.998Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **GestãoClick aposta no ROI financeiro.** No conteúdo atualizado em **6 de julho de 2026**, considera a planilha adequada para operação individual com menos de 50 lançamentos mensais. O gatilho de migração é quando tempo, erros e incertez",
+        "timestamp": "2026-08-11T19:07:43.243Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-11T19:07:43.243Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Sistema para assistência técnica de celular: quando migrar da planilha?",
+        "timestamp": "2026-08-11T19:07:56.841Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-11T19:07:56.841Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Uma planilha pode funcionar bem no começo: poucas ordens de serviço, estoque pequeno e apenas uma pessoa fazendo os lançamentos. O problema aparece quando atualizar, conferir e procurar informações co...",
+        "timestamp": "2026-08-11T19:08:49.723Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-11T19:08:49.724Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "Título fora do intervalo recomendado de 20 a 70 caracteres.",
+        "timestamp": "2026-08-11T19:09:50.404Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 57139,
+      "outputTokens": 10335,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 6,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-11T18:56:11.612Z",
     "origem": "action",
     "iniciadoEm": "2026-08-11T18:56:11.612Z",
