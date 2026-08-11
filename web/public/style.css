@@ -66,6 +66,8 @@ body {
 .floor-heading strong { color: #1c2b4a; font-size: 17px; }
 .floor-heading span:last-child { font-size: 12px; }
 .eyebrow { color: #70809d; font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+.active-agent { color: #6d7585; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px; background: #eef1f6; }
+.active-agent.is-active { color: #946900; background: #fff1cc; box-shadow: 0 0 0 3px rgba(255,176,32,.12); }
 
 .desk {
   min-width: 0;
@@ -81,13 +83,17 @@ body {
   position: relative;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
   border: 1px solid #edf0f5;
+  overflow: hidden;
 }
+.desk::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: transparent; }
+.desk.status-working::before { background: linear-gradient(90deg, #ffb020, #ffe29a, #ffb020); background-size: 200% 100%; animation: flow 1.5s linear infinite; }
 .desk:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(28,43,74,.12); }
 .desk-top { width: 100%; display: flex; justify-content: space-between; align-items: center; color: #aab2c2; font-size: 10px; font-weight: 800; letter-spacing: .08em; }
 .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #b8bec9; }
 .status-working .status-dot { background: #f2a900; box-shadow: 0 0 0 4px #fff3d2; }
 .status-done .status-dot { background: #2fa85a; box-shadow: 0 0 0 4px #e3f6e8; }
 .status-error .status-dot { background: #d24b4b; box-shadow: 0 0 0 4px #fce5e5; }
+@keyframes flow { to { background-position: -200% 0; } }
 
 .desk .avatar-wrap {
   width: 72px;
@@ -121,6 +127,9 @@ body {
 
 .desk.status-working { box-shadow: 0 3px 0 rgba(0,0,0,0.08), 0 0 0 3px #ffe6a3; }
 .desk.status-working .avatar-wrap { animation: bounce 0.6s ease-in-out infinite; }
+.status-working .status-badge { animation: pulse-badge 1.2s ease-in-out infinite; }
+.status-working .bubble { background: #fff9e9; border: 1px solid #ffe4a3; }
+@keyframes pulse-badge { 50% { box-shadow: 0 0 0 4px rgba(255,176,32,.16); } }
 .desk.status-done .avatar-wrap::after {
   content: "✓";
   position: absolute;
@@ -155,7 +164,13 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.bubble:empty::before { content: "esperando..."; color: #aab; }
+.bubble:has(.bubble-text:empty)::before { content: "esperando..."; color: #aab; }
+.typing-dots { display: none; gap: 3px; margin-left: 4px; vertical-align: middle; }
+.typing-dots i { width: 4px; height: 4px; border-radius: 50%; background: #c48b16; display: inline-block; animation: typing 1s infinite ease-in-out; }
+.typing-dots i:nth-child(2) { animation-delay: .15s; }
+.typing-dots i:nth-child(3) { animation-delay: .3s; }
+.status-working .typing-dots { display: inline-flex; }
+@keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: .45; } 30% { transform: translateY(-3px); opacity: 1; } }
 .desk-progress { width: 100%; height: 4px; background: #eef1f6; border-radius: 999px; overflow: hidden; margin-top: 2px; }
 .desk-progress span { display: block; height: 100%; width: 0; background: #2a78d6; border-radius: inherit; transition: width .35s ease; }
 .status-done .desk-progress span { background: #2fa85a; }
@@ -382,6 +397,7 @@ body {
   .floor { grid-template-columns: 1fr; padding: 82px 14px 18px; min-height: 0; border-radius: 12px; gap: 12px; }
   .floor-heading { top: 18px; left: 16px; right: 16px; }
   .floor-heading strong { font-size: 15px; }
+  .active-agent { flex-basis: 100%; width: fit-content; }
   .history-panel { padding: 18px; }
   .run-top { align-items: flex-start; gap: 8px; }
   .run-top a { width: 100%; margin-left: 0; }

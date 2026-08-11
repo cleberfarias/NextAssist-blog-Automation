@@ -27,6 +27,7 @@ const usageUpdated = document.getElementById("usage-updated");
 const conversionKpis = document.getElementById("conversion-kpis");
 const conversionUpdated = document.getElementById("conversion-updated");
 const conversionAttribution = document.getElementById("conversion-attribution");
+const activeAgent = document.getElementById("active-agent");
 const historyPagination = document.getElementById("history-pagination");
 const runsPagination = document.getElementById("runs-pagination");
 const perfPagination = document.getElementById("perf-pagination");
@@ -72,7 +73,7 @@ function buildDesks() {
       <div class="name">${agent.name}</div>
       <div class="role">${agent.role}</div>
       <div class="desk-status"><span class="status-badge">Ocioso</span><span class="status-time">aguardando</span></div>
-      <div class="bubble"></div>
+      <div class="bubble"><span class="bubble-text"></span><span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
       <div class="desk-progress"><span></span></div>
     `;
     floor.appendChild(desk);
@@ -84,13 +85,24 @@ const STATUS_LABEL = { idle: "Ocioso", working: "Trabalhando", done: "Concluído
 function updateDesk(event) {
   const desk = document.getElementById(`desk-${event.agent}`);
   if (!desk) return;
+  if (event.status === "working") {
+    for (const other of document.querySelectorAll(".desk.status-working")) {
+      if (other !== desk) other.className = "desk status-idle";
+    }
+    const agent = AGENTS.find((item) => item.id === event.agent);
+    activeAgent.textContent = `Trabalhando agora: ${agent?.name ?? event.agent} · ${agent?.role ?? "Etapa atual"}`;
+    activeAgent.classList.add("is-active");
+  } else if (event.status === "done" || event.status === "error") {
+    activeAgent.textContent = event.status === "error" ? "A etapa precisa de atenção" : "Equipe aguardando a próxima etapa";
+    activeAgent.classList.toggle("is-active", event.status === "error");
+  }
   desk.className = `desk status-${event.status}`;
   desk.querySelector(".status-badge").textContent = STATUS_LABEL[event.status] ?? event.status;
   desk.querySelector(".status-time").textContent = event.status === "working" ? "em andamento" : event.status === "done" ? "finalizado" : event.status === "error" ? "precisa de atenção" : "aguardando";
   desk.querySelector(".status-dot").setAttribute("aria-label", STATUS_LABEL[event.status] ?? event.status);
   desk.querySelector(".desk-progress span").style.width = event.status === "working" ? "62%" : event.status === "done" ? "100%" : event.status === "error" ? "100%" : "0%";
   if (event.message) {
-    desk.querySelector(".bubble").textContent = event.message;
+    desk.querySelector(".bubble-text").textContent = event.message;
   }
   if (event.tema) {
     topicLine.textContent = `Tema de hoje: ${event.tema}`;
