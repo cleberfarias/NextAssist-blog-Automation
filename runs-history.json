@@ -1,5 +1,113 @@
 [
   {
+    "id": "2026-08-11T20:06:31.819Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-11T20:06:31.819Z",
+    "finalizadoEm": "2026-08-11T20:10:26.482Z",
+    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+    "status": "publicado",
+    "slug": "sistema-para-assistencia-tecnica-de-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-11T20:06:31.833Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **Consenso do mercado:** a planilha não é tratada como vilã; ela ainda serve para operações individuais e de baixo volume. O GestãoClick, em conteúdo atualizado em **6 de julho de 2026**, sugere como referência uma operação solo com menos",
+        "timestamp": "2026-08-11T20:06:59.930Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-11T20:06:59.930Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Sistema para assistência técnica de celular: quando migrar",
+        "timestamp": "2026-08-11T20:07:10.766Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-11T20:07:10.766Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "A planilha pode funcionar bem quando o dono atende, conserta e controla tudo sozinho. Com poucas ordens de serviço, um arquivo organizado costuma dar conta de clientes, aparelhos, peças e pagamentos.\n...",
+        "timestamp": "2026-08-11T20:08:21.917Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-11T20:08:21.917Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: sistema-para-assistencia-tecnica-de-celular · Tags: Assistência técnica de celular, Ordem de serviço, Gestão de assistência técnica, Controle de estoque",
+        "timestamp": "2026-08-11T20:09:26.755Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-11T20:09:26.755Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/sistema-para-assistencia-tecnica-de-celular",
+        "timestamp": "2026-08-11T20:10:15.731Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-11T20:10:15.731Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Publicado no Instagram: https://www.instagram.com/p/Db6ajM3IEXV/",
+        "timestamp": "2026-08-11T20:10:25.046Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-11T20:10:25.046Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-11T20:10:26.481Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 35208,
+      "outputTokens": 11435,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-11T19:50:08.070Z",
     "origem": "action",
     "iniciadoEm": "2026-08-11T19:50:08.070Z",
