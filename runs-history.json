@@ -1,5 +1,89 @@
 [
   {
+    "id": "2026-08-11T20:42:15.931Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-11T20:42:15.931Z",
+    "finalizadoEm": "2026-08-11T20:45:40.651Z",
+    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+    "status": "falhou",
+    "slug": null,
+    "erro": "Falha ao gerar imagem de capa: {\n  \"error\": {\n    \"message\": \"Incorrect API key provided: sk-proj-********************************************************************************************************************************************************xNkA. You can find your API key at https://platform.openai.com/account/api-keys.\",\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_api_key\",\n    \"param\": null\n  },\n  \"status\": 401\n}",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-11T20:42:15.939Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **Consenso: a planilha ainda serve no início.** GestãoClick define um cenário concreto: operação individual, atualização diária e menos de **50 lançamentos mensais**. A MarkupEmpresa também reconhece seu valor para assistências muito pequ",
+        "timestamp": "2026-08-11T20:42:55.539Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-11T20:42:55.539Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Sistema para assistência técnica de celular: hora de migrar?",
+        "timestamp": "2026-08-11T20:43:06.904Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-11T20:43:06.904Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "A planilha pode organizar bem uma operação pequena. O problema começa quando atualizar abas, procurar históricos e corrigir erros passa a consumir o tempo que deveria ir para os consertos e para o ate...",
+        "timestamp": "2026-08-11T20:44:29.383Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-11T20:44:29.383Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: sistema-assistencia-tecnica-celular · Tags: Assistência técnica de celular, Ordem de serviço, Gestão de assistência técnica, Controle de estoque, Produtividade",
+        "timestamp": "2026-08-11T20:45:40.549Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-11T20:45:40.549Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "Falha ao gerar imagem de capa: {\n  \"error\": {\n    \"message\": \"Incorrect API key provided: sk-proj-********************************************************************************************************************************************************xNkA. You can find your API key at https://platform.openai.com/account/api-keys.\",\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_api_key\",\n    \"param\": null\n  },\n  \"status\": 401\n}",
+        "timestamp": "2026-08-11T20:45:40.651Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 45135,
+      "outputTokens": 11592,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-11T20:40:28.839Z",
     "origem": "action",
     "iniciadoEm": "2026-08-11T20:40:28.839Z",
