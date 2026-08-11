@@ -1,5 +1,89 @@
 [
   {
+    "id": "2026-08-11T19:50:08.070Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-11T19:50:08.070Z",
+    "finalizadoEm": "2026-08-11T19:53:29.238Z",
+    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+    "status": "falhou",
+    "slug": null,
+    "erro": "Falha ao gerar imagem de capa: {\n  \"error\": {\n    \"message\": \"Incorrect API key provided: sk-proj-********************************************************************************************************************************************************xNkA. You can find your API key at https://platform.openai.com/account/api-keys.\",\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_api_key\",\n    \"param\": null\n  },\n  \"status\": 401\n}",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-11T19:50:08.081Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **GestãoClick traz o argumento mais objetivo de ROI.** No conteúdo atualizado em **6 de julho de 2026**, considera a planilha adequada para operação individual com menos de 50 lançamentos mensais. Sugere migrar quando há mais de três sina",
+        "timestamp": "2026-08-11T19:50:51.032Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-11T19:50:51.032Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Sistema para assistência técnica de celular: quando migrar",
+        "timestamp": "2026-08-11T19:51:05.263Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-11T19:51:05.263Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Uma planilha pode funcionar muito bem no começo. O problema aparece quando a mesma informação precisa ser digitada na ordem de serviço, no controle de estoque, no caixa e depois no WhatsApp do cliente...",
+        "timestamp": "2026-08-11T19:52:19.591Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-11T19:52:19.591Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: sistema-assistencia-tecnica-celular · Tags: Assistência técnica, Ordem de serviço, Gestão de estoque, Gestão financeira, Produtividade",
+        "timestamp": "2026-08-11T19:53:29.112Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-11T19:53:29.112Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "Falha ao gerar imagem de capa: {\n  \"error\": {\n    \"message\": \"Incorrect API key provided: sk-proj-********************************************************************************************************************************************************xNkA. You can find your API key at https://platform.openai.com/account/api-keys.\",\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_api_key\",\n    \"param\": null\n  },\n  \"status\": 401\n}",
+        "timestamp": "2026-08-11T19:53:29.238Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 47108,
+      "outputTokens": 11936,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 5,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-11T19:39:53.549Z",
     "origem": "action",
     "iniciadoEm": "2026-08-11T19:39:53.549Z",
