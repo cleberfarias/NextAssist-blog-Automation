@@ -33,7 +33,10 @@ Priorize a intenção de busca de um dono de assistência técnica que precisa r
 
 Pesquisa de mercado:
 ${marketResearch}`,
-    maxTokens: 1000,
+    // O plano precisa conter a meta description e vários H2s em JSON.
+    // Com modelos mais verbosos, 1000 tokens pode truncar a resposta antes
+    // do fechamento do objeto e causar "Unexpected end of JSON input".
+    maxTokens: 2000,
   });
   return extractJson<ContentPlan>(raw);
 }

@@ -161,5 +161,11 @@ async function runOpenAi(
 export function extractJson<T>(text: string): T {
   const cleaned = text.replace(/```json|```/g, "").trim();
   const match = cleaned.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-  return JSON.parse(match ? match[0] : cleaned) as T;
+  const candidate = match ? match[0] : cleaned;
+  try {
+    return JSON.parse(candidate) as T;
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(`Resposta JSON inválida ou truncada (${detail}). Tamanho recebido: ${candidate.length} caracteres.`);
+  }
 }
