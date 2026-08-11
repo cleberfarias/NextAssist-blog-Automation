@@ -27,6 +27,15 @@ const usageUpdated = document.getElementById("usage-updated");
 const conversionKpis = document.getElementById("conversion-kpis");
 const conversionUpdated = document.getElementById("conversion-updated");
 const conversionAttribution = document.getElementById("conversion-attribution");
+const historyPagination = document.getElementById("history-pagination");
+const runsPagination = document.getElementById("runs-pagination");
+const perfPagination = document.getElementById("perf-pagination");
+
+const PAGE_SIZE = 6;
+const pageState = { history: 1, runs: 1, performance: 1 };
+let historyEntries = [];
+let runEntries = [];
+let performancePosts = [];
 
 const nf = new Intl.NumberFormat("pt-BR");
 const usd = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "USD" });
@@ -58,11 +67,13 @@ function buildDesks() {
     desk.className = "desk status-idle";
     desk.id = `desk-${agent.id}`;
     desk.innerHTML = `
+      <div class="desk-top"><span class="desk-index">0${AGENTS.indexOf(agent) + 1}</span><span class="status-dot"></span></div>
       <div class="avatar-wrap">${agent.emoji}</div>
       <div class="name">${agent.name}</div>
       <div class="role">${agent.role}</div>
-      <span class="status-badge">Ocioso</span>
+      <div class="desk-status"><span class="status-badge">Ocioso</span><span class="status-time">aguardando</span></div>
       <div class="bubble"></div>
+      <div class="desk-progress"><span></span></div>
     `;
     floor.appendChild(desk);
   }
@@ -75,6 +86,9 @@ function updateDesk(event) {
   if (!desk) return;
   desk.className = `desk status-${event.status}`;
   desk.querySelector(".status-badge").textContent = STATUS_LABEL[event.status] ?? event.status;
+  desk.querySelector(".status-time").textContent = event.status === "working" ? "em andamento" : event.status === "done" ? "finalizado" : event.status === "error" ? "precisa de atenção" : "aguardando";
+  desk.querySelector(".status-dot").setAttribute("aria-label", STATUS_LABEL[event.status] ?? event.status);
+  desk.querySelector(".desk-progress span").style.width = event.status === "working" ? "62%" : event.status === "done" ? "100%" : event.status === "error" ? "100%" : "0%";
   if (event.message) {
     desk.querySelector(".bubble").textContent = event.message;
   }
@@ -83,18 +97,31 @@ function updateDesk(event) {
   }
 }
 
-function showToast(text) {
+function showToast(text, type = "info") {
   toast.textContent = text;
+  toast.className = `toast ${type}`;
   toast.classList.remove("hidden");
   setTimeout(() => toast.classList.add("hidden"), 4000);
 }
 
+function renderPagination(container, key, total, onChange) {
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  pageState[key] = Math.min(pageState[key], pages);
+  if (pages <= 1) { container.innerHTML = ""; return; }
+  container.innerHTML = `<button data-page="prev" ${pageState[key] === 1 ? "disabled" : ""}>Anterior</button><span class="page-label">Página ${pageState[key]} de ${pages}</span><button data-page="next" ${pageState[key] === pages ? "disabled" : ""}>Próxima</button>`;
+  container.querySelector("[data-page=prev]").addEventListener("click", () => { pageState[key]--; onChange(); });
+  container.querySelector("[data-page=next]").addEventListener("click", () => { pageState[key]++; onChange(); });
+}
+
 function renderHistory(entries) {
-  if (!entries.length) {
+  historyEntries = entries ?? [];
+  if (!historyEntries.length) {
     historyList.innerHTML = `<li class="empty">Nenhum post publicado ainda.</li>`;
+    historyPagination.innerHTML = "";
     return;
   }
-  historyList.innerHTML = entries
+  const start = (pageState.history - 1) * PAGE_SIZE;
+  historyList.innerHTML = historyEntries.slice(start, start + PAGE_SIZE)
     .map(
       (entry) => `
       <li>
@@ -103,11 +130,15 @@ function renderHistory(entries) {
       </li>`,
     )
     .join("");
+  renderPagination(historyPagination, "history", historyEntries.length, () => renderHistory(historyEntries));
 }
 
 async function loadHistory() {
-  const res = await fetch("/api/history");
-  renderHistory(await res.json());
+  try {
+    const res = await fetch("/api/history");
+    if (!res.ok) throw new Error("Não foi possível carregar os posts publicados.");
+    renderHistory(await res.json());
+  } catch (error) { showToast(error.message, "error"); }
 }
 
 function kpiTile(label, value, sub) {
@@ -169,7 +200,8 @@ function renderChart(posts) {
 }
 
 function renderPerformance(report) {
-  if (!report || !report.posts || !report.posts.length) {
+  performancePosts = report?.posts ?? [];
+  if (!report || !performancePosts.length) {
     perfBody.innerHTML = `<tr class="empty"><td colspan="6">Sem dados ainda. Clique em "Atualizar métricas".</td></tr>`;
     perfUpdated.textContent = "Nunca atualizado";
     perfKpis.innerHTML = "";
@@ -181,7 +213,8 @@ function renderPerformance(report) {
   perfUpdated.textContent = `Atualizado ${new Date(report.atualizadoEm).toLocaleString("pt-BR")} · período ${report.periodo.inicio} a ${report.periodo.fim} · ${report.posts.length} posts`;
   perfStart.value = report.periodo.inicio;
   perfEnd.value = report.periodo.fim;
-  perfBody.innerHTML = report.posts
+  const start = (pageState.performance - 1) * PAGE_SIZE;
+  perfBody.innerHTML = performancePosts.slice(start, start + PAGE_SIZE)
     .map((p) => {
       const badge = p.erro
         ? `<span class="idx idx-err" title="${p.erro}">erro</span>`
@@ -199,11 +232,15 @@ function renderPerformance(report) {
       </tr>`;
     })
     .join("");
+  renderPagination(perfPagination, "performance", performancePosts.length, () => renderPerformance({ ...report, posts: performancePosts }));
 }
 
 async function loadPerformance() {
-  const res = await fetch("/api/performance");
-  renderPerformance(await res.json());
+  try {
+    const res = await fetch("/api/performance");
+    if (!res.ok) throw new Error("Não foi possível carregar o desempenho.");
+    renderPerformance(await res.json());
+  } catch (error) { showToast(error.message, "error"); }
 }
 
 refreshPerfBtn.addEventListener("click", async () => {
@@ -226,12 +263,13 @@ refreshPerfBtn.addEventListener("click", async () => {
     });
     const data = await res.json();
     if (!res.ok) {
-      showToast(data.error ?? "Falha ao atualizar métricas.");
+      showToast(data.error ?? "Falha ao atualizar métricas.", "error");
     } else {
       renderPerformance(data);
+      showToast("Métricas atualizadas com sucesso.", "success");
     }
   } catch {
-    showToast("Não foi possível consultar o Google.");
+    showToast("Não foi possível consultar o Google. Tente novamente.", "error");
   } finally {
     refreshPerfBtn.disabled = false;
     refreshPerfBtn.textContent = "↻ Atualizar métricas";
@@ -252,13 +290,16 @@ function agentFinalStatus(run, agentId) {
 }
 
 function renderRuns(runs) {
-  if (!runs || !runs.length) {
+  runEntries = runs ?? [];
+  if (!runEntries.length) {
     runsList.innerHTML = `<li class="empty">Nenhuma execução registrada ainda.</li>`;
+    runsPagination.innerHTML = "";
     return;
   }
-  runsUpdated.textContent = `${runs.length} execução(ões) registradas`;
-  runsList.innerHTML = runs
-    .slice(0, 20)
+  runsUpdated.textContent = `${runEntries.length} execução(ões) registradas`;
+  const start = (pageState.runs - 1) * PAGE_SIZE;
+  runsList.innerHTML = runEntries
+    .slice(start, start + PAGE_SIZE)
     .map((run) => {
       const st = RUN_STATUS[run.status] ?? { label: run.status, cls: "run-neutral" };
       const quando = new Date(run.finalizadoEm || run.iniciadoEm).toLocaleString("pt-BR");
@@ -290,6 +331,7 @@ function renderRuns(runs) {
       </li>`;
     })
     .join("");
+  renderPagination(runsPagination, "runs", runEntries.length, () => renderRuns(runEntries));
 }
 
 function hydrateFloorFromLatest(runs) {
@@ -303,10 +345,13 @@ function hydrateFloorFromLatest(runs) {
 }
 
 async function loadRuns() {
-  const res = await fetch("/api/runs");
-  const runs = await res.json();
-  renderRuns(runs);
-  hydrateFloorFromLatest(runs);
+  try {
+    const res = await fetch("/api/runs");
+    if (!res.ok) throw new Error("Não foi possível carregar as execuções.");
+    const runs = await res.json();
+    renderRuns(runs);
+    hydrateFloorFromLatest(runs);
+  } catch (error) { showToast(error.message, "error"); }
 }
 
 function renderUsage(report) {
@@ -386,7 +431,7 @@ runBtn.addEventListener("click", async () => {
   const res = await fetch("/api/run", { method: "POST" });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
-    showToast(data.error ?? "Não foi possível iniciar o pipeline.");
+    showToast(data.error ?? "Não foi possível iniciar o pipeline.", "error");
     setRunning(false);
   }
 });
@@ -398,10 +443,10 @@ function connectEvents() {
     updateDesk(event);
 
     if (event.agent === "publicador" && event.status === "done") {
-      showToast("Post publicado! 🎉");
+      showToast("Post publicado com sucesso! 🎉", "success");
     }
     if (event.agent === "instagram" && event.status === "done" && !/ignorado/.test(event.message ?? "")) {
-      showToast("Publicado no Instagram! 📸");
+      showToast("Publicado no Instagram com sucesso! 📸", "success");
     }
     if (event.agent === "indexador" && event.status === "done") {
       liveRunActive = false;
@@ -411,7 +456,7 @@ function connectEvents() {
       setRunning(false);
     }
     if (event.status === "error") {
-      showToast(`Erro no agente ${event.agent}: ${event.message ?? ""}`);
+      showToast(`Não foi possível concluir ${event.agent}: ${event.message ?? "Tente novamente."}`, "error");
       liveRunActive = false;
       loadRuns();
       loadUsage();

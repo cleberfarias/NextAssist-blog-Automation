@@ -18,6 +18,20 @@ export interface ContentPlan {
   anguloEditorial: string;
 }
 
+function normalize(value: string): string {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+function fitTitle(title: string, keyword: string): string {
+  const trimmed = title.trim();
+  if (trimmed.length <= 70) return trimmed;
+  if (normalize(trimmed).includes(normalize(keyword))) {
+    const compact = `${keyword}: vale a pena migrar?`;
+    if (compact.length >= 20 && compact.length <= 70) return compact;
+  }
+  throw new Error("O planejador gerou um título maior que 70 caracteres; tente executar novamente.");
+}
+
 export async function planTopic(
   tema: string,
   palavraChaveAlvo: string,
@@ -27,6 +41,7 @@ export async function planTopic(
     system: SYSTEM,
     prompt: `Tema: "${tema}"
 Palavra-chave principal: "${palavraChaveAlvo}"
+O título deve ter entre 20 e 70 caracteres, contando espaços.
 
 O título e a meta description devem conter a palavra-chave principal de forma natural.
 Priorize a intenção de busca de um dono de assistência técnica que precisa resolver esse problema e inclua H2s úteis para a decisão, não apenas definições.
@@ -38,5 +53,6 @@ ${marketResearch}`,
     // do fechamento do objeto e causar "Unexpected end of JSON input".
     maxTokens: 2000,
   });
-  return extractJson<ContentPlan>(raw);
+  const plan = extractJson<ContentPlan>(raw);
+  return { ...plan, titulo: fitTitle(plan.titulo, palavraChaveAlvo) };
 }
