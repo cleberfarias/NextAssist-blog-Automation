@@ -42,6 +42,15 @@ export interface EditorialContext {
   demoPath?: string;
 }
 
+/** Garante os dois CTAs exigidos sem fazer uma nova chamada ao modelo. */
+export function ensureTrackedCtas(post: FinalPost, demoPath = "/demo"): FinalPost {
+  const base = `${demoPath}?utm_source=blog&utm_medium=article&utm_campaign=${encodeURIComponent(post.slug)}`;
+  let conteudo = post.conteudo;
+  if (!conteudo.includes(`${base}&utm_content=cta-inline`)) conteudo += `<p><a href="${base}&utm_content=cta-inline">Teste grátis por 7 dias</a></p>`;
+  if (!conteudo.includes(`${base}&utm_content=cta-final`)) conteudo += `<p><a href="${base}&utm_content=cta-final">Comece seu teste grátis</a></p>`;
+  return conteudo === post.conteudo ? post : { ...post, conteudo };
+}
+
 export async function editAndFinalize(
   plan: ContentPlan,
   draftHtml: string,
@@ -66,5 +75,5 @@ Substitua SLUG_DO_ARTIGO pelo mesmo slug devolvido no JSON.`,
     // cortada no meio de uma string e o JSON.parse falha.
     maxTokens: 8000,
   });
-  return extractJson<FinalPost>(raw);
+  return ensureTrackedCtas(extractJson<FinalPost>(raw), context.demoPath);
 }
