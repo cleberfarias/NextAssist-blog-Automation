@@ -46,7 +46,9 @@ export const config = {
   firebaseStorageBucket: required("FIREBASE_STORAGE_BUCKET"),
 
   imageGenProvider: process.env.IMAGE_GEN_PROVIDER ?? "openai",
-  imageGenApiKey: process.env.IMAGE_GEN_API_KEY ?? "",
+  // A geração de imagem OpenAI usa a mesma credencial da API principal.
+  // IMAGE_GEN_API_KEY continua aceito como fallback para compatibilidade.
+  imageGenApiKey: process.env.OPENAI_API_KEY || process.env.IMAGE_GEN_API_KEY || "",
 
   // Instagram (Graph API da Meta). Requer conta Business/Creator conectada a
   // uma Página do Facebook. Se userId ou accessToken estiverem vazios, o passo
