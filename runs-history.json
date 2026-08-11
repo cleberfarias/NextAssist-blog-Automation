@@ -1,5 +1,53 @@
 [
   {
+    "id": "2026-08-11T18:56:11.612Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-11T18:56:11.612Z",
+    "finalizadoEm": "2026-08-11T18:57:05.262Z",
+    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+    "status": "falhou",
+    "slug": null,
+    "erro": "Unexpected end of JSON input",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-11T18:56:11.622Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **GestãoClick traz o ângulo mais quantitativo:** considera a planilha adequada para operação individual com menos de **50 lançamentos mensais** e sugere migrar quando aparecem três ou mais sinais, como fechamento acima de duas horas, sald",
+        "timestamp": "2026-08-11T18:56:49.764Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-11T18:56:49.764Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "Unexpected end of JSON input",
+        "timestamp": "2026-08-11T18:57:05.261Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 30054,
+      "outputTokens": 2500,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-11T18:48:08.911Z",
     "origem": "action",
     "iniciadoEm": "2026-08-11T18:48:08.911Z",
