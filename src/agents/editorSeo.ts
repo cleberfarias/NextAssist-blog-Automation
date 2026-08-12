@@ -9,9 +9,11 @@ recebido e devolva a versão final pronta para publicar, aplicando:
 - Se houver alguma seção em formato pergunta/resposta, adicione ao final
   do HTML um bloco <script type="application/ld+json"> com FAQPage schema
   correspondente
-- Garanta que o HTML tem pelo menos 2 links internos usando <a href="/blog/...">
-  para outros posts do blog do NextAssist (pode usar slugs plausíveis
-  relacionados ao tema, já que o blog está em expansão) e pelo menos 1
+- Se a lista de slugs publicados fornecida no contexto tiver pelo menos 2
+  itens, garanta que o HTML tem pelo menos 2 links internos usando
+  <a href="/blog/...">, usando exclusivamente slugs dessa lista — nunca
+  invente um slug que não esteja nela. Se a lista tiver menos de 2 itens,
+  use os que houver (ou nenhum) e não invente. Garanta também pelo menos 1
   link para a página de funcionalidades, ex: <a href="/#funcionalidades">
 - Não repita o título dentro do HTML do conteúdo
 
@@ -64,7 +66,9 @@ Meta description planejada: ${plan.metaDescription}
 Rascunho HTML:
 ${draftHtml}
 
-Regras obrigatórias adicionais: use somente os slugs listados no contexto; não invente links.
+Slugs publicados disponíveis para link interno (use somente estes, nunca invente outro): ${
+      context.slugsPublicados.length ? context.slugsPublicados.map((slug) => `/blog/${slug}`).join(", ") : "nenhum ainda — não inclua links /blog/... neste artigo"
+    }
 Palavra-chave principal: "${context.palavraChaveAlvo ?? ""}". Ela deve aparecer naturalmente no título e na meta description.
 Inclua /#funcionalidades e dois links para o teste grátis de 7 dias. Em ambos, use ${context.demoPath ?? "/demo"}?utm_source=blog&utm_medium=article&utm_campaign=SLUG_DO_ARTIGO e identifique a posição:
 - CTA no meio do artigo: utm_content=cta-inline
