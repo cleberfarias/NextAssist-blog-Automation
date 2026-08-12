@@ -1,5 +1,77 @@
 [
   {
+    "id": "2026-08-12T22:01:45.941Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-12T22:01:45.941Z",
+    "finalizadoEm": "2026-08-12T22:04:43.999Z",
+    "tema": "Como precificar o conserto de celular sem perder margem",
+    "status": "falhou",
+    "slug": null,
+    "erro": "Meta description fora do intervalo recomendado de 120 a 165 caracteres.",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como precificar o conserto de celular sem perder margem",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-12T22:01:45.955Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **Consenso do mercado:** preço não deve ser definido “no feeling” nem copiando concorrentes. A base recorrente é **peça com margem + mão de obra calculada por hora + custos indiretos + reserva para garantia/risco**. Os conteúdos também de",
+        "timestamp": "2026-08-12T22:02:22.128Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-12T22:02:22.128Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Como precificar conserto de celular sem perder margem",
+        "timestamp": "2026-08-12T22:02:46.044Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-12T22:02:46.044Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Saber como precificar conserto de celular exige mais do que somar o valor da peça com uma mão de obra definida no improviso. O preço precisa pagar estoque, tempo produtivo, aluguel, impostos, taxas, p...",
+        "timestamp": "2026-08-12T22:03:54.817Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-12T22:03:54.817Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "Meta description fora do intervalo recomendado de 120 a 165 caracteres.",
+        "timestamp": "2026-08-12T22:04:43.999Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 34662,
+      "outputTokens": 11286,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-12T21:53:21.867Z",
     "origem": "action",
     "iniciadoEm": "2026-08-12T21:53:21.867Z",
