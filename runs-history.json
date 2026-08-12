@@ -1,5 +1,77 @@
 [
   {
+    "id": "2026-08-12T21:53:21.867Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-12T21:53:21.867Z",
+    "finalizadoEm": "2026-08-12T21:56:08.062Z",
+    "tema": "Como precificar o conserto de celular sem perder margem",
+    "status": "falhou",
+    "slug": null,
+    "erro": "O artigo contém links para posts inexistentes: como-calcular-custo-hora-assistencia-tecnica, controle-ordem-de-servico-assistencia-tecnica",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como precificar o conserto de celular sem perder margem",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-12T21:53:21.876Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **Consenso da cobertura:** o preço deve somar **peça, mão de obra, custos operacionais e proteção contra riscos**, evitando copiar concorrentes ou cobrar “no feeling”. A MarkupEmpresa inclui frete, impostos, perdas, complexidade e custos ",
+        "timestamp": "2026-08-12T21:53:51.090Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-12T21:53:51.090Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Como precificar conserto de celular sem perder margem",
+        "timestamp": "2026-08-12T21:54:07.641Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-12T21:54:07.641Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Entender como precificar conserto de celular exige mais do que somar o valor da peça com uma mão de obra estimada. O preço precisa pagar o tempo produtivo da bancada, despesas da assistência, impostos...",
+        "timestamp": "2026-08-12T21:55:09.121Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-12T21:55:09.121Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "O artigo contém links para posts inexistentes: como-calcular-custo-hora-assistencia-tecnica, controle-ordem-de-servico-assistencia-tecnica",
+        "timestamp": "2026-08-12T21:56:08.061Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 34824,
+      "outputTokens": 11446,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-12T21:35:06.370Z",
     "origem": "action",
     "iniciadoEm": "2026-08-12T21:35:06.370Z",
