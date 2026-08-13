@@ -1,5 +1,113 @@
 [
   {
+    "id": "2026-08-13T13:51:34.569Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-13T13:51:34.569Z",
+    "finalizadoEm": "2026-08-13T13:55:32.230Z",
+    "tema": "Peças originais vs paralelas: o que informar ao cliente por lei",
+    "status": "publicado",
+    "slug": "pecas-paralelas-conserto-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Peças originais vs paralelas: o que informar ao cliente por lei",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-13T13:51:34.591Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A MarkupEmpresa é quem mais se aproxima do tema:** seu checklist orienta esclarecer se a peça é **original ou paralela**, registrar a aprovação antes do reparo e informar a garantia na entrega. O ângulo útil é transformar a obrigação de",
+        "timestamp": "2026-08-13T13:52:11.853Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-13T13:52:11.853Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Peças paralelas conserto de celular: como agir por lei",
+        "timestamp": "2026-08-13T13:52:30.383Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-13T13:52:30.383Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "A busca por “peças paralelas conserto de celular” costuma levar o cliente a comparar apenas preço. Para a assistência, porém, a escolha envolve procedência, estado da peça, compatibilidade, garantia e...",
+        "timestamp": "2026-08-13T13:53:45.977Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-13T13:53:45.977Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: pecas-paralelas-conserto-celular · Tags: Peças para celular, Código de Defesa do Consumidor, Ordem de serviço, Garantia de conserto, Gestão de assistência técnica",
+        "timestamp": "2026-08-13T13:54:29.882Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-13T13:54:29.882Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/pecas-paralelas-conserto-celular",
+        "timestamp": "2026-08-13T13:55:19.609Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-13T13:55:19.609Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Publicado no Instagram: https://www.instagram.com/p/Db-5O7gINKl/",
+        "timestamp": "2026-08-13T13:55:29.763Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-13T13:55:29.763Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-13T13:55:32.228Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 42410,
+      "outputTokens": 10941,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-13T00:21:46.754Z",
     "origem": "action",
     "iniciadoEm": "2026-08-13T00:21:46.754Z",
