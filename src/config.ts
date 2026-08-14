@@ -80,9 +80,24 @@ export const config = {
   // Token de leitura (contents:read). Necessário se o repositório for
   // privado; opcional (só evita rate limit) se for público.
   githubToken: process.env.PANEL_GITHUB_TOKEN ?? process.env.GITHUB_TOKEN ?? "",
+  // Token separado, só com permissão de disparar Actions (actions:write).
+  // Usado pelo botão "Rodar pipeline agora" do painel hospedado — em vez de
+  // rodar o pipeline no próprio host, dispara a mesma GitHub Action manual
+  // (workflow_dispatch), que publica e commita o estado normalmente. Sem
+  // essa variável, o botão fica escondido no painel hospedado.
+  githubDispatchToken: process.env.GITHUB_DISPATCH_TOKEN ?? "",
   // Senha do painel (Basic Auth). Vazio = sem proteção (ok localmente).
   // Defina ao hospedar publicamente.
   panelPassword: process.env.PANEL_PASSWORD ?? "",
+  // URL do endpoint de ingestão de eventos do painel hospedado (usado pela
+  // Action pra "empurrar" o progresso do pipeline em tempo real pro
+  // escritório, já que rodando na Action o servidor não fica sabendo de
+  // nada até o commit final). Ex: https://.../api/events/ingest.
+  panelIngestUrl: process.env.PANEL_INGEST_URL ?? "",
+  // Segredo compartilhado entre quem envia (Action) e quem recebe (painel
+  // hospedado) os eventos — sem ele, qualquer um na internet poderia forjar
+  // eventos no painel público.
+  panelIngestToken: process.env.PANEL_INGEST_TOKEN ?? "",
   requireApproval: process.env.REQUIRE_APPROVAL === "true",
   demoPath: process.env.DEMO_PATH ?? "/demo",
 };

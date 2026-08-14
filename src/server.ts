@@ -2,25 +2,36 @@ import express from "express";
 import { timingSafeEqual } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { runPipeline, type PipelineEvent } from "./pipeline.js";
+import { runPipeline, type AgentId, type AgentStatus, type PipelineEvent } from "./pipeline.js";
 import { getHistory } from "./history.js";
 import { getRuns } from "./runsHistory.js";
 import { getPerformance, refreshPerformance } from "./performance.js";
 import { config } from "./config.js";
 import { getConversionSummary, recordConversion, type ConversionEventName } from "./conversions.js";
+import { triggerDailyPostWorkflow } from "./lib/githubDispatch.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4173;
 
-// No modo hospedado, a publicação deve passar só pela Action para evitar
-// posts duplicados; por isso o botão manual fica desligado.
-const runEnabled = config.dataSource !== "github";
+// No modo hospedado o servidor não commita o estado de volta pro repo, então
+// rodar o pipeline direto aqui geraria post duplicado. Em vez disso:
+//  - "local": roda o pipeline neste processo (dev local, npm run office).
+//  - "dispatch": dispara a GitHub Action manualmente (workflow_dispatch) —
+//    publica e commita normalmente, só que sob demanda em vez de esperar o cron.
+//  - "disabled": sem token de disparo configurado, botão fica escondido.
+type RunMode = "local" | "dispatch" | "disabled";
+const runMode: RunMode =
+  config.dataSource !== "github" ? "local" : config.githubDispatchToken ? "dispatch" : "disabled";
 
 const app = express();
 
 // Proteção por senha (Basic Auth). Ativa só se PANEL_PASSWORD estiver definida.
+// A rota de ingestão de eventos fica de fora: ela é chamada pela GitHub
+// Action (que não tem a senha do painel) e já tem sua própria autenticação
+// por token (ver validIngestToken mais abaixo).
 if (config.panelPassword) {
   app.use((req, res, next) => {
+    if (req.path === "/api/events/ingest") return next();
     const [scheme, encoded] = (req.headers.authorization ?? "").split(" ");
     if (scheme?.toLowerCase() === "basic" && encoded) {
       const credentials = Buffer.from(encoded, "base64").toString("utf8");
@@ -83,20 +94,101 @@ app.get("/api/events", (req, res) => {
 });
 
 app.get("/api/status", (_req, res) => {
-  res.json({ running, lastEvents, runEnabled });
+  res.json({ running, lastEvents, runMode });
 });
 
+const AGENT_IDS: AgentId[] = [
+  "pesquisa-mercado",
+  "pesquisa-pauta",
+  "redator",
+  "editor-seo",
+  "publicador",
+  "instagram",
+  "indexador",
+];
+const AGENT_STATUSES: AgentStatus[] = ["idle", "working", "done", "error"];
+
+function validIngestToken(req: express.Request): boolean {
+  if (!config.panelIngestToken) return false;
+  const received = Buffer.from(String(req.header("X-Panel-Ingest-Token") ?? ""));
+  const expected = Buffer.from(config.panelIngestToken);
+  return received.length === expected.length && timingSafeEqual(received, expected);
+}
+
+/**
+ * Recebe eventos do pipeline rodando numa GitHub Action (fora deste
+ * processo) e os retransmite via SSE — pra o escritório do painel hospedado
+ * acender as mesas em tempo real mesmo quando quem publicou foi a Action
+ * (cron automático ou disparo manual), não este servidor.
+ */
+app.post("/api/events/ingest", express.json(), (req, res) => {
+  if (!validIngestToken(req)) {
+    res.status(401).json({ error: "Token de ingestão inválido." });
+    return;
+  }
+
+  const body = req.body ?? {};
+  if (
+    !AGENT_IDS.includes(body.agent) ||
+    !AGENT_STATUSES.includes(body.status) ||
+    typeof body.timestamp !== "string"
+  ) {
+    res.status(400).json({ error: "Evento inválido." });
+    return;
+  }
+
+  const event: PipelineEvent = {
+    agent: body.agent,
+    status: body.status,
+    timestamp: body.timestamp,
+    ...(typeof body.message === "string" ? { message: body.message } : {}),
+    ...(typeof body.tema === "string" ? { tema: body.tema } : {}),
+  };
+
+  if (event.agent === "pesquisa-mercado" && event.status === "working") running = true;
+  if (event.status === "error" || (event.agent === "indexador" && event.status === "done")) {
+    running = false;
+  }
+
+  broadcast(event);
+  res.status(204).end();
+});
+
+let dispatching = false;
+
 app.post("/api/run", express.json(), async (_req, res) => {
-  if (!runEnabled) {
+  if (runMode === "disabled") {
     res.status(403).json({ error: "Execução manual desabilitada neste ambiente — a publicação roda pela GitHub Action." });
     return;
   }
+
+  if (runMode === "dispatch") {
+    if (dispatching) {
+      res.status(409).json({ error: "Já disparei uma execução há pouco — aguarde." });
+      return;
+    }
+    dispatching = true;
+    // Cooldown curto só pra evitar clique duplo; a Action em si tem sua
+    // própria trava de concorrência (não roda duas ao mesmo tempo).
+    setTimeout(() => { dispatching = false; }, 60_000);
+    try {
+      await triggerDailyPostWorkflow();
+      res.json({ ok: true, mode: "dispatch" });
+    } catch (err) {
+      dispatching = false;
+      const message = err instanceof Error ? err.message : String(err);
+      res.status(502).json({ error: message });
+    }
+    return;
+  }
+
+  // runMode === "local"
   if (running) {
     res.status(409).json({ error: "O pipeline já está rodando." });
     return;
   }
   running = true;
-  res.json({ ok: true });
+  res.json({ ok: true, mode: "local" });
 
   try {
     await runPipeline(broadcast);

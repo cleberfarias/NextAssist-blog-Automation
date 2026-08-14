@@ -205,13 +205,28 @@ Notas:
 - **Senha:** defina `PANEL_PASSWORD` no `.env` antes de subir — a URL do
   Cloud Run é pública e o painel exige Basic Auth (qualquer usuário + essa
   senha). Sem ela, o painel fica aberto.
-- **Execução manual desligada no ar:** no modo hospedado o botão "Rodar
-  pipeline agora" some. A publicação roda só pela GitHub Action (fonte
-  única da verdade) — rodar manualmente no host geraria post duplicado,
-  já que o estado atualizado não é commitado de volta.
+- **Execução manual no ar:** o host não commita o estado de volta, então
+  rodar o pipeline direto nele geraria post duplicado. Por isso, no modo
+  hospedado o botão "Rodar pipeline agora" não roda o pipeline no próprio
+  servidor — em vez disso, se `GITHUB_DISPATCH_TOKEN` estiver configurada,
+  ele **dispara a GitHub Action manualmente** (`workflow_dispatch`), que
+  publica e commita o estado normalmente, só que sob demanda em vez de
+  esperar o cron. Sem essa variável, o botão fica escondido (comportamento
+  anterior). `GITHUB_DISPATCH_TOKEN` precisa de um token com permissão de
+  disparar Actions (`actions:write`) — diferente do `PANEL_GITHUB_TOKEN`
+  abaixo, que é só leitura.
 - **Seções "Execuções" e "Posts publicados":** só populam se o
   `PANEL_GITHUB_TOKEN` estiver configurado (repo privado). O "Desempenho no
   Google" funciona sem token (usa a API do blog + Search Console).
+- **Escritório ao vivo mesmo publicando pela Action:** como o pipeline
+  automático (cron) e o disparo manual sempre rodam numa GitHub Action —
+  nunca dentro deste servidor —, ele normalmente só saberia do resultado
+  depois do commit final. Configurando `PANEL_INGEST_TOKEN` (mesmo valor
+  aqui e no secret da Action) e `PANEL_INGEST_URL` (só na Action, apontando
+  pra `.../api/events/ingest` deste painel), a Action empurra cada evento
+  do pipeline pro painel em tempo real — as mesas mudam de "ocioso" pra
+  "trabalhando" ao vivo, igual ao modo local. Sem isso, o painel só reflete
+  o resultado depois que a Action termina e commita o estado.
 
 Esse servidor roda a mesma lógica do `npm run run` (`src/pipeline.ts`),
 só que via HTTP em vez de CLI. Bom para rodar localmente enquanto você

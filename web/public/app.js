@@ -420,12 +420,15 @@ async function loadConversions() {
   conversionUpdated.textContent = `Atualizado ${new Date(data.updatedAt).toLocaleString("pt-BR")}`;
 }
 
+let runMode = "local";
+
 async function loadStatus() {
   const res = await fetch("/api/status");
   const data = await res.json();
   for (const event of data.lastEvents) updateDesk(event);
-  // Painel hospedado: execução manual desligada (publicação roda pela Action).
-  if (data.runEnabled === false) {
+  runMode = data.runMode ?? (data.runEnabled === false ? "disabled" : "local");
+  // Painel hospedado sem token de disparo: execução manual fica escondida.
+  if (runMode === "disabled") {
     runBtn.hidden = true;
   } else {
     setRunning(data.running);
@@ -438,6 +441,22 @@ function setRunning(running) {
 }
 
 runBtn.addEventListener("click", async () => {
+  if (runMode === "dispatch") {
+    runBtn.disabled = true;
+    const res = await fetch("/api/run", { method: "POST" });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      showToast(
+        "Execução disparada no GitHub Actions — acompanhe pela aba Actions do repositório; a lista de execuções deste painel atualiza sozinha quando terminar.",
+        "success",
+      );
+    } else {
+      showToast(data.error ?? "Não foi possível disparar a execução.", "error");
+    }
+    setTimeout(() => { runBtn.disabled = false; }, 60_000);
+    return;
+  }
+
   setRunning(true);
   liveRunActive = true;
   const res = await fetch("/api/run", { method: "POST" });

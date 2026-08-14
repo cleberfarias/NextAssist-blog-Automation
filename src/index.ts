@@ -1,6 +1,7 @@
 import { runPipeline, type PipelineEvent } from "./pipeline.js";
 import { appendRun, type RunRecord, type RunStatus } from "./runsHistory.js";
 import { getAnthropicUsage } from "./lib/anthropic.js";
+import { pushEventToPanel } from "./lib/panelIngest.js";
 
 /**
  * Entrada da CLI (usada pelo GitHub Actions). Além de rodar o pipeline,
@@ -32,6 +33,7 @@ try {
   const result = await runPipeline((event) => {
     console.log(`[${event.agent}] ${event.status}${event.message ? " — " + event.message : ""}`);
     eventos.push(event);
+    void pushEventToPanel(event);
   });
 
   if (result) {
