@@ -1,5 +1,113 @@
 [
   {
+    "id": "2026-08-14T20:51:17.243Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-14T20:51:17.243Z",
+    "finalizadoEm": "2026-08-14T20:56:34.812Z",
+    "tema": "Indicadores que toda assistência técnica de celular deveria acompanhar",
+    "status": "publicado",
+    "slug": "indicadores-assistencia-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Indicadores que toda assistência técnica de celular deveria acompanhar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-14T20:51:17.251Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **MarkupEmpresa traz a cobertura mais direta:** lista 7 KPIs com fórmulas — tempo médio de reparo, retrabalho, aprovação de orçamento, faturamento médio por OS, conversão de atendimentos, NPS e produtividade por técnico. Também recomenda ",
+        "timestamp": "2026-08-14T20:51:49.131Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-14T20:51:49.132Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Indicadores assistência técnica de celular: metas práticas",
+        "timestamp": "2026-08-14T20:52:05.161Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-14T20:52:05.161Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Os indicadores assistência técnica de celular ajudam a responder perguntas simples que normalmente ficam no “achismo”: por que os aparelhos estão atrasando, quais serviços dão mais lucro, quanto o ret...",
+        "timestamp": "2026-08-14T20:53:12.341Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-14T20:53:12.342Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: indicadores-assistencia-celular · Tags: Indicadores de desempenho, Gestão de assistência técnica, Ordem de serviço, Rentabilidade, Produtividade",
+        "timestamp": "2026-08-14T20:54:16.059Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-14T20:54:16.059Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/indicadores-assistencia-celular",
+        "timestamp": "2026-08-14T20:55:09.876Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-14T20:55:09.877Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "error",
+        "message": "Falha ao publicar no Instagram: Instagram API (17841403725886685/media_publish): Fatal",
+        "timestamp": "2026-08-14T20:56:30.212Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-14T20:56:30.213Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-14T20:56:34.810Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 45783,
+      "outputTokens": 11863,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-14T13:49:35.040Z",
     "origem": "action",
     "iniciadoEm": "2026-08-14T13:49:35.040Z",
