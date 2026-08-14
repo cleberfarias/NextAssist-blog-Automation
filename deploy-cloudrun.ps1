@@ -129,12 +129,19 @@ if ($ingestToken) {
   $updateSecrets += ",PANEL_INGEST_TOKEN=${ingestSecret}:latest"
 }
 
+# --min-instances=1: mantém sempre 1 instância viva (não escala a zero, nem
+# pra mais de uma sob a carga baixa deste painel). O estado ao vivo do
+# escritório (SSE + eventos ingeridos) vive em memória; com múltiplas
+# instâncias um evento poderia chegar numa diferente da que segura a conexão
+# do navegador e se perder.
 & $gcloud run deploy $Service `
   --project $Project `
   --region $Region `
   --source "." `
   --allow-unauthenticated `
   --memory "512Mi" `
+  --min-instances "1" `
+  --max-instances "1" `
   --update-env-vars="DATA_SOURCE=github" `
   --update-secrets=$updateSecrets `
   --quiet

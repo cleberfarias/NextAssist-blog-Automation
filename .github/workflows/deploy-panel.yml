@@ -66,9 +66,15 @@ jobs:
           source: .
           env_vars: DATA_SOURCE=github
           env_vars_update_strategy: merge
+          # --min/max-instances=1: uma única instância sempre viva. O estado
+          # ao vivo do escritório (SSE + eventos ingeridos) vive em memória;
+          # com múltiplas instâncias um evento poderia chegar numa diferente
+          # da que segura a conexão do navegador e se perder.
           flags: >-
             --allow-unauthenticated
             --memory=512Mi
+            --min-instances=1
+            --max-instances=1
 
       - name: Exibir URL publicada
         run: echo "Painel publicado em ${{ steps.deploy.outputs.url }}"
