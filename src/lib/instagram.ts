@@ -1,16 +1,9 @@
 import { config } from "../config.js";
 
 /**
- * Publica uma única imagem no feed do Instagram via Graph API da Meta.
- *
- * A publicação é feita em dois passos (exigência da API):
- *  1. cria um "container" de mídia a partir de `imageUrl` (que precisa ser uma
- *     URL pública em JPEG) + legenda;
- *  2. publica o container.
- *
- * Entre os dois, esperamos o container ficar pronto (`status_code=FINISHED`);
- * para imagens isso costuma ser quase imediato, mas a API pode responder
- * `IN_PROGRESS` por alguns segundos.
+ * Publica mídia no Instagram via Graph API da Meta (fluxo de container em
+ * dois passos: cria a mídia a partir de uma URL pública + legenda, depois
+ * publica o container depois que ele fica pronto).
  */
 
 const GRAPH = "https://graph.facebook.com";
@@ -56,14 +49,17 @@ async function graphGet(path: string, fields: string): Promise<any> {
 }
 
 /** Espera o container de mídia ficar pronto antes de publicar. */
-async function waitForContainer(containerId: string): Promise<void> {
-  // ~30s no total: imagens costumam ficar prontas em 1-2 tentativas.
-  const maxAttempts = 10;
+async function waitForContainer(containerId: string, maxAttempts: number): Promise<void> {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const { status_code: status } = await graphGet(containerId, "status_code");
+    const { status_code: status, status: statusDetail } = await graphGet(
+      containerId,
+      "status_code,status",
+    );
     if (status === "FINISHED") return;
     if (status === "ERROR" || status === "EXPIRED") {
-      throw new Error(`container de mídia ficou com status ${status}`);
+      throw new Error(
+        `container de mídia ficou com status ${status}${statusDetail ? `: ${statusDetail}` : ""}`,
+      );
     }
     await sleep(3000);
   }
@@ -75,21 +71,29 @@ export interface InstagramPostResult {
   permalink: string | null;
 }
 
-export async function publishImageToInstagram(
-  imageUrl: string,
+/**
+ * Publica um Reel no Instagram via Graph API da Meta.
+ *
+ * Mesmo fluxo de dois passos da imagem, mas com `media_type=REELS` e
+ * `video_url`. O processamento de vídeo demora bem mais que o de imagem —
+ * por isso o timeout de espera do container é maior.
+ */
+export async function publishReelToInstagram(
+  videoUrl: string,
   caption: string,
 ): Promise<InstagramPostResult> {
   const userId = config.instagram.userId;
 
-  // 1. Cria o container.
+  // 1. Cria o container do Reel.
   const container = await graphPost(`${userId}/media`, {
-    image_url: imageUrl,
+    media_type: "REELS",
+    video_url: videoUrl,
     caption,
   });
   const containerId: string = container.id;
 
-  // 2. Espera ficar pronto.
-  await waitForContainer(containerId);
+  // 2. Espera ficar pronto (~5min no total: processamento de vídeo é mais lento).
+  await waitForContainer(containerId, 100);
 
   // 3. Publica.
   const published = await graphPost(`${userId}/media_publish`, {

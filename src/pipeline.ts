@@ -103,7 +103,7 @@ export async function runPipeline(onEvent?: OnEvent): Promise<PipelineResult | n
     // (o post do blog já foi publicado neste ponto).
     if (config.instagram.userId && config.instagram.accessToken) {
       emit(onEvent, { agent: "instagram", status: "working", message: "Publicando no Instagram..." });
-      const igResult = await publishToInstagram(finalPost, published.imagemCapa, postUrl(publishedSlug));
+      const igResult = await publishToInstagram(finalPost, published.imagemCapaBuffer, postUrl(publishedSlug));
       emit(onEvent, { agent: "instagram", status: igResult.ok ? "done" : "error", message: igResult.detalhes });
     } else {
       emit(onEvent, { agent: "instagram", status: "done", message: "Instagram não configurado — passo ignorado." });

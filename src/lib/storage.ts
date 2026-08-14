@@ -75,3 +75,27 @@ export async function uploadCoverImage(
 
   return url;
 }
+
+/**
+ * Envia os bytes de um vídeo do Reel para o Firebase Storage e devolve uma
+ * URL pública de longa duração para usar em `video_url` na Graph API.
+ */
+export async function uploadReelVideo(
+  videoBuffer: Buffer,
+  slug: string,
+): Promise<string> {
+  const bucket = getStorageBucket();
+  const filePath = `blog-covers/${slug}-${Date.now()}-reel.mp4`;
+  const file = bucket.file(filePath);
+
+  await file.save(videoBuffer, {
+    metadata: { contentType: "video/mp4" },
+  });
+
+  const [url] = await file.getSignedUrl({
+    action: "read",
+    expires: "01-01-2100",
+  });
+
+  return url;
+}

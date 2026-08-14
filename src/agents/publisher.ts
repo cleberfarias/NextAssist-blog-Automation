@@ -5,9 +5,12 @@ import { uploadCoverImage } from "../lib/storage.js";
 import type { FinalPost } from "./editorSeo.js";
 
 function buildImagePrompt(titulo: string): string {
-  return `Capa de blog, estilo flat/vetor, cores azul e branco, tema:
-"${titulo}". Contexto: assistência técnica de celular, ferramentas e
-peças organizadas, visual limpo e profissional, sem texto ou logotipos
+  return `Fotografia realista para capa de blog, tema: "${titulo}".
+Contexto: assistência técnica de celular — mãos de um técnico
+consertando um smartphone, ferramentas de precisão e peças organizadas
+sobre uma bancada, ambiente de loja/oficina bem iluminado. Foto
+profissional, luz natural, alta definição, cores azul e branco como
+paleta dominante, profundidade de campo rasa, sem texto ou logotipos
 na imagem.`;
 }
 
@@ -16,6 +19,8 @@ export interface PublishResult {
   publicado: boolean;
   /** URL pública da imagem de capa (reaproveitada na publicação do Instagram). */
   imagemCapa: string;
+  /** Bytes JPEG da imagem de capa (reaproveitados para gerar o Reel do Instagram). */
+  imagemCapaBuffer: Buffer;
 }
 
 export async function publishPost(post: FinalPost): Promise<PublishResult> {
@@ -52,5 +57,10 @@ export async function publishPost(post: FinalPost): Promise<PublishResult> {
   }
 
   const data = (await res.json()) as { data: { id: string; slug: string } };
-  return { slug: data.data.slug, publicado: !config.requireApproval, imagemCapa };
+  return {
+    slug: data.data.slug,
+    publicado: !config.requireApproval,
+    imagemCapa,
+    imagemCapaBuffer: imageBuffer,
+  };
 }

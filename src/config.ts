@@ -50,6 +50,15 @@ export const config = {
   // IMAGE_GEN_API_KEY continua aceito como fallback para compatibilidade.
   imageGenApiKey: process.env.OPENAI_API_KEY || process.env.IMAGE_GEN_API_KEY || "",
 
+  // Gemini API (Veo) — geração de vídeo criativo para o Reel. Opcional: se
+  // vazio, o Reel usa o fallback local (zoom/pan + narração TTS). Tem custo
+  // por vídeo (não é o mesmo benefício da assinatura do app Gemini).
+  geminiApiKey: process.env.GEMINI_API_KEY ?? "",
+  // Segunda chave/conta (opcional): usada se a primeira estourar cota/limite.
+  geminiApiKeyFallback:
+    process.env.GEMINI_API_KEY_FALLBACK ?? process.env.GEMINI_API_KEY_2 ?? "",
+  geminiVeoModel: process.env.GEMINI_VEO_MODEL ?? "veo-3.1-fast-generate-preview",
+
   // Instagram (Graph API da Meta). Requer conta Business/Creator conectada a
   // uma Página do Facebook. Se userId ou accessToken estiverem vazios, o passo
   // do Instagram é ignorado (melhor esforço — não derruba o post do blog).

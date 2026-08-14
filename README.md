@@ -15,11 +15,13 @@ NextAssist, sem intervenção manual.
 5. **Publicador** (`src/agents/publisher.ts`) — gera a imagem de capa
    (JPEG), sobe pro Firebase Storage, autentica no Firebase Auth e publica
    via `POST /blog/admin/posts`
-6. **Instagram** (`src/agents/instagramPublisher.ts`) — reaproveita a capa
-   já gerada e publica no feed do Instagram via Graph API da Meta (título +
-   resumo + link + hashtags a partir das tags). É melhor esforço: se falhar
-   ou não estiver configurado, não derruba o pipeline (o post do blog já
-   saiu). Só roda se `IG_USER_ID` e `IG_ACCESS_TOKEN` estiverem definidos.
+6. **Instagram** (`src/agents/instagramPublisher.ts`) — gera um Reel (vídeo
+   vertical 9:16, ~7s, efeito de zoom/pan sobre a capa) a partir da mesma
+   imagem de capa e publica no Instagram via Graph API da Meta (título +
+   resumo + link + hashtags a partir das tags na legenda). É melhor esforço:
+   se falhar ou não estiver configurado, não derruba o pipeline (o post do
+   blog já saiu). Só roda se `IG_USER_ID` e `IG_ACCESS_TOKEN` estiverem
+   definidos.
 7. **Indexador** (`src/agents/indexer.ts`) — notifica a Google Indexing
    API sobre a nova URL e reenvia o sitemap ao Search Console, para
    acelerar o rastreamento (melhor esforço; não derruba o pipeline se
@@ -57,6 +59,8 @@ npm run run
 | `SITEMAP_URL` | URL do sitemap reenviado ao Google |
 | `IG_USER_ID` *(opcional)* | ID da conta Instagram Business/Creator (ver seção Instagram) |
 | `IG_ACCESS_TOKEN` *(opcional)* | Token de longa duração da Graph API da Meta |
+| `GEMINI_API_KEY` *(opcional)* | Google AI Studio — gera o vídeo do Reel com o Veo em vez do fallback local |
+| `GEMINI_API_KEY_FALLBACK` *(opcional)* | Segunda chave/conta, usada se a primeira estourar cota |
 
 **Nunca commite o `.env`** — ele já está coberto por `.gitignore`.
 
@@ -82,8 +86,24 @@ faça uma vez no Google Cloud / Search Console:
 
 ### Publicação no Instagram
 
-O passo do Instagram usa a **Graph API da Meta** (caminho oficial). Pré-requisitos
-que só se resolvem no lado da Meta (uma vez):
+O passo do Instagram publica um **Reel** (não um post de feed) usando a
+**Graph API da Meta** (caminho oficial). A API de Reels exige vídeo — o
+vídeo em si vem de duas fontes possíveis:
+
+- **Veo** (`src/lib/veo.ts`, via Gemini API) — se `GEMINI_API_KEY` estiver
+  configurada, gera um vídeo criativo a partir da imagem de capa, com
+  narração nativa (câmera cinematográfica, ambiente de assistência técnica).
+  Tem custo por vídeo (chave separada da assinatura do app Gemini — ver
+  tabela de variáveis).
+- **Fallback local** (`src/lib/video.ts`, via `ffmpeg-static`, sem custo) —
+  usado quando `GEMINI_API_KEY` não está configurada ou quando o Veo falha:
+  efeito de zoom/pan lento sobre a imagem, formato vertical 1080×1920, com
+  narração gerada por TTS (`src/lib/tts.ts`, mesma credencial da OpenAI)
+  dizendo o título do post e convidando a conferir o link na bio (duração
+  se ajusta à narração, 5-20s). Se a narração falhar, o Reel sai mudo em vez
+  de derrubar a publicação.
+
+Pré-requisitos que só se resolvem no lado da Meta (uma vez):
 
 1. A conta do Instagram precisa ser **Business** ou **Creator** e estar
    conectada a uma **Página do Facebook**.
@@ -100,8 +120,8 @@ Preencha `IG_USER_ID` e `IG_ACCESS_TOKEN` no `.env` (ou nos secrets da Action).
 Se qualquer um faltar, o passo é simplesmente ignorado.
 
 > Notas honestas:
-> - A API só aceita imagens **JPEG** — por isso a capa passou a ser gerada em
->   JPEG (serve para o blog e para o Instagram, mesma URL).
+> - Vídeos de Reel demoram mais para processar que imagens — o passo espera
+>   até ~5 minutos pelo container ficar pronto antes de publicar.
 > - Só é possível publicar de contas **Business/Creator**. Contas pessoais não
 >   têm API; bibliotecas não-oficiais violam os termos e arriscam banir a conta.
 > - O token de longa duração **expira** (tipicamente ~60 dias). Quando expirar,
