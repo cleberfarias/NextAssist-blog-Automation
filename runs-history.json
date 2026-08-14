@@ -216,6 +216,114 @@
     }
   },
   {
+    "id": "2026-08-13T00:27:20.987Z",
+    "origem": "manual",
+    "iniciadoEm": "2026-08-13T00:27:20.987Z",
+    "finalizadoEm": "2026-08-13T00:31:49.174Z",
+    "tema": "Como precificar o conserto de celular sem perder margem",
+    "status": "publicado",
+    "slug": "como-precificar-conserto-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como precificar o conserto de celular sem perder margem",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-13T00:27:20.996Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A fórmula dominante é “peça + mão de obra + margem/riscos”.** A AnaDita, em conteúdo atualizado em **5 de julho de 2026**, usa o exemplo de uma tela de R$120: cobrar R$150 deixaria apenas R$30 pelo trabalho; sua referência seria R$220–R",
+        "timestamp": "2026-08-13T00:27:53.349Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-13T00:27:53.350Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Como precificar conserto de celular sem perder margem",
+        "timestamp": "2026-08-13T00:28:04.452Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-13T00:28:04.452Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Entender como precificar conserto de celular exige mais do que somar o valor da peça e colocar um percentual por cima. O preço precisa pagar insumos, tempo técnico, despesas da operação, taxas de vend...",
+        "timestamp": "2026-08-13T00:29:51.768Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-13T00:29:51.768Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: como-precificar-conserto-celular · Tags: Precificação, Assistência técnica, Gestão financeira, Conserto de celular, Margem de lucro",
+        "timestamp": "2026-08-13T00:30:41.138Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-13T00:30:41.138Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/como-precificar-conserto-celular",
+        "timestamp": "2026-08-13T00:31:35.912Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-13T00:31:35.912Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Publicado no Instagram: https://www.instagram.com/p/Db9dQC6DUeS/",
+        "timestamp": "2026-08-13T00:31:45.891Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-13T00:31:45.892Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-13T00:31:49.004Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 35646,
+      "outputTokens": 11268,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-13T00:21:46.754Z",
     "origem": "action",
     "iniciadoEm": "2026-08-13T00:21:46.754Z",
