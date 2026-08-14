@@ -1,5 +1,113 @@
 [
   {
+    "id": "2026-08-14T13:49:35.040Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-14T13:49:35.040Z",
+    "finalizadoEm": "2026-08-14T13:53:26.247Z",
+    "tema": "Como reduzir o tempo médio de reparo em uma assistência técnica",
+    "status": "publicado",
+    "slug": "tempo-reparo-assistencia-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como reduzir o tempo médio de reparo em uma assistência técnica",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-14T13:49:35.051Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **O TMR já aparece como KPI, mas de forma superficial.** O MarkupEmpresa define **tempo médio de reparo = tempo total dos reparos ÷ aparelhos consertados** e relaciona o indicador à satisfação e à capacidade de atendimento. Falta explicar",
+        "timestamp": "2026-08-14T13:50:14.548Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-14T13:50:14.548Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Tempo de reparo assistência técnica de celular: como reduzir",
+        "timestamp": "2026-08-14T13:50:31.772Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-14T13:50:31.773Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Reduzir o tempo de reparo assistência técnica de celular não significa pedir para o técnico trocar uma tela mais rápido. Na maioria das lojas, o aparelho passa mais tempo aguardando diagnóstico, respo...",
+        "timestamp": "2026-08-14T13:51:30.538Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-14T13:51:30.538Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: tempo-reparo-assistencia-celular · Tags: gestão de assistência técnica, tempo médio de reparo, ordem de serviço, estoque de peças, produtividade",
+        "timestamp": "2026-08-14T13:52:22.455Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-14T13:52:22.455Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/tempo-reparo-assistencia-celular",
+        "timestamp": "2026-08-14T13:53:12.471Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-14T13:53:12.471Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Publicado no Instagram: https://www.instagram.com/p/DcBdyQ6G7tK/",
+        "timestamp": "2026-08-14T13:53:24.489Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-14T13:53:24.489Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-14T13:53:26.245Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 56016,
+      "outputTokens": 11217,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 6,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-13T13:51:34.569Z",
     "origem": "action",
     "iniciadoEm": "2026-08-13T13:51:34.569Z",
