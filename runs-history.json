@@ -1,5 +1,113 @@
 [
   {
+    "id": "2026-08-14T21:16:20.140Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-14T21:16:20.140Z",
+    "finalizadoEm": "2026-08-14T21:21:45.994Z",
+    "tema": "Como montar um programa de indicação para assistência técnica",
+    "status": "publicado",
+    "slug": "programa-indicacao-assistencia-tecnica",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como montar um programa de indicação para assistência técnica",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-14T21:16:20.148Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "**Busca realizada em 14 de agosto de 2026:**\n\n- **A cobertura direta ainda é pequena.** Entre os concorrentes analisados, Mercado Phone e CellFlow apresentam programas próprios de indicação, enquanto MarkupEmpresa e GestãoClick abordam indi",
+        "timestamp": "2026-08-14T21:17:05.955Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-14T21:17:05.955Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Programa de indicação assistência técnica: passo a passo",
+        "timestamp": "2026-08-14T21:17:25.698Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-14T21:17:25.699Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Um programa de indicação assistência técnica não precisa de aplicativo próprio, pontos complicados ou prêmios caros. Para uma loja pequena, o melhor modelo costuma ser simples: um cliente satisfeito i...",
+        "timestamp": "2026-08-14T21:18:31.763Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando, adicionando schema e links internos...",
+        "timestamp": "2026-08-14T21:18:31.765Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: programa-indicacao-assistencia-tecnica · Tags: Programa de indicação, Marketing para assistência técnica, Fidelização de clientes, Gestão de assistência técnica, WhatsApp",
+        "timestamp": "2026-08-14T21:19:23.614Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-14T21:19:23.614Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/programa-indicacao-assistencia-tecnica",
+        "timestamp": "2026-08-14T21:20:22.414Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-14T21:20:22.414Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcCRCyVigPO/",
+        "timestamp": "2026-08-14T21:21:44.738Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-14T21:21:44.738Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-14T21:21:45.991Z"
+      }
+    ],
+    "usage": {
+      "provider": "openai",
+      "model": "gpt-5.6",
+      "inputTokens": 43993,
+      "outputTokens": 10677,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    }
+  },
+  {
     "id": "2026-08-14T20:51:17.243Z",
     "origem": "action",
     "iniciadoEm": "2026-08-14T20:51:17.243Z",
