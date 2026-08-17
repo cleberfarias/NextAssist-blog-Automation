@@ -55,3 +55,33 @@ test("listWorkspaces devolve só os workspaces ativos", async () => {
   const workspaces = await listWorkspaces(root);
   assert.deepEqual(workspaces.map((w) => w.id), ["acme"]);
 });
+
+test("loadWorkspace rejeita workspace.json com campo obrigatório ausente, apontando o campo", async () => {
+  const { channels: _channels, ...semChannels } = baseWorkspace;
+  const root = await makeFixtureRoot({ acme: semChannels });
+  await assert.rejects(() => loadWorkspace("acme", root), /"channels" precisa ser objeto/);
+});
+
+test("loadWorkspace rejeita goals.primary fora do enum permitido", async () => {
+  const root = await makeFixtureRoot({
+    acme: { ...baseWorkspace, goals: { primary: "world-domination" } },
+  });
+  await assert.rejects(() => loadWorkspace("acme", root), /"goals\.primary" precisa ser um de/);
+});
+
+test("listWorkspaces ignora um workspace inválido (loga o erro) sem derrubar os outros", async () => {
+  const root = await makeFixtureRoot({
+    acme: baseWorkspace,
+    quebrado: { ...baseWorkspace, id: "quebrado", active: true, secrets: { required: "não-é-array" } },
+  });
+  const originalError = console.error;
+  const logged: string[] = [];
+  console.error = (...args: unknown[]) => { logged.push(String(args[0])); };
+  try {
+    const workspaces = await listWorkspaces(root);
+    assert.deepEqual(workspaces.map((w) => w.id), ["acme"]);
+    assert.ok(logged.some((line) => line.includes("quebrado") && line.includes("secrets.required")));
+  } finally {
+    console.error = originalError;
+  }
+});
