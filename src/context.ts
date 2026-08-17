@@ -104,6 +104,12 @@ export interface BuildContextOptions {
   openaiModel?: string;
   workspacesRoot?: URL;
   firebaseWebApiKeyOverride?: string; // usado nos testes de outras tasks
+  /**
+   * Quando `false`, não exige OPENAI_API_KEY/ANTHROPIC_API_KEY — usado pelas
+   * rotas somente-leitura do painel, que só leem estado persistido e nunca
+   * chamam `runAgent`. Padrão: `true`.
+   */
+  requireAiProvider?: boolean;
 }
 
 const DEFAULT_WORKSPACES_ROOT = new URL("../workspaces/", import.meta.url);
@@ -117,8 +123,21 @@ export async function buildWorkspaceContext(
     secrets.get(workspace.id, "OPENAI_API_KEY"),
     secrets.get(workspace.id, "ANTHROPIC_API_KEY"),
   ]);
-  if (!openaiKey && !anthropicKey) {
+  if (!openaiKey && !anthropicKey && options.requireAiProvider !== false) {
     throw new Error(`Workspace "${workspace.id}": nenhum provider de IA configurado (OPENAI_API_KEY ou ANTHROPIC_API_KEY).`);
+  }
+
+  // Falha rápido se algum segredo declarado como obrigatório no workspace.json
+  // estiver ausente — antes de gastar chamadas de IA em estágios posteriores.
+  // As chaves de IA já têm a verificação dedicada acima.
+  const aiKeys = new Set(["OPENAI_API_KEY", "ANTHROPIC_API_KEY"]);
+  const requiredSecrets = (workspace.secrets?.required ?? []).filter((key) => !aiKeys.has(key));
+  const resolvedRequired = await Promise.all(
+    requiredSecrets.map(async (key) => ({ key, value: await secrets.get(workspace.id, key) })),
+  );
+  const missing = resolvedRequired.filter(({ value }) => !value).map(({ key }) => key);
+  if (missing.length) {
+    throw new Error(`Workspace "${workspace.id}": segredos obrigatórios ausentes: ${missing.join(", ")}`);
   }
 
   const aiPrimaryProvider = options.aiPrimaryProvider ?? (openaiKey ? "openai" : "anthropic");

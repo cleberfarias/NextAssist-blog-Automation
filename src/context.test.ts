@@ -52,3 +52,20 @@ test("lança erro claro quando nenhum provider de IA tem chave configurada", asy
     /nenhum provider de IA configurado/i,
   );
 });
+
+test("falha rápido nomeando os segredos obrigatórios ausentes", async () => {
+  const strictWorkspace: MarketingWorkspace = {
+    ...workspace,
+    secrets: { required: ["OPENAI_API_KEY", "FIREBASE_STORAGE_BUCKET"] },
+  };
+  await assert.rejects(
+    () => buildWorkspaceContext(strictWorkspace, fakeSecrets({ OPENAI_API_KEY: "sk" })),
+    /segredos obrigatórios ausentes: FIREBASE_STORAGE_BUCKET/,
+  );
+});
+
+test("não exige chave de IA quando requireAiProvider é false", async () => {
+  const ctx = await buildWorkspaceContext(workspace, fakeSecrets({}), { requireAiProvider: false });
+  assert.equal(ctx.ai.openai, undefined);
+  assert.equal(ctx.ai.anthropic, undefined);
+});

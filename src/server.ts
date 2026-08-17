@@ -49,9 +49,26 @@ function broadcast(workspaceId: string, event: PipelineEvent) {
   for (const res of state.clients) res.write(payload);
 }
 
+/**
+ * Express 4 não captura rejeições de handlers async — sem isto, um erro (ex:
+ * workspace inexistente) deixaria o cliente pendurado e viraria unhandled
+ * rejection no processo.
+ */
+function asyncHandler(fn: (req: express.Request, res: express.Response) => Promise<void>) {
+  return (req: express.Request, res: express.Response) => {
+    fn(req, res).catch((err) => {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error("Erro na rota:", message);
+      if (!res.headersSent) res.status(500).json({ error: message });
+    });
+  };
+}
+
 async function contextFor(workspaceId: string): Promise<WorkspaceContext> {
   const workspace = await loadWorkspace(workspaceId);
-  return buildWorkspaceContext(workspace, secrets);
+  // Nenhuma rota que usa contextFor chama runAgent (o pipeline monta o próprio
+  // contexto em pipeline.ts), então o painel não precisa de chave de IA.
+  return buildWorkspaceContext(workspace, secrets, { requireAiProvider: false });
 }
 
 function requireWorkspaceId(req: express.Request, res: express.Response): string | null {
@@ -87,14 +104,16 @@ if (config.panelPassword) {
 app.use(express.static(path.join(__dirname, "../web/public")));
 app.use((req, res, next) => { res.header("Access-Control-Allow-Origin", "*"); next(); });
 
-app.get("/api/workspaces", async (_req, res) => {
+app.get("/api/workspaces", asyncHandler(async (_req, res) => {
   const workspaces = await listWorkspaces();
   res.json(workspaces.map((w: MarketingWorkspace) => ({ id: w.id, name: w.name })));
-});
+}));
 
-app.post("/api/conversions", express.json(), async (req, res) => {
-  const workspaceId = String(req.body?.workspaceId ?? "");
-  if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
+app.post("/api/conversions", express.json(), asyncHandler(async (req, res) => {
+  // Única rota que assume um default em vez de exigir workspaceId: o frontend do
+  // site público (outro repositório) já postava aqui antes do multi-workspace e
+  // não conhece o parâmetro — exigi-lo quebraria o rastreio de conversões ao vivo.
+  const workspaceId = String(req.body?.workspaceId ?? "nextassist");
   const allowed: ConversionEventName[] = ["demo_view", "demo_submit", "contact_submit", "whatsapp_click"];
   if (!allowed.includes(req.body?.name)) { res.status(400).json({ error: "Evento inválido" }); return; }
   const campaign = String(req.body.campaign ?? "").slice(0, 80);
@@ -107,14 +126,14 @@ app.post("/api/conversions", express.json(), async (req, res) => {
   const ctx = await contextFor(workspaceId);
   await recordConversion(ctx, { name: req.body.name, path: String(req.body.path ?? "").slice(0, 200), source: String(req.body.source ?? "").slice(0, 80), medium: String(req.body.medium ?? "").slice(0, 80), campaign, content });
   res.status(204).end();
-});
+}));
 
-app.get("/api/conversions", async (req, res) => {
+app.get("/api/conversions", asyncHandler(async (req, res) => {
   const workspaceId = requireWorkspaceId(req, res);
   if (!workspaceId) return;
   const ctx = await contextFor(workspaceId);
   res.json(await getConversionSummary(ctx));
-});
+}));
 
 app.get("/api/events", (req, res) => {
   const workspaceId = requireWorkspaceId(req, res);
@@ -168,7 +187,7 @@ app.post("/api/events/ingest", express.json(), (req, res) => {
   res.status(204).end();
 });
 
-app.post("/api/run", express.json(), async (req, res) => {
+app.post("/api/run", express.json(), asyncHandler(async (req, res) => {
   const workspaceId = String(req.body?.workspaceId ?? "");
   if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
   const state = getRuntimeState(workspaceId);
@@ -203,21 +222,21 @@ app.post("/api/run", express.json(), async (req, res) => {
   } finally {
     state.running = false;
   }
-});
+}));
 
-app.get("/api/history", async (req, res) => {
+app.get("/api/history", asyncHandler(async (req, res) => {
   const workspaceId = requireWorkspaceId(req, res);
   if (!workspaceId) return;
   res.json(await getHistory(await contextFor(workspaceId)));
-});
+}));
 
-app.get("/api/runs", async (req, res) => {
+app.get("/api/runs", asyncHandler(async (req, res) => {
   const workspaceId = requireWorkspaceId(req, res);
   if (!workspaceId) return;
   res.json(await getRuns(await contextFor(workspaceId)));
-});
+}));
 
-app.get("/api/usage", async (req, res) => {
+app.get("/api/usage", asyncHandler(async (req, res) => {
   const workspaceId = requireWorkspaceId(req, res);
   if (!workspaceId) return;
   const runs = await getRuns(await contextFor(workspaceId));
@@ -235,15 +254,15 @@ app.get("/api/usage", async (req, res) => {
     total: { estimatedUsd: sum(tracked, "estimatedUsd"), inputTokens: sum(tracked, "inputTokens"), outputTokens: sum(tracked, "outputTokens"), webSearchRequests: sum(tracked, "webSearchRequests") },
     averagePublishedUsd: published.length ? sum(published, "estimatedUsd") / published.length : 0,
   });
-});
+}));
 
-app.get("/api/performance", async (req, res) => {
+app.get("/api/performance", asyncHandler(async (req, res) => {
   const workspaceId = requireWorkspaceId(req, res);
   if (!workspaceId) return;
   res.json(await getPerformance(await contextFor(workspaceId)));
-});
+}));
 
-app.post("/api/performance/refresh", express.json(), async (req, res) => {
+app.post("/api/performance/refresh", express.json(), asyncHandler(async (req, res) => {
   const workspaceId = String(req.body?.workspaceId ?? "");
   if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
   const state = getRuntimeState(workspaceId);
@@ -260,7 +279,7 @@ app.post("/api/performance/refresh", express.json(), async (req, res) => {
   } finally {
     state.refreshingPerf = false;
   }
-});
+}));
 
 app.listen(PORT, () => {
   console.log(`Escritório rodando em http://localhost:${PORT}`);
