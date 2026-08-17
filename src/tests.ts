@@ -1,3 +1,4 @@
+import "./context.test.js";
 import "./conversions.test.js";
 import "./lib/cms.test.js";
 import "./lib/contentQuality.test.js";
