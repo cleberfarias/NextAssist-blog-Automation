@@ -1,53 +1,52 @@
+// src/index.ts
 import { runPipeline, type PipelineEvent } from "./pipeline.js";
-import { appendRun, type RunRecord, type RunStatus } from "./runsHistory.js";
-import { getAnthropicUsage } from "./lib/anthropic.js";
+import { appendRun, type RunRecord } from "./runsHistory.js";
+import { loadWorkspace } from "./workspace.js";
+import { EnvSecretProvider } from "./lib/secrets.js";
+import { buildWorkspaceContext, type AnthropicUsage } from "./context.js";
 import { pushEventToPanel } from "./lib/panelIngest.js";
 
-/**
- * Entrada da CLI (usada pelo GitHub Actions). Além de rodar o pipeline,
- * grava um registro detalhado da execução em `runs-history.json` — tanto em
- * sucesso quanto em falha — para o painel acompanhar cada agente e confirmar
- * se o post foi publicado. A Action commita esse arquivo de volta.
- */
+const workspaceId = process.env.WORKSPACE_ID ?? "nextassist";
 const eventos: PipelineEvent[] = [];
 const iniciadoEm = new Date().toISOString();
 const origem = process.env.GITHUB_ACTIONS === "true" ? "action" : "manual";
 
-function finalize(status: RunStatus, tema: string | null, slug: string | null, erro: string | null) {
+/** Grava o registro de execução para os dois desfechos que não lançam (publicado / sem tópico). */
+async function finalize(status: "publicado" | "sem-tema", tema: string | null, slug: string | null, usage?: AnthropicUsage) {
+  const workspace = await loadWorkspace(workspaceId);
+  const ctx = await buildWorkspaceContext(workspace, new EnvSecretProvider());
   const record: RunRecord = {
-    id: iniciadoEm,
-    origem,
-    iniciadoEm,
-    finalizadoEm: new Date().toISOString(),
-    tema,
-    status,
-    slug,
-    erro,
-    eventos,
-    usage: getAnthropicUsage(),
+    id: iniciadoEm, origem, iniciadoEm, finalizadoEm: new Date().toISOString(),
+    tema, status, slug, erro: null, eventos, usage,
   };
-  return appendRun(record);
+  return appendRun(ctx, record);
 }
 
 try {
-  const result = await runPipeline((event) => {
-    console.log(`[${event.agent}] ${event.status}${event.message ? " — " + event.message : ""}`);
+  const result = await runPipeline(workspaceId, (event) => {
+    console.log(`[${workspaceId}][${event.agent}] ${event.status}${event.message ? " — " + event.message : ""}`);
     eventos.push(event);
-    void pushEventToPanel(event);
+    void pushEventToPanel(workspaceId, event);
   });
 
   if (result) {
     console.log(`Post publicado: /blog/${result.slugPublicado}`);
-    await finalize("publicado", result.tema, result.slugPublicado, null);
+    await finalize("publicado", result.tema, result.slugPublicado, result.usage);
   } else {
     console.log("Nenhum tópico pendente no calendário.");
-    await finalize("sem-tema", null, null, null);
+    await finalize("sem-tema", null, null, undefined);
   }
   process.exit(0);
 } catch (err) {
   const message = err instanceof Error ? err.message : String(err);
   console.error("Falha no pipeline:", message);
   const tema = eventos.find((e) => e.tema)?.tema ?? null;
-  await finalize("falhou", tema, null, message);
+  const usage = (err as Error & { usage?: AnthropicUsage }).usage;
+  const workspace = await loadWorkspace(workspaceId);
+  const ctx = await buildWorkspaceContext(workspace, new EnvSecretProvider());
+  await appendRun(ctx, {
+    id: iniciadoEm, origem, iniciadoEm, finalizadoEm: new Date().toISOString(),
+    tema, status: "falhou", slug: null, erro: message, eventos, usage,
+  });
   process.exit(1);
 }
