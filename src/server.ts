@@ -1,3 +1,4 @@
+// src/server.ts
 import express from "express";
 import { timingSafeEqual } from "node:crypto";
 import { fileURLToPath } from "node:url";
@@ -9,26 +10,61 @@ import { getPerformance, refreshPerformance } from "./performance.js";
 import { config } from "./config.js";
 import { getConversionSummary, recordConversion, type ConversionEventName } from "./conversions.js";
 import { triggerDailyPostWorkflow } from "./lib/githubDispatch.js";
+import { listWorkspaces, loadWorkspace, type MarketingWorkspace } from "./workspace.js";
+import { EnvSecretProvider } from "./lib/secrets.js";
+import { buildWorkspaceContext, type WorkspaceContext } from "./context.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4173;
+const secrets = new EnvSecretProvider();
 
-// No modo hospedado o servidor não commita o estado de volta pro repo, então
-// rodar o pipeline direto aqui geraria post duplicado. Em vez disso:
-//  - "local": roda o pipeline neste processo (dev local, npm run office).
-//  - "dispatch": dispara a GitHub Action manualmente (workflow_dispatch) —
-//    publica e commita normalmente, só que sob demanda em vez de esperar o cron.
-//  - "disabled": sem token de disparo configurado, botão fica escondido.
 type RunMode = "local" | "dispatch" | "disabled";
 const runMode: RunMode =
   config.dataSource !== "github" ? "local" : config.githubDispatchToken ? "dispatch" : "disabled";
 
+interface WorkspaceRuntimeState {
+  running: boolean;
+  lastEvents: PipelineEvent[];
+  clients: Set<express.Response>;
+  dispatching: boolean;
+  refreshingPerf: boolean;
+}
+
+const runtimeStates = new Map<string, WorkspaceRuntimeState>();
+
+function getRuntimeState(workspaceId: string): WorkspaceRuntimeState {
+  let state = runtimeStates.get(workspaceId);
+  if (!state) {
+    state = { running: false, lastEvents: [], clients: new Set(), dispatching: false, refreshingPerf: false };
+    runtimeStates.set(workspaceId, state);
+  }
+  return state;
+}
+
+function broadcast(workspaceId: string, event: PipelineEvent) {
+  const state = getRuntimeState(workspaceId);
+  state.lastEvents.push(event);
+  if (state.lastEvents.length > 50) state.lastEvents = state.lastEvents.slice(-50);
+  const payload = `data: ${JSON.stringify(event)}\n\n`;
+  for (const res of state.clients) res.write(payload);
+}
+
+async function contextFor(workspaceId: string): Promise<WorkspaceContext> {
+  const workspace = await loadWorkspace(workspaceId);
+  return buildWorkspaceContext(workspace, secrets);
+}
+
+function requireWorkspaceId(req: express.Request, res: express.Response): string | null {
+  const workspaceId = String(req.query.workspace ?? "");
+  if (!workspaceId) {
+    res.status(400).json({ error: "Parâmetro ?workspace= é obrigatório." });
+    return null;
+  }
+  return workspaceId;
+}
+
 const app = express();
 
-// Proteção por senha (Basic Auth). Ativa só se PANEL_PASSWORD estiver definida.
-// A rota de ingestão de eventos fica de fora: ela é chamada pela GitHub
-// Action (que não tem a senha do painel) e já tem sua própria autenticação
-// por token (ver validIngestToken mais abaixo).
 if (config.panelPassword) {
   app.use((req, res, next) => {
     if (req.path === "/api/events/ingest") return next();
@@ -43,15 +79,22 @@ if (config.panelPassword) {
         return next();
       }
     }
-    res.set("WWW-Authenticate", 'Basic realm="Escritorio NextAssist"');
+    res.set("WWW-Authenticate", 'Basic realm="Escritorio"');
     res.status(401).send("Autenticação necessária.");
   });
 }
 
 app.use(express.static(path.join(__dirname, "../web/public")));
-app.use((req, res, next) => { res.header("Access-Control-Allow-Origin", config.siteBaseUrl); next(); });
+app.use((req, res, next) => { res.header("Access-Control-Allow-Origin", "*"); next(); });
+
+app.get("/api/workspaces", async (_req, res) => {
+  const workspaces = await listWorkspaces();
+  res.json(workspaces.map((w: MarketingWorkspace) => ({ id: w.id, name: w.name })));
+});
 
 app.post("/api/conversions", express.json(), async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
   const allowed: ConversionEventName[] = ["demo_view", "demo_submit", "contact_submit", "whatsapp_click"];
   if (!allowed.includes(req.body?.name)) { res.status(400).json({ error: "Evento inválido" }); return; }
   const campaign = String(req.body.campaign ?? "").slice(0, 80);
@@ -61,51 +104,37 @@ app.post("/api/conversions", express.json(), async (req, res) => {
     res.status(400).json({ error: "Parâmetros UTM inválidos" });
     return;
   }
-  await recordConversion({ name: req.body.name, path: String(req.body.path ?? "").slice(0, 200), source: String(req.body.source ?? "").slice(0, 80), medium: String(req.body.medium ?? "").slice(0, 80), campaign, content });
+  const ctx = await contextFor(workspaceId);
+  await recordConversion(ctx, { name: req.body.name, path: String(req.body.path ?? "").slice(0, 200), source: String(req.body.source ?? "").slice(0, 80), medium: String(req.body.medium ?? "").slice(0, 80), campaign, content });
   res.status(204).end();
 });
 
-app.get("/api/conversions", async (_req, res) => res.json(await getConversionSummary()));
-
-let running = false;
-let lastEvents: PipelineEvent[] = [];
-const clients = new Set<express.Response>();
-
-function broadcast(event: PipelineEvent) {
-  lastEvents.push(event);
-  if (lastEvents.length > 50) lastEvents = lastEvents.slice(-50);
-  const payload = `data: ${JSON.stringify(event)}\n\n`;
-  for (const res of clients) res.write(payload);
-}
+app.get("/api/conversions", async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  const ctx = await contextFor(workspaceId);
+  res.json(await getConversionSummary(ctx));
+});
 
 app.get("/api/events", (req, res) => {
-  res.set({
-    "Content-Type": "text/event-stream",
-    "Cache-Control": "no-cache",
-    Connection: "keep-alive",
-  });
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  res.set({ "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" });
   res.flushHeaders();
-  clients.add(res);
-  // Manda o histórico recente pra quem acabou de conectar não ver a tela vazia.
-  for (const event of lastEvents) {
-    res.write(`data: ${JSON.stringify(event)}\n\n`);
-  }
-  req.on("close", () => clients.delete(res));
+  const state = getRuntimeState(workspaceId);
+  state.clients.add(res);
+  for (const event of state.lastEvents) res.write(`data: ${JSON.stringify(event)}\n\n`);
+  req.on("close", () => state.clients.delete(res));
 });
 
-app.get("/api/status", (_req, res) => {
-  res.json({ running, lastEvents, runMode });
+app.get("/api/status", (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  const state = getRuntimeState(workspaceId);
+  res.json({ running: state.running, lastEvents: state.lastEvents, runMode });
 });
 
-const AGENT_IDS: AgentId[] = [
-  "pesquisa-mercado",
-  "pesquisa-pauta",
-  "redator",
-  "editor-seo",
-  "publicador",
-  "instagram",
-  "indexador",
-];
+const AGENT_IDS: AgentId[] = ["pesquisa-mercado", "pesquisa-pauta", "redator", "editor-seo", "publicador", "instagram", "indexador"];
 const AGENT_STATUSES: AgentStatus[] = ["idle", "working", "done", "error"];
 
 function validIngestToken(req: express.Request): boolean {
@@ -115,155 +144,121 @@ function validIngestToken(req: express.Request): boolean {
   return received.length === expected.length && timingSafeEqual(received, expected);
 }
 
-/**
- * Recebe eventos do pipeline rodando numa GitHub Action (fora deste
- * processo) e os retransmite via SSE — pra o escritório do painel hospedado
- * acender as mesas em tempo real mesmo quando quem publicou foi a Action
- * (cron automático ou disparo manual), não este servidor.
- */
 app.post("/api/events/ingest", express.json(), (req, res) => {
-  if (!validIngestToken(req)) {
-    res.status(401).json({ error: "Token de ingestão inválido." });
-    return;
-  }
+  if (!validIngestToken(req)) { res.status(401).json({ error: "Token de ingestão inválido." }); return; }
 
   const body = req.body ?? {};
-  if (
-    !AGENT_IDS.includes(body.agent) ||
-    !AGENT_STATUSES.includes(body.status) ||
-    typeof body.timestamp !== "string"
-  ) {
+  const workspaceId = String(body.workspaceId ?? "");
+  if (!workspaceId || !AGENT_IDS.includes(body.agent) || !AGENT_STATUSES.includes(body.status) || typeof body.timestamp !== "string") {
     res.status(400).json({ error: "Evento inválido." });
     return;
   }
 
   const event: PipelineEvent = {
-    agent: body.agent,
-    status: body.status,
-    timestamp: body.timestamp,
+    agent: body.agent, status: body.status, timestamp: body.timestamp,
     ...(typeof body.message === "string" ? { message: body.message } : {}),
     ...(typeof body.tema === "string" ? { tema: body.tema } : {}),
   };
 
-  if (event.agent === "pesquisa-mercado" && event.status === "working") running = true;
-  if (event.status === "error" || (event.agent === "indexador" && event.status === "done")) {
-    running = false;
-  }
+  const state = getRuntimeState(workspaceId);
+  if (event.agent === "pesquisa-mercado" && event.status === "working") state.running = true;
+  if (event.status === "error" || (event.agent === "indexador" && event.status === "done")) state.running = false;
 
-  broadcast(event);
+  broadcast(workspaceId, event);
   res.status(204).end();
 });
 
-let dispatching = false;
+app.post("/api/run", express.json(), async (req, res) => {
+  const workspaceId = String(req.body?.workspaceId ?? "");
+  if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
+  const state = getRuntimeState(workspaceId);
 
-app.post("/api/run", express.json(), async (_req, res) => {
   if (runMode === "disabled") {
     res.status(403).json({ error: "Execução manual desabilitada neste ambiente — a publicação roda pela GitHub Action." });
     return;
   }
 
   if (runMode === "dispatch") {
-    if (dispatching) {
-      res.status(409).json({ error: "Já disparei uma execução há pouco — aguarde." });
-      return;
-    }
-    dispatching = true;
-    // Cooldown curto só pra evitar clique duplo; a Action em si tem sua
-    // própria trava de concorrência (não roda duas ao mesmo tempo).
-    setTimeout(() => { dispatching = false; }, 60_000);
+    if (state.dispatching) { res.status(409).json({ error: "Já disparei uma execução há pouco — aguarde." }); return; }
+    state.dispatching = true;
+    setTimeout(() => { state.dispatching = false; }, 60_000);
     try {
-      await triggerDailyPostWorkflow();
+      await triggerDailyPostWorkflow(workspaceId);
       res.json({ ok: true, mode: "dispatch" });
     } catch (err) {
-      dispatching = false;
-      const message = err instanceof Error ? err.message : String(err);
-      res.status(502).json({ error: message });
+      state.dispatching = false;
+      res.status(502).json({ error: err instanceof Error ? err.message : String(err) });
     }
     return;
   }
 
-  // runMode === "local"
-  if (running) {
-    res.status(409).json({ error: "O pipeline já está rodando." });
-    return;
-  }
-  running = true;
+  if (state.running) { res.status(409).json({ error: "O pipeline já está rodando." }); return; }
+  state.running = true;
   res.json({ ok: true, mode: "local" });
 
   try {
-    await runPipeline(broadcast);
+    await runPipeline(workspaceId, (event) => broadcast(workspaceId, event));
   } catch {
-    // O erro já foi transmitido como evento "error" pelo broadcast.
+    // erro já foi transmitido como evento "error" pelo broadcast
   } finally {
-    running = false;
+    state.running = false;
   }
 });
 
-app.get("/api/history", async (_req, res) => {
-  res.json(await getHistory());
+app.get("/api/history", async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  res.json(await getHistory(await contextFor(workspaceId)));
 });
 
-app.get("/api/runs", async (_req, res) => {
-  res.json(await getRuns());
+app.get("/api/runs", async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  res.json(await getRuns(await contextFor(workspaceId)));
 });
 
-app.get("/api/usage", async (_req, res) => {
-  const runs = await getRuns();
+app.get("/api/usage", async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  const runs = await getRuns(await contextFor(workspaceId));
   const tracked = runs.filter((run) => run.usage);
   const now = new Date();
   const monthStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
   const published = tracked.filter((run) => run.status === "publicado");
-  const monthRuns = tracked.filter(
-    (run) => new Date(run.finalizadoEm || run.iniciadoEm).getTime() >= monthStart,
-  );
-  const sum = (
-    items: typeof tracked,
-    field: "estimatedUsd" | "inputTokens" | "outputTokens" | "webSearchRequests",
-  ) => items.reduce((total, run) => total + (run.usage?.[field] ?? 0), 0);
+  const monthRuns = tracked.filter((run) => new Date(run.finalizadoEm || run.iniciadoEm).getTime() >= monthStart);
+  const sum = (items: typeof tracked, field: "estimatedUsd" | "inputTokens" | "outputTokens" | "webSearchRequests") =>
+    items.reduce((total, run) => total + (run.usage?.[field] ?? 0), 0);
 
   res.json({
     trackedRuns: tracked.length,
-    month: {
-      estimatedUsd: sum(monthRuns, "estimatedUsd"),
-      inputTokens: sum(monthRuns, "inputTokens"),
-      outputTokens: sum(monthRuns, "outputTokens"),
-      webSearchRequests: sum(monthRuns, "webSearchRequests"),
-    },
-    total: {
-      estimatedUsd: sum(tracked, "estimatedUsd"),
-      inputTokens: sum(tracked, "inputTokens"),
-      outputTokens: sum(tracked, "outputTokens"),
-      webSearchRequests: sum(tracked, "webSearchRequests"),
-    },
-    averagePublishedUsd: published.length
-      ? sum(published, "estimatedUsd") / published.length
-      : 0,
+    month: { estimatedUsd: sum(monthRuns, "estimatedUsd"), inputTokens: sum(monthRuns, "inputTokens"), outputTokens: sum(monthRuns, "outputTokens"), webSearchRequests: sum(monthRuns, "webSearchRequests") },
+    total: { estimatedUsd: sum(tracked, "estimatedUsd"), inputTokens: sum(tracked, "inputTokens"), outputTokens: sum(tracked, "outputTokens"), webSearchRequests: sum(tracked, "webSearchRequests") },
+    averagePublishedUsd: published.length ? sum(published, "estimatedUsd") / published.length : 0,
   });
 });
 
-app.get("/api/performance", async (_req, res) => {
-  res.json(await getPerformance());
+app.get("/api/performance", async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  res.json(await getPerformance(await contextFor(workspaceId)));
 });
 
-let refreshingPerf = false;
 app.post("/api/performance/refresh", express.json(), async (req, res) => {
-  if (refreshingPerf) {
-    res.status(409).json({ error: "Já estou atualizando as métricas." });
-    return;
-  }
-  refreshingPerf = true;
+  const workspaceId = String(req.body?.workspaceId ?? "");
+  if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
+  const state = getRuntimeState(workspaceId);
+  if (state.refreshingPerf) { res.status(409).json({ error: "Já estou atualizando as métricas." }); return; }
+  state.refreshingPerf = true;
   try {
-    const report = await refreshPerformance(req.body?.inicio, req.body?.fim);
+    const ctx = await contextFor(workspaceId);
+    const report = await refreshPerformance(ctx, req.body?.inicio, req.body?.fim);
     res.json(report);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    const invalidPeriod =
-      message.includes("data inicial") ||
-      message.includes("data final") ||
-      message.includes("formato AAAA-MM-DD");
+    const invalidPeriod = message.includes("data inicial") || message.includes("data final") || message.includes("formato AAAA-MM-DD");
     res.status(invalidPeriod ? 400 : 500).json({ error: message });
   } finally {
-    refreshingPerf = false;
+    state.refreshingPerf = false;
   }
 });
 
