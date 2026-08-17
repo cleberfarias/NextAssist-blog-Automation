@@ -3,16 +3,22 @@ import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 import type { WorkspaceContext } from "../context.js";
 
+/**
+ * Um app nomeado por workspace — o app default do Admin SDK é um singleton do
+ * processo inteiro, então no painel (que serve vários workspaces) o workspace B
+ * acabaria usando as credenciais/bucket do workspace A.
+ */
 async function getStorageBucket(ctx: WorkspaceContext) {
-  if (getApps().length === 0) {
-    const serviceAccountJson = await ctx.secrets.get(ctx.workspace.id, "FIREBASE_SERVICE_ACCOUNT_JSON");
-    const storageBucket = await ctx.secrets.get(ctx.workspace.id, "FIREBASE_STORAGE_BUCKET");
-    if (!serviceAccountJson || !storageBucket) {
-      throw new Error(`Workspace "${ctx.workspace.id}": FIREBASE_SERVICE_ACCOUNT_JSON / FIREBASE_STORAGE_BUCKET ausentes.`);
-    }
-    initializeApp({ credential: cert(JSON.parse(serviceAccountJson)), storageBucket });
+  const existing = getApps().find((app) => app.name === ctx.workspace.id);
+  if (existing) return getStorage(existing).bucket();
+
+  const serviceAccountJson = await ctx.secrets.get(ctx.workspace.id, "FIREBASE_SERVICE_ACCOUNT_JSON");
+  const storageBucket = await ctx.secrets.get(ctx.workspace.id, "FIREBASE_STORAGE_BUCKET");
+  if (!serviceAccountJson || !storageBucket) {
+    throw new Error(`Workspace "${ctx.workspace.id}": FIREBASE_SERVICE_ACCOUNT_JSON / FIREBASE_STORAGE_BUCKET ausentes.`);
   }
-  return getStorage().bucket();
+  const app = initializeApp({ credential: cert(JSON.parse(serviceAccountJson)), storageBucket }, ctx.workspace.id);
+  return getStorage(app).bucket();
 }
 
 export async function writeStateJson(ctx: WorkspaceContext, fileName: string, value: unknown): Promise<void> {
