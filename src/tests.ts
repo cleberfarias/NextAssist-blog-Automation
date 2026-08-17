@@ -1,3 +1,4 @@
+import "./backlog.test.js";
 import "./context.test.js";
 import "./contentCalendar.test.js";
 import "./conversions.test.js";
