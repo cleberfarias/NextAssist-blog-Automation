@@ -10,4 +10,5 @@ import "./lib/providerFallback.test.js";
 import "./lib/editorSeo.test.js";
 import "./lib/secrets.test.js";
 import "./lib/text.test.js";
+import "./pipeline.test.js";
 import "./workspace.test.js";

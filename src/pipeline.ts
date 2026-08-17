@@ -1,5 +1,6 @@
 // src/pipeline.ts
 import { getNextTopic, markTopicPublished } from "./contentCalendar.js";
+import { ensureContentBacklog } from "./backlog.js";
 import { researchMarket } from "./agents/marketResearch.js";
 import { planTopic } from "./agents/topicPlanner.js";
 import { writeArticle } from "./agents/writer.js";
@@ -9,7 +10,8 @@ import { publishToInstagram } from "./agents/instagramPublisher.js";
 import { indexPublishedPost, postUrl } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
 import { validateFinalPost } from "./lib/contentQuality.js";
-import { emit, type AgentId, type AgentStatus, type PipelineEvent, type OnEvent } from "./pipelineEvents.js";
+import { emit, type OnEvent } from "./pipelineEvents.js";
+import type { BacklogResult } from "./backlog.js";
 import type { WorkspaceContext, AnthropicUsage } from "./context.js";
 
 export type { AgentId, AgentStatus, PipelineEvent, OnEvent } from "./pipelineEvents.js";
@@ -22,13 +24,15 @@ async function getPublishedSlugs(ctx: WorkspaceContext): Promise<string[]> {
 }
 
 export interface PipelineResult {
-  tema: string;
-  slugPublicado: string;
+  tema: string | null;
+  slugPublicado: string | null;
   usage: AnthropicUsage;
+  backlog: BacklogResult;
 }
 
 /**
- * Roda o pipeline completo uma vez para um workspace: pesquisa de mercado →
+ * Roda o pipeline completo uma vez para um workspace: reabastecimento de
+ * backlog (Marketing Director, se necessário) → pesquisa de mercado →
  * pesquisa de pauta → redação → edição/SEO → publicação → Instagram →
  * indexação. Chama `onEvent` a cada mudança de estado de um agente.
  *
@@ -36,11 +40,13 @@ export interface PipelineResult {
  * painel) — não resolve workspace/segredos por conta própria, para não
  * reconstruir o contexto (e reautenticar) mais de uma vez por execução.
  */
-export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Promise<PipelineResult | null> {
+export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Promise<PipelineResult> {
+  const backlog = await ensureContentBacklog(ctx, onEvent);
   const topic = await getNextTopic(ctx);
   if (!topic) {
-    emit(onEvent, { agent: "pesquisa-pauta", status: "error", message: "Nenhum tópico pendente no calendário." });
-    return null;
+    const detail = backlog.error ? ` Motivo do reabastecimento não ter resolvido: ${backlog.error}` : "";
+    emit(onEvent, { agent: "pesquisa-pauta", status: "error", message: `Nenhum tópico pendente no calendário.${detail}` });
+    return { tema: null, slugPublicado: null, usage: ctx.usage.get(), backlog };
   }
 
   try {
@@ -95,7 +101,7 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
     if (published.publicado) await markTopicPublished(ctx, topic.tema);
     await appendHistory(ctx, { tema: topic.tema, titulo: finalPost.titulo, slug: publishedSlug, publicadoEm: new Date().toISOString() });
 
-    return { tema: topic.tema, slugPublicado: publishedSlug, usage: ctx.usage.get() };
+    return { tema: topic.tema, slugPublicado: publishedSlug, usage: ctx.usage.get(), backlog };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     emit(onEvent, { agent: "publicador", status: "error", message });
