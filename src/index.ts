@@ -1,6 +1,6 @@
 // src/index.ts
 import { runPipeline, type PipelineEvent } from "./pipeline.js";
-import { appendRun, type RunRecord } from "./runsHistory.js";
+import { appendRun, type RunRecord, type RunStatus } from "./runsHistory.js";
 import { loadWorkspace } from "./workspace.js";
 import { EnvSecretProvider } from "./lib/secrets.js";
 import { buildWorkspaceContext, type AnthropicUsage } from "./context.js";
@@ -11,19 +11,28 @@ const eventos: PipelineEvent[] = [];
 const iniciadoEm = new Date().toISOString();
 const origem = process.env.GITHUB_ACTIONS === "true" ? "action" : "manual";
 
-/** Grava o registro de execução para os dois desfechos que não lançam (publicado / sem tópico). */
-async function finalize(status: "publicado" | "sem-tema", tema: string | null, slug: string | null, usage?: AnthropicUsage) {
-  const workspace = await loadWorkspace(workspaceId);
-  const ctx = await buildWorkspaceContext(workspace, new EnvSecretProvider());
+const ctx = await (async () => {
+  try {
+    const workspace = await loadWorkspace(workspaceId);
+    return await buildWorkspaceContext(workspace, new EnvSecretProvider());
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`Falha ao resolver o workspace "${workspaceId}":`, message);
+    process.exit(1);
+  }
+})();
+
+/** Grava o registro de execução, reaproveitando o mesmo WorkspaceContext da execução. */
+function finalize(status: RunStatus, tema: string | null, slug: string | null, erro: string | null, usage?: AnthropicUsage) {
   const record: RunRecord = {
     id: iniciadoEm, origem, iniciadoEm, finalizadoEm: new Date().toISOString(),
-    tema, status, slug, erro: null, eventos, usage,
+    tema, status, slug, erro, eventos, usage,
   };
   return appendRun(ctx, record);
 }
 
 try {
-  const result = await runPipeline(workspaceId, (event) => {
+  const result = await runPipeline(ctx, (event) => {
     console.log(`[${workspaceId}][${event.agent}] ${event.status}${event.message ? " — " + event.message : ""}`);
     eventos.push(event);
     void pushEventToPanel(workspaceId, event);
@@ -31,10 +40,10 @@ try {
 
   if (result) {
     console.log(`Post publicado: /blog/${result.slugPublicado}`);
-    await finalize("publicado", result.tema, result.slugPublicado, result.usage);
+    await finalize("publicado", result.tema, result.slugPublicado, null, result.usage);
   } else {
     console.log("Nenhum tópico pendente no calendário.");
-    await finalize("sem-tema", null, null, undefined);
+    await finalize("sem-tema", null, null, null, undefined);
   }
   process.exit(0);
 } catch (err) {
@@ -42,19 +51,6 @@ try {
   console.error("Falha no pipeline:", message);
   const tema = eventos.find((e) => e.tema)?.tema ?? null;
   const usage = (err as Error & { usage?: AnthropicUsage }).usage;
-  // Se a falha original foi justamente workspace inválido / credencial ausente,
-  // essa recuperação também falha — não deixe isso virar unhandled rejection.
-  try {
-    const workspace = await loadWorkspace(workspaceId);
-    const ctx = await buildWorkspaceContext(workspace, new EnvSecretProvider());
-    await appendRun(ctx, {
-      id: iniciadoEm, origem, iniciadoEm, finalizadoEm: new Date().toISOString(),
-      tema, status: "falhou", slug: null, erro: message, eventos, usage,
-    });
-  } catch (recoveryErr) {
-    const recoveryMessage = recoveryErr instanceof Error ? recoveryErr.message : String(recoveryErr);
-    console.error("Não foi possível registrar a execução que falhou:", recoveryMessage);
-    console.error("Erro original do pipeline:", message);
-  }
+  await finalize("falhou", tema, null, message, usage);
   process.exit(1);
 }

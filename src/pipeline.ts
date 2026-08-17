@@ -9,9 +9,7 @@ import { publishToInstagram } from "./agents/instagramPublisher.js";
 import { indexPublishedPost, postUrl } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
 import { validateFinalPost } from "./lib/contentQuality.js";
-import { loadWorkspace } from "./workspace.js";
-import { EnvSecretProvider } from "./lib/secrets.js";
-import { buildWorkspaceContext, type WorkspaceContext, type AnthropicUsage } from "./context.js";
+import type { WorkspaceContext, AnthropicUsage } from "./context.js";
 
 export type AgentId =
   | "pesquisa-mercado" | "pesquisa-pauta" | "redator" | "editor-seo"
@@ -50,11 +48,12 @@ export interface PipelineResult {
  * Roda o pipeline completo uma vez para um workspace: pesquisa de mercado →
  * pesquisa de pauta → redação → edição/SEO → publicação → Instagram →
  * indexação. Chama `onEvent` a cada mudança de estado de um agente.
+ *
+ * Recebe o `WorkspaceContext` já construído pelo chamador (entrypoint ou
+ * painel) — não resolve workspace/segredos por conta própria, para não
+ * reconstruir o contexto (e reautenticar) mais de uma vez por execução.
  */
-export async function runPipeline(workspaceId: string, onEvent?: OnEvent): Promise<PipelineResult | null> {
-  const workspace = await loadWorkspace(workspaceId);
-  const ctx = await buildWorkspaceContext(workspace, new EnvSecretProvider());
-
+export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Promise<PipelineResult | null> {
   const topic = await getNextTopic(ctx);
   if (!topic) {
     emit(onEvent, { agent: "pesquisa-pauta", status: "error", message: "Nenhum tópico pendente no calendário." });

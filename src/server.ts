@@ -102,7 +102,30 @@ if (config.panelPassword) {
 }
 
 app.use(express.static(path.join(__dirname, "../web/public")));
-app.use((req, res, next) => { res.header("Access-Control-Allow-Origin", "*"); next(); });
+
+/**
+ * CORS por allowlist: só ecoa `Access-Control-Allow-Origin` quando o
+ * `Origin` da requisição bate com o `integrations.siteUrl` de algum
+ * workspace ativo (é assim que o site público de cada cliente chama
+ * `POST /api/conversions`). `*` abriria todas as rotas — incluindo
+ * `/api/run`, `/api/performance/refresh` e o histórico/uso de IA — a
+ * qualquer origem; combinado com Basic Auth (cujas credenciais o browser
+ * reenvia automaticamente para o mesmo host), isso é uma superfície de
+ * CSRF real, não só teórica.
+ */
+app.use((req, res, next) => {
+  const origin = req.header("origin");
+  if (!origin) { next(); return; }
+  listWorkspaces()
+    .then((workspaces) => {
+      if (workspaces.some((w) => w.integrations.siteUrl === origin)) {
+        res.header("Access-Control-Allow-Origin", origin);
+        res.header("Vary", "Origin");
+      }
+      next();
+    })
+    .catch(next);
+});
 
 app.get("/api/workspaces", asyncHandler(async (_req, res) => {
   const workspaces = await listWorkspaces();
@@ -216,7 +239,12 @@ app.post("/api/run", express.json(), asyncHandler(async (req, res) => {
   res.json({ ok: true, mode: "local" });
 
   try {
-    await runPipeline(workspaceId, (event) => broadcast(workspaceId, event));
+    // Ao contrário de contextFor() (rotas somente-leitura), rodar o pipeline
+    // de verdade precisa de um provider de IA — contexto próprio, com as
+    // exigências padrão (requireAiProvider: true).
+    const workspace = await loadWorkspace(workspaceId);
+    const runCtx = await buildWorkspaceContext(workspace, secrets);
+    await runPipeline(runCtx, (event) => broadcast(workspaceId, event));
   } catch {
     // erro já foi transmitido como evento "error" pelo broadcast
   } finally {
