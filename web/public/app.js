@@ -21,8 +21,13 @@ function withWorkspace(path) {
 
 async function initWorkspaceSelector() {
   const res = await fetch("/api/workspaces");
+  if (!res.ok) throw new Error("Não foi possível carregar a lista de workspaces.");
   const workspaces = await res.json();
   const select = document.getElementById("workspace-select");
+  if (!select) throw new Error("Seletor de workspace não encontrado na página.");
+  if (!Array.isArray(workspaces) || workspaces.length === 0) {
+    throw new Error("Nenhum workspace configurado.");
+  }
   select.innerHTML = workspaces.map((w) => `<option value="${w.id}">${w.name}</option>`).join("");
 
   let selected = currentWorkspaceId();
@@ -546,20 +551,27 @@ function connectEvents() {
 }
 
 async function init() {
-  await initWorkspaceSelector();
-  buildDesks();
-  loadHistory();
-  loadRuns();
-  loadUsage();
-  loadConversions();
-  loadStatus();
-  loadPerformance();
-  connectEvents();
+  try {
+    await initWorkspaceSelector();
+    buildDesks();
+    loadHistory();
+    loadRuns();
+    loadUsage();
+    loadConversions();
+    loadStatus();
+    loadPerformance();
+    connectEvents();
 
-  // Painel hospedado: recarrega as execuções periodicamente para pegar novas
-  // publicações da Action sem precisar dar refresh na página.
-  setInterval(loadRuns, 60000);
-  setInterval(loadUsage, 60000);
+    // Painel hospedado: recarrega as execuções periodicamente para pegar novas
+    // publicações da Action sem precisar dar refresh na página.
+    setInterval(loadRuns, 60000);
+    setInterval(loadUsage, 60000);
+  } catch (error) {
+    // Sem isto, qualquer falha aqui (ex: /api/workspaces fora do ar) deixava o
+    // painel em branco, sem nenhuma mensagem para o usuário.
+    showToast(error.message ?? "Falha ao carregar o painel.", "error");
+    if (topicLine) topicLine.textContent = `Não foi possível carregar o painel: ${error.message ?? "erro desconhecido"}`;
+  }
 }
 
 init();
