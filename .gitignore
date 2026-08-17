@@ -18,7 +18,7 @@ build/
 graphify-out/
 
 # --- Estado gerado em runtime (métricas geradas sob demanda no painel) ---
-post-performance.json
+**/post-performance.json
 
 # --- Logs ---
 *.log

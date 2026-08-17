@@ -27,9 +27,35 @@ NextAssist, sem intervenção manual.
    acelerar o rastreamento (melhor esforço; não derruba o pipeline se
    falhar, já que o post já foi publicado)
 
-Os temas vêm de `content-calendar.json`. Cada execução consome o
+Os temas vêm de `workspaces/<id>/content-calendar.json`. Cada execução consome o
 próximo tema não publicado e marca como `publicado: true` ao final.
 Quando a lista acabar, adicione novos tópicos nesse arquivo.
+
+## Workspaces
+
+Tudo é organizado por workspace (uma marca / um cliente). Cada um vive em
+`workspaces/<id>/`:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `workspace.json` | marca, metas, canais, integrações e segredos obrigatórios |
+| `content-calendar.json` | fila de temas a publicar |
+| `post-history.json` | posts já publicados |
+| `runs-history.json` | registro de cada execução do pipeline |
+| `post-performance.json` | último relatório do Search Console (gerado local, não versionado) |
+
+O CLI escolhe o workspace pela variável `WORKSPACE_ID` (padrão: `nextassist`):
+
+```bash
+WORKSPACE_ID=nextassist npm run run
+WORKSPACE_ID=nextassist npm run update:seo
+```
+
+O painel exige o workspace na URL — `http://localhost:4173/?workspace=nextassist`
+— e o seletor no topo da página troca entre os workspaces ativos (todas as
+chamadas de API recebem `?workspace=<id>`). A GitHub Action roda um job por
+workspace ativo via matrix, e o `workflow_dispatch` aceita o input
+`workspace_id` para rodar apenas um.
 
 ## Setup
 
@@ -152,7 +178,7 @@ Abaixo do escritório há duas seções de acompanhamento:
   impressões, CTR e posição média) com botão "Atualizar métricas" que
   consulta o Search Console na hora. No painel hospedado, o último relatório
   fica persistido no Firebase Storage em
-  `panel-state/post-performance.json`, sobrevivendo ao encerramento ou à
+  `panel-state/<workspace-id>/post-performance.json`, sobrevivendo ao encerramento ou à
   recriação da instância.
 - **Conversões do blog** — mostra visitas à demonstração, testes iniciados,
   contatos e cliques no WhatsApp. Os novos artigos identificam o slug e a
@@ -160,15 +186,15 @@ Abaixo do escritório há duas seções de acompanhamento:
   comparar quais pautas e chamadas realmente geram leads.
 
 Cada execução do pipeline grava um registro detalhado em
-`runs-history.json`, que a Action commita de volta (inclusive quando
+`workspaces/<id>/runs-history.json`, que a Action commita de volta (inclusive quando
 falha) — é assim que o painel confirma o que a automação realmente fez.
 
 ### Hospedando o painel sempre online
 
 Se rodar o painel num serviço (Cloud Run, Render etc.), ele não recebe os
 commits da Action diretamente. Defina `DATA_SOURCE=github` no ambiente do
-servidor para que ele leia os arquivos de estado (`runs-history.json`,
-`post-history.json`) via API do GitHub — assim o painel reflete as
+servidor para que ele leia os arquivos de estado
+(`workspaces/<id>/runs-history.json`, `workspaces/<id>/post-history.json`) via API do GitHub — assim o painel reflete as
 publicações diárias sem precisar de `git pull`. Localmente, deixe
 `DATA_SOURCE=local` (padrão).
 
@@ -248,7 +274,8 @@ Brasília) via GitHub Actions. Para ativar:
 
 ## Adicionando mais temas
 
-Edite `content-calendar.json` e adicione objetos no formato:
+Edite `workspaces/<id>/content-calendar.json` (ex:
+`workspaces/nextassist/content-calendar.json`) e adicione objetos no formato:
 
 ```json
 { "tema": "...", "palavraChaveAlvo": "...", "publicado": false }
