@@ -176,7 +176,7 @@ app.get("/api/status", (req, res) => {
   res.json({ running: state.running, lastEvents: state.lastEvents, runMode });
 });
 
-const AGENT_IDS: AgentId[] = ["pesquisa-mercado", "pesquisa-pauta", "redator", "editor-seo", "publicador", "instagram", "indexador"];
+const AGENT_IDS: AgentId[] = ["marketing-director", "pesquisa-mercado", "pesquisa-pauta", "redator", "editor-seo", "publicador", "instagram", "indexador"];
 const AGENT_STATUSES: AgentStatus[] = ["idle", "working", "done", "error"];
 
 function validIngestToken(req: express.Request): boolean {

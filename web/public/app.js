@@ -42,6 +42,7 @@ async function initWorkspaceSelector() {
 }
 
 const AGENTS = [
+  { id: "marketing-director", name: "Marina", role: "Marketing Director", emoji: "📊" },
   { id: "pesquisa-mercado", name: "Ana", role: "Pesquisa de mercado", emoji: "🔍" },
   { id: "pesquisa-pauta", name: "Bruno", role: "Pesquisa de pauta", emoji: "🗂️" },
   { id: "redator", name: "Carla", role: "Redação", emoji: "✍️" },

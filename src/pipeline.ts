@@ -9,33 +9,16 @@ import { publishToInstagram } from "./agents/instagramPublisher.js";
 import { indexPublishedPost, postUrl } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
 import { validateFinalPost } from "./lib/contentQuality.js";
+import { emit, type AgentId, type AgentStatus, type PipelineEvent, type OnEvent } from "./pipelineEvents.js";
 import type { WorkspaceContext, AnthropicUsage } from "./context.js";
 
-export type AgentId =
-  | "pesquisa-mercado" | "pesquisa-pauta" | "redator" | "editor-seo"
-  | "publicador" | "instagram" | "indexador";
-
-export type AgentStatus = "idle" | "working" | "done" | "error";
-
-export interface PipelineEvent {
-  agent: AgentId;
-  status: AgentStatus;
-  message?: string;
-  tema?: string;
-  timestamp: string;
-}
-
-export type OnEvent = (event: PipelineEvent) => void;
+export type { AgentId, AgentStatus, PipelineEvent, OnEvent } from "./pipelineEvents.js";
 
 async function getPublishedSlugs(ctx: WorkspaceContext): Promise<string[]> {
   const response = await fetch(`${ctx.workspace.integrations.cms.apiUrl}/blog/posts`, { headers: { Accept: "application/json" } });
   if (!response.ok) throw new Error(`Não foi possível carregar posts existentes: HTTP ${response.status}`);
   const payload = (await response.json()) as { data?: Array<{ slug?: string }> };
   return (payload.data ?? []).map((post) => post.slug).filter((slug): slug is string => Boolean(slug));
-}
-
-function emit(onEvent: OnEvent | undefined, event: Omit<PipelineEvent, "timestamp">) {
-  onEvent?.({ ...event, timestamp: new Date().toISOString() });
 }
 
 export interface PipelineResult {
