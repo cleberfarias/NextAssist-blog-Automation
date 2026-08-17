@@ -1,5 +1,23 @@
 [
   {
+    "id": "2026-08-17T19:55:23.988Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-17T19:55:23.988Z",
+    "finalizadoEm": "2026-08-17T19:55:24.008Z",
+    "tema": null,
+    "status": "sem-tema",
+    "slug": null,
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-pauta",
+        "status": "error",
+        "message": "Nenhum tópico pendente no calendário.",
+        "timestamp": "2026-08-17T19:55:23.995Z"
+      }
+    ]
+  },
+  {
     "id": "2026-08-17T13:32:36.469Z",
     "origem": "action",
     "iniciadoEm": "2026-08-17T13:32:36.469Z",
