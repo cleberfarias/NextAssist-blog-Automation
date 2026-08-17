@@ -21,9 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: list
+        # O input vai por env, nunca interpolado direto no script — evita injeção
+        # de shell num job com contents:write e acesso a segredos.
+        env:
+          WORKSPACE_ID_INPUT: ${{ github.event.inputs.workspace_id }}
         run: |
-          if [ -n "${{ github.event.inputs.workspace_id }}" ]; then
-            echo "workspaces=[\"${{ github.event.inputs.workspace_id }}\"]" >> "$GITHUB_OUTPUT"
+          if [ -n "$WORKSPACE_ID_INPUT" ]; then
+            echo "workspaces=$(jq -nc --arg id "$WORKSPACE_ID_INPUT" '[$id]')" >> "$GITHUB_OUTPUT"
           else
             ids=$(for f in workspaces/*/workspace.json; do
               active=$(jq -r '.active' "$f")
