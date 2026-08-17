@@ -129,15 +129,21 @@ export async function buildWorkspaceContext(
 
   // Falha rápido se algum segredo declarado como obrigatório no workspace.json
   // estiver ausente — antes de gastar chamadas de IA em estágios posteriores.
-  // As chaves de IA já têm a verificação dedicada acima.
-  const aiKeys = new Set(["OPENAI_API_KEY", "ANTHROPIC_API_KEY"]);
-  const requiredSecrets = (workspace.secrets?.required ?? []).filter((key) => !aiKeys.has(key));
-  const resolvedRequired = await Promise.all(
-    requiredSecrets.map(async (key) => ({ key, value: await secrets.get(workspace.id, key) })),
-  );
-  const missing = resolvedRequired.filter(({ value }) => !value).map(({ key }) => key);
-  if (missing.length) {
-    throw new Error(`Workspace "${workspace.id}": segredos obrigatórios ausentes: ${missing.join(", ")}`);
+  // As chaves de IA já têm a verificação dedicada acima. Assim como aquela
+  // verificação, isso é pulado quando `requireAiProvider: false` (rotas
+  // somente-leitura do painel) — essas rotas nunca chamam `runAgent` nem
+  // publicam, então não devem depender de segredos que só as etapas de
+  // publicação/mídia realmente usam.
+  if (options.requireAiProvider !== false) {
+    const aiKeys = new Set(["OPENAI_API_KEY", "ANTHROPIC_API_KEY"]);
+    const requiredSecrets = (workspace.secrets?.required ?? []).filter((key) => !aiKeys.has(key));
+    const resolvedRequired = await Promise.all(
+      requiredSecrets.map(async (key) => ({ key, value: await secrets.get(workspace.id, key) })),
+    );
+    const missing = resolvedRequired.filter(({ value }) => !value).map(({ key }) => key);
+    if (missing.length) {
+      throw new Error(`Workspace "${workspace.id}": segredos obrigatórios ausentes: ${missing.join(", ")}`);
+    }
   }
 
   const aiPrimaryProvider = options.aiPrimaryProvider ?? (openaiKey ? "openai" : "anthropic");

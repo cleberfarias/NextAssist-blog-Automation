@@ -69,3 +69,13 @@ test("não exige chave de IA quando requireAiProvider é false", async () => {
   assert.equal(ctx.ai.openai, undefined);
   assert.equal(ctx.ai.anthropic, undefined);
 });
+
+test("requireAiProvider: false também pula a checagem de segredos obrigatórios (rotas somente-leitura do painel)", async () => {
+  const strictWorkspace: MarketingWorkspace = {
+    ...workspace,
+    secrets: { required: ["OPENAI_API_KEY", "FIREBASE_STORAGE_BUCKET"] },
+  };
+  await assert.doesNotReject(() =>
+    buildWorkspaceContext(strictWorkspace, fakeSecrets({}), { requireAiProvider: false }),
+  );
+});
