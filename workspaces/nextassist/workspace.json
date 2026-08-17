@@ -35,6 +35,10 @@
   "autonomy": {
     "mode": "semi-autonomous"
   },
+  "contentStrategy": {
+    "minimumPendingTopics": 5,
+    "replenishAmount": 15
+  },
   "secrets": {
     "required": [
       "OPENAI_API_KEY",
