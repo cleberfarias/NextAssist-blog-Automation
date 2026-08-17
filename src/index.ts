@@ -42,11 +42,19 @@ try {
   console.error("Falha no pipeline:", message);
   const tema = eventos.find((e) => e.tema)?.tema ?? null;
   const usage = (err as Error & { usage?: AnthropicUsage }).usage;
-  const workspace = await loadWorkspace(workspaceId);
-  const ctx = await buildWorkspaceContext(workspace, new EnvSecretProvider());
-  await appendRun(ctx, {
-    id: iniciadoEm, origem, iniciadoEm, finalizadoEm: new Date().toISOString(),
-    tema, status: "falhou", slug: null, erro: message, eventos, usage,
-  });
+  // Se a falha original foi justamente workspace inválido / credencial ausente,
+  // essa recuperação também falha — não deixe isso virar unhandled rejection.
+  try {
+    const workspace = await loadWorkspace(workspaceId);
+    const ctx = await buildWorkspaceContext(workspace, new EnvSecretProvider());
+    await appendRun(ctx, {
+      id: iniciadoEm, origem, iniciadoEm, finalizadoEm: new Date().toISOString(),
+      tema, status: "falhou", slug: null, erro: message, eventos, usage,
+    });
+  } catch (recoveryErr) {
+    const recoveryMessage = recoveryErr instanceof Error ? recoveryErr.message : String(recoveryErr);
+    console.error("Não foi possível registrar a execução que falhou:", recoveryMessage);
+    console.error("Erro original do pipeline:", message);
+  }
   process.exit(1);
 }
