@@ -34,6 +34,10 @@ export interface MarketingWorkspace {
   autonomy: {
     mode: "copilot" | "semi-autonomous" | "autonomous";
   };
+  contentStrategy?: {
+    minimumPendingTopics: number;
+    replenishAmount: number;
+  };
   secrets: {
     required: string[];
     optional?: string[];
@@ -80,6 +84,10 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     if (typeof v !== "string" || !allowed.has(v as T)) fail(`"${path}" precisa ser um de: ${[...allowed].join(", ")}`);
     return v as T;
   };
+  const requirePositiveInteger = (v: unknown, path: string): number => {
+    if (typeof v !== "number" || !Number.isInteger(v) || v <= 0) fail(`"${path}" precisa ser um inteiro positivo`);
+    return v as number;
+  };
 
   const w = requireObject(value, "(raiz)");
 
@@ -109,6 +117,12 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
 
   const autonomyRaw = requireObject(w.autonomy, "autonomy");
   requireEnum(autonomyRaw.mode, "autonomy.mode", AUTONOMY_MODES);
+
+  if (w.contentStrategy !== undefined) {
+    const contentStrategyRaw = requireObject(w.contentStrategy, "contentStrategy");
+    requirePositiveInteger(contentStrategyRaw.minimumPendingTopics, "contentStrategy.minimumPendingTopics");
+    requirePositiveInteger(contentStrategyRaw.replenishAmount, "contentStrategy.replenishAmount");
+  }
 
   const secretsRaw = requireObject(w.secrets, "secrets");
   requireStringArray(secretsRaw.required, "secrets.required");

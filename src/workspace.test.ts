@@ -85,3 +85,27 @@ test("listWorkspaces ignora um workspace inválido (loga o erro) sem derrubar os
     console.error = originalError;
   }
 });
+
+test("contentStrategy é opcional — workspace sem o campo carrega normalmente", async () => {
+  const root = await makeFixtureRoot({ acme: baseWorkspace });
+  const workspace = await loadWorkspace("acme", root);
+  assert.equal(workspace.contentStrategy, undefined);
+});
+
+test("contentStrategy inválido (minimumPendingTopics não numérico) falha ao carregar", async () => {
+  const root = await makeFixtureRoot({
+    acme: { ...baseWorkspace, contentStrategy: { minimumPendingTopics: "cinco", replenishAmount: 15 } },
+  });
+  await assert.rejects(
+    () => loadWorkspace("acme", root),
+    /contentStrategy\.minimumPendingTopics.*inteiro positivo/,
+  );
+});
+
+test("contentStrategy válido é aceito e exposto no workspace carregado", async () => {
+  const root = await makeFixtureRoot({
+    acme: { ...baseWorkspace, contentStrategy: { minimumPendingTopics: 5, replenishAmount: 15 } },
+  });
+  const workspace = await loadWorkspace("acme", root);
+  assert.deepEqual(workspace.contentStrategy, { minimumPendingTopics: 5, replenishAmount: 15 });
+});
