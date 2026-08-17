@@ -93,8 +93,8 @@ app.get("/api/workspaces", async (_req, res) => {
 });
 
 app.post("/api/conversions", express.json(), async (req, res) => {
-  const workspaceId = requireWorkspaceId(req, res);
-  if (!workspaceId) return;
+  const workspaceId = String(req.body?.workspaceId ?? "");
+  if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
   const allowed: ConversionEventName[] = ["demo_view", "demo_submit", "contact_submit", "whatsapp_click"];
   if (!allowed.includes(req.body?.name)) { res.status(400).json({ error: "Evento inválido" }); return; }
   const campaign = String(req.body.campaign ?? "").slice(0, 80);
