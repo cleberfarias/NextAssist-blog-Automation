@@ -1,4 +1,5 @@
 import "./context.test.js";
+import "./contentCalendar.test.js";
 import "./conversions.test.js";
 import "./lib/cms.test.js";
 import "./lib/dataSource.test.js";

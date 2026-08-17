@@ -1,3 +1,4 @@
+// src/contentCalendar.ts
 import { readFile, writeFile } from "node:fs/promises";
 import type { WorkspaceContext } from "./context.js";
 
@@ -6,6 +7,19 @@ export interface CalendarTopic {
   palavraChaveAlvo: string;
   publicado: boolean;
   publicadoEm?: string;
+  /** Presente quando o tópico foi gerado pelo Marketing Director em vez de curado manualmente. */
+  generatedBy?: "marketing-director";
+  createdAt?: string;
+  reason?: string;
+  priority?: "high" | "medium" | "low";
+}
+
+/** O que o Marketing Director (ou qualquer outro gerador futuro) precisa fornecer para virar um `CalendarTopic`. */
+export interface NewTopicInput {
+  tema: string;
+  palavraChaveAlvo: string;
+  reason?: string;
+  priority?: "high" | "medium" | "low";
 }
 
 interface Calendar {
@@ -38,11 +52,36 @@ export async function markTopicPublished(ctx: WorkspaceContext, tema: string): P
   }
 }
 
-/** Adiciona novos tópicos descobertos pelo agente de pesquisa de mercado. */
-export async function addTopics(ctx: WorkspaceContext, newTopics: CalendarTopic[]): Promise<void> {
+/** Conta quantos tópicos ainda não foram publicados — usado por `ensureContentBacklog` para decidir se reabastece. */
+export async function countPendingTopics(ctx: WorkspaceContext): Promise<number> {
   const calendar = await load(ctx);
-  const existing = new Set(calendar.topicos.map((t) => t.tema.toLowerCase()));
-  const toAdd = newTopics.filter((t) => !existing.has(t.tema.toLowerCase()));
-  calendar.topicos.push(...toAdd);
+  return calendar.topicos.filter((t) => !t.publicado).length;
+}
+
+/** Todos os tópicos (pendentes e publicados) — base para deduplicar novas pautas geradas pelo Marketing Director. */
+export async function getAllTopics(ctx: WorkspaceContext): Promise<CalendarTopic[]> {
+  return (await load(ctx)).topicos;
+}
+
+/**
+ * Acrescenta novos tópicos ao calendário. Quem chama (`ensureContentBacklog`)
+ * já validou duplicidade/qualidade — esta função só persiste, marcando a
+ * origem para diferenciar de tópicos curados manualmente.
+ */
+export async function addTopics(ctx: WorkspaceContext, inputs: NewTopicInput[]): Promise<CalendarTopic[]> {
+  if (inputs.length === 0) return [];
+  const calendar = await load(ctx);
+  const createdAt = new Date().toISOString();
+  const newTopics: CalendarTopic[] = inputs.map((input) => ({
+    tema: input.tema,
+    palavraChaveAlvo: input.palavraChaveAlvo,
+    publicado: false,
+    generatedBy: "marketing-director",
+    createdAt,
+    reason: input.reason,
+    priority: input.priority,
+  }));
+  calendar.topicos.push(...newTopics);
   await save(ctx, calendar);
+  return newTopics;
 }
