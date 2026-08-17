@@ -1,0 +1,55 @@
+{
+  "id": "nextassist",
+  "name": "NextAssist",
+  "active": true,
+  "brand": {
+    "name": "NextAssist",
+    "description": "Sistema de gestão para assistências técnicas de celular no Brasil.",
+    "toneOfVoice": "Direto e prático, focado em dono de assistência técnica solo ou com equipe pequena — sem jargão corporativo.",
+    "targetAudience": ["donos de assistência técnica de celular", "gestores de pequenas equipes de conserto"],
+    "competitors": ["AnaDita", "MarkupEmpresa", "GestãoClick"],
+    "requiredLinks": ["/#funcionalidades"]
+  },
+  "goals": {
+    "primary": "leads"
+  },
+  "channels": {
+    "blog": true,
+    "instagram": true,
+    "linkedin": false
+  },
+  "integrations": {
+    "siteUrl": "https://www.nextassist-app.com.br",
+    "cms": {
+      "provider": "nextassist",
+      "apiUrl": "https://rr-infocell-api-91248386036.southamerica-east1.run.app"
+    },
+    "searchConsole": {
+      "siteUrl": "sc-domain:nextassist-app.com.br",
+      "sitemapUrl": "https://www.nextassist-app.com.br/sitemap.xml"
+    },
+    "instagram": {
+      "apiVersion": "v21.0"
+    }
+  },
+  "autonomy": {
+    "mode": "semi-autonomous"
+  },
+  "secrets": {
+    "required": [
+      "OPENAI_API_KEY",
+      "FIREBASE_WEB_API_KEY",
+      "FIREBASE_ADMIN_EMAIL",
+      "FIREBASE_ADMIN_PASSWORD",
+      "FIREBASE_SERVICE_ACCOUNT_JSON",
+      "FIREBASE_STORAGE_BUCKET"
+    ],
+    "optional": [
+      "ANTHROPIC_API_KEY",
+      "IG_USER_ID",
+      "IG_ACCESS_TOKEN",
+      "GEMINI_API_KEY",
+      "GEMINI_API_KEY_FALLBACK"
+    ]
+  }
+}

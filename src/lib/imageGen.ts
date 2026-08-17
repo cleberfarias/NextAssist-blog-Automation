@@ -1,54 +1,19 @@
-import { config } from "../config.js";
+// src/lib/imageGen.ts
+import type { WorkspaceContext } from "../context.js";
 
-/**
- * Gera uma imagem de capa a partir de um prompt e devolve os bytes (JPEG).
- * Implementado para o provider "openai" (gpt-image-1). Para trocar de
- * provider, adicione um novo `case` aqui — o restante do pipeline não muda.
- *
- * O formato precisa ser JPEG: a mesma capa é reaproveitada na publicação do
- * Instagram, e a Graph API da Meta só aceita imagens JPEG.
- */
-export async function generateCoverImage(prompt: string): Promise<Buffer> {
-  if (!config.imageGenApiKey) {
-    throw new Error(
-      "IMAGE_GEN_API_KEY não configurada — necessária para gerar a imagem de capa.",
-    );
-  }
+export async function generateCoverImage(ctx: WorkspaceContext, prompt: string): Promise<Buffer> {
+  const apiKey = await ctx.secrets.get(ctx.workspace.id, "OPENAI_API_KEY");
+  if (!apiKey) throw new Error(`Workspace "${ctx.workspace.id}": OPENAI_API_KEY não configurada — necessária para gerar a imagem de capa.`);
 
-  switch (config.imageGenProvider) {
-    case "openai":
-      return generateWithOpenAi(prompt);
-    default:
-      throw new Error(
-        `Provider de imagem "${config.imageGenProvider}" não implementado.`,
-      );
-  }
-}
-
-async function generateWithOpenAi(prompt: string): Promise<Buffer> {
   const res = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${config.imageGenApiKey}`,
-    },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
-      model: "gpt-image-1",
-      prompt,
-      size: "1536x1024",
-      // JPEG para compatibilidade com a Graph API do Instagram (não aceita PNG).
-      // 1536x1024 (proporção 1.5:1) fica dentro da faixa aceita no feed.
-      output_format: "jpeg",
-      output_compression: 90,
-      n: 1,
+      model: "gpt-image-1", prompt, size: "1536x1024",
+      output_format: "jpeg", output_compression: 90, n: 1,
     }),
   });
-
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Falha ao gerar imagem de capa: ${err}`);
-  }
-
+  if (!res.ok) throw new Error(`Falha ao gerar imagem de capa: ${await res.text()}`);
   const data = (await res.json()) as { data: { b64_json: string }[] };
   return Buffer.from(data.data[0].b64_json, "base64");
 }

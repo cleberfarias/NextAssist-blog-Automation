@@ -1,15 +1,14 @@
+// src/lib/githubDispatch.ts
 import { config } from "../config.js";
 
 const WORKFLOW_FILE = "daily-post.yml";
 
 /**
- * Dispara manualmente o workflow diário do GitHub Actions
- * (`.github/workflows/daily-post.yml`, `workflow_dispatch`). Usado pelo
- * botão "Rodar pipeline agora" do painel hospedado: em vez de rodar o
- * pipeline no próprio servidor (que não commita o estado de volta), aciona
- * a mesma automação de sempre, que publica e commita normalmente.
+ * Dispara manualmente o workflow diário do GitHub Actions para um workspace
+ * específico (`workflow_dispatch` com `inputs.workspace_id`). Usado pelo
+ * botão "Rodar pipeline agora" do painel hospedado.
  */
-export async function triggerDailyPostWorkflow(): Promise<void> {
+export async function triggerDailyPostWorkflow(workspaceId: string): Promise<void> {
   if (!config.githubDispatchToken) {
     throw new Error("GITHUB_DISPATCH_TOKEN não configurada — necessária para disparar a Action.");
   }
@@ -24,7 +23,7 @@ export async function triggerDailyPostWorkflow(): Promise<void> {
         "X-GitHub-Api-Version": "2022-11-28",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ref: config.githubBranch }),
+      body: JSON.stringify({ ref: config.githubBranch, inputs: { workspace_id: workspaceId } }),
     },
   );
 

@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
+import type { WorkspaceContext } from "./context.js";
 
-const PATH = new URL("../conversion-events.json", import.meta.url);
 export type ConversionEventName = "demo_view" | "demo_submit" | "contact_submit" | "whatsapp_click";
 export interface ConversionEvent {
   name: ConversionEventName;
@@ -19,18 +19,18 @@ interface AttributionRow {
   whatsappClicks: number;
 }
 
-async function load(): Promise<ConversionEvent[]> {
+async function load(ctx: WorkspaceContext): Promise<ConversionEvent[]> {
   try {
-    return JSON.parse(await readFile(PATH, "utf8")) as ConversionEvent[];
+    return JSON.parse(await readFile(ctx.paths.conversions, "utf8")) as ConversionEvent[];
   } catch {
     return [];
   }
 }
 
-export async function recordConversion(event: Omit<ConversionEvent, "createdAt">): Promise<void> {
-  const events = await load();
+export async function recordConversion(ctx: WorkspaceContext, event: Omit<ConversionEvent, "createdAt">): Promise<void> {
+  const events = await load(ctx);
   const updated = [{ ...event, createdAt: new Date().toISOString() }, ...events].slice(0, 10000);
-  await writeFile(PATH, `${JSON.stringify(updated, null, 2)}\n`);
+  await writeFile(ctx.paths.conversions, `${JSON.stringify(updated, null, 2)}\n`);
 }
 
 function attribution(
@@ -82,6 +82,6 @@ export function summarizeConversions(events: ConversionEvent[]) {
   };
 }
 
-export async function getConversionSummary() {
-  return summarizeConversions(await load());
+export async function getConversionSummary(ctx: WorkspaceContext) {
+  return summarizeConversions(await load(ctx));
 }

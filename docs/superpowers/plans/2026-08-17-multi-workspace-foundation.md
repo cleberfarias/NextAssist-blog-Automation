@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- No agent (`src/agents/*.ts`) or lib (`src/lib/*.ts`) imports `config.ts` after this plan — everything client-specific flows through the `WorkspaceContext` parameter.
+- No agent (`src/agents/*.ts`) imports `config.ts` after this plan — everything client-specific flows through the `WorkspaceContext` parameter. Among `src/lib/*.ts`, this applies to every integration lib migrated in Task 8 (storage, google, searchConsole, imageGen, instagram, tts, veo) and `src/lib/anthropic.ts` (Task 7) — `src/lib/dataSource.ts`, `src/lib/githubDispatch.ts`, and `src/lib/panelIngest.ts` are the deliberate exception: they read only the app-level fields `config.ts` still legitimately owns after Task 16 (`dataSource`, `githubRepo`, `githubBranch`, `githubToken`, `githubDispatchToken`, `panelIngestUrl`, `panelIngestToken`), not client-specific values, so importing `config.ts` there is correct, not a violation.
 - Internal imports use explicit `.js` extensions in `.ts` source (existing ESM convention) — every new/edited import follows this.
 - No ESLint/Prettier is configured — match the exact style of the file being edited.
 - Every persisted state field lives under `workspaces/<id>/`, never at the repo root, after this plan.
@@ -2495,8 +2495,8 @@ app.get("/api/workspaces", async (_req, res) => {
 });
 
 app.post("/api/conversions", express.json(), async (req, res) => {
-  const workspaceId = requireWorkspaceId(req, res);
-  if (!workspaceId) return;
+  const workspaceId = String(req.body?.workspaceId ?? "");
+  if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
   const allowed: ConversionEventName[] = ["demo_view", "demo_submit", "contact_submit", "whatsapp_click"];
   if (!allowed.includes(req.body?.name)) { res.status(400).json({ error: "Evento inválido" }); return; }
   const campaign = String(req.body.campaign ?? "").slice(0, 80);

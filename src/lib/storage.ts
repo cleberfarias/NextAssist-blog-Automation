@@ -1,45 +1,37 @@
+// src/lib/storage.ts
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
-import { config } from "../config.js";
-
-function getStorageBucket() {
-  if (getApps().length === 0) {
-    const serviceAccount = JSON.parse(config.firebaseServiceAccountJson);
-    initializeApp({
-      credential: cert(serviceAccount),
-      storageBucket: config.firebaseStorageBucket,
-    });
-  }
-  return getStorage().bucket();
-}
+import type { WorkspaceContext } from "../context.js";
 
 /**
- * Grava estado JSON durável no bucket. É usado pelo painel hospedado porque
- * o sistema de arquivos do Cloud Run é descartado quando a instância encerra.
+ * Um app nomeado por workspace — o app default do Admin SDK é um singleton do
+ * processo inteiro, então no painel (que serve vários workspaces) o workspace B
+ * acabaria usando as credenciais/bucket do workspace A.
  */
-export async function writeStateJson(
-  fileName: string,
-  value: unknown,
-): Promise<void> {
-  const file = getStorageBucket().file(`panel-state/${fileName}`);
+async function getStorageBucket(ctx: WorkspaceContext) {
+  const existing = getApps().find((app) => app.name === ctx.workspace.id);
+  if (existing) return getStorage(existing).bucket();
+
+  const serviceAccountJson = await ctx.secrets.get(ctx.workspace.id, "FIREBASE_SERVICE_ACCOUNT_JSON");
+  const storageBucket = await ctx.secrets.get(ctx.workspace.id, "FIREBASE_STORAGE_BUCKET");
+  if (!serviceAccountJson || !storageBucket) {
+    throw new Error(`Workspace "${ctx.workspace.id}": FIREBASE_SERVICE_ACCOUNT_JSON / FIREBASE_STORAGE_BUCKET ausentes.`);
+  }
+  const app = initializeApp({ credential: cert(JSON.parse(serviceAccountJson)), storageBucket }, ctx.workspace.id);
+  return getStorage(app).bucket();
+}
+
+export async function writeStateJson(ctx: WorkspaceContext, fileName: string, value: unknown): Promise<void> {
+  const file = (await getStorageBucket(ctx)).file(`panel-state/${ctx.workspace.id}/${fileName}`);
   await file.save(JSON.stringify(value, null, 2) + "\n", {
     resumable: false,
-    metadata: {
-      contentType: "application/json; charset=utf-8",
-      cacheControl: "no-store",
-    },
+    metadata: { contentType: "application/json; charset=utf-8", cacheControl: "no-store" },
   });
 }
 
-/** Lê um estado JSON persistido no bucket, ou devolve o fallback se não existir. */
-export async function readStoredStateJson<T>(
-  fileName: string,
-  fallback: T,
-): Promise<T> {
+export async function readStoredStateJson<T>(ctx: WorkspaceContext, fileName: string, fallback: T): Promise<T> {
   try {
-    const [contents] = await getStorageBucket()
-      .file(`panel-state/${fileName}`)
-      .download();
+    const [contents] = await (await getStorageBucket(ctx)).file(`panel-state/${ctx.workspace.id}/${fileName}`).download();
     return JSON.parse(contents.toString("utf-8")) as T;
   } catch (err) {
     const code = (err as { code?: number | string })?.code;
@@ -48,54 +40,20 @@ export async function readStoredStateJson<T>(
   }
 }
 
-/**
- * Envia os bytes de uma imagem para o Firebase Storage e devolve uma URL
- * pública de longa duração para usar em `imagemCapa`.
- */
-export async function uploadCoverImage(
-  imageBuffer: Buffer,
-  slug: string,
-): Promise<string> {
-  const bucket = getStorageBucket();
-  // JPEG: a capa é reaproveitada na publicação do Instagram, cuja API só aceita
-  // esse formato (ver src/lib/imageGen.ts).
-  const filePath = `blog-covers/${slug}-${Date.now()}.jpg`;
+export async function uploadCoverImage(ctx: WorkspaceContext, imageBuffer: Buffer, slug: string): Promise<string> {
+  const bucket = await getStorageBucket(ctx);
+  const filePath = `blog-covers/${ctx.workspace.id}/${slug}-${Date.now()}.jpg`;
   const file = bucket.file(filePath);
-
-  await file.save(imageBuffer, {
-    metadata: { contentType: "image/jpeg" },
-  });
-
-  // Token de acesso longo em vez de ACL pública — evita depender de
-  // regras de storage abertas.
-  const [url] = await file.getSignedUrl({
-    action: "read",
-    expires: "01-01-2100",
-  });
-
+  await file.save(imageBuffer, { metadata: { contentType: "image/jpeg" } });
+  const [url] = await file.getSignedUrl({ action: "read", expires: "01-01-2100" });
   return url;
 }
 
-/**
- * Envia os bytes de um vídeo do Reel para o Firebase Storage e devolve uma
- * URL pública de longa duração para usar em `video_url` na Graph API.
- */
-export async function uploadReelVideo(
-  videoBuffer: Buffer,
-  slug: string,
-): Promise<string> {
-  const bucket = getStorageBucket();
-  const filePath = `blog-covers/${slug}-${Date.now()}-reel.mp4`;
+export async function uploadReelVideo(ctx: WorkspaceContext, videoBuffer: Buffer, slug: string): Promise<string> {
+  const bucket = await getStorageBucket(ctx);
+  const filePath = `blog-covers/${ctx.workspace.id}/${slug}-${Date.now()}-reel.mp4`;
   const file = bucket.file(filePath);
-
-  await file.save(videoBuffer, {
-    metadata: { contentType: "video/mp4" },
-  });
-
-  const [url] = await file.getSignedUrl({
-    action: "read",
-    expires: "01-01-2100",
-  });
-
+  await file.save(videoBuffer, { metadata: { contentType: "video/mp4" } });
+  const [url] = await file.getSignedUrl({ action: "read", expires: "01-01-2100" });
   return url;
 }

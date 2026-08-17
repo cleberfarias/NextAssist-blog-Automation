@@ -1,3 +1,46 @@
+// web/public/app.js — add near the top, before any fetch/EventSource call runs
+const WORKSPACE_STORAGE_KEY = "office.workspaceId";
+
+function currentWorkspaceId() {
+  const url = new URL(window.location.href);
+  return url.searchParams.get("workspace") || localStorage.getItem(WORKSPACE_STORAGE_KEY) || "";
+}
+
+function setWorkspaceId(id) {
+  localStorage.setItem(WORKSPACE_STORAGE_KEY, id);
+  const url = new URL(window.location.href);
+  url.searchParams.set("workspace", id);
+  window.history.replaceState({}, "", url);
+}
+
+function withWorkspace(path) {
+  const url = new URL(path, window.location.origin);
+  url.searchParams.set("workspace", currentWorkspaceId());
+  return url.pathname + url.search;
+}
+
+async function initWorkspaceSelector() {
+  const res = await fetch("/api/workspaces");
+  if (!res.ok) throw new Error("Não foi possível carregar a lista de workspaces.");
+  const workspaces = await res.json();
+  const select = document.getElementById("workspace-select");
+  if (!select) throw new Error("Seletor de workspace não encontrado na página.");
+  if (!Array.isArray(workspaces) || workspaces.length === 0) {
+    throw new Error("Nenhum workspace configurado.");
+  }
+  select.innerHTML = workspaces.map((w) => `<option value="${w.id}">${w.name}</option>`).join("");
+
+  let selected = currentWorkspaceId();
+  if (!workspaces.some((w) => w.id === selected)) selected = workspaces[0]?.id ?? "";
+  select.value = selected;
+  setWorkspaceId(selected);
+
+  select.addEventListener("change", () => {
+    setWorkspaceId(select.value);
+    window.location.reload(); // simplest correct behavior: re-init everything (SSE, history, etc.) for the new workspace
+  });
+}
+
 const AGENTS = [
   { id: "pesquisa-mercado", name: "Ana", role: "Pesquisa de mercado", emoji: "🔍" },
   { id: "pesquisa-pauta", name: "Bruno", role: "Pesquisa de pauta", emoji: "🗂️" },
@@ -147,7 +190,7 @@ function renderHistory(entries) {
 
 async function loadHistory() {
   try {
-    const res = await fetch("/api/history");
+    const res = await fetch(withWorkspace("/api/history"));
     if (!res.ok) throw new Error("Não foi possível carregar os posts publicados.");
     renderHistory(await res.json());
   } catch (error) { showToast(error.message, "error"); }
@@ -249,7 +292,7 @@ function renderPerformance(report) {
 
 async function loadPerformance() {
   try {
-    const res = await fetch("/api/performance");
+    const res = await fetch(withWorkspace("/api/performance"));
     if (!res.ok) throw new Error("Não foi possível carregar o desempenho.");
     renderPerformance(await res.json());
   } catch (error) { showToast(error.message, "error"); }
@@ -271,7 +314,7 @@ refreshPerfBtn.addEventListener("click", async () => {
     const res = await fetch("/api/performance/refresh", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ inicio: perfStart.value, fim: perfEnd.value }),
+      body: JSON.stringify({ inicio: perfStart.value, fim: perfEnd.value, workspaceId: currentWorkspaceId() }),
     });
     const data = await res.json();
     if (!res.ok) {
@@ -358,7 +401,7 @@ function hydrateFloorFromLatest(runs) {
 
 async function loadRuns() {
   try {
-    const res = await fetch("/api/runs");
+    const res = await fetch(withWorkspace("/api/runs"));
     if (!res.ok) throw new Error("Não foi possível carregar as execuções.");
     const runs = await res.json();
     renderRuns(runs);
@@ -381,12 +424,12 @@ function renderUsage(report) {
 }
 
 async function loadUsage() {
-  const res = await fetch("/api/usage");
+  const res = await fetch(withWorkspace("/api/usage"));
   renderUsage(await res.json());
 }
 
 async function loadConversions() {
-  const res = await fetch("/api/conversions");
+  const res = await fetch(withWorkspace("/api/conversions"));
   if (!res.ok) return;
   const data = await res.json();
   conversionKpis.innerHTML = [
@@ -423,7 +466,7 @@ async function loadConversions() {
 let runMode = "local";
 
 async function loadStatus() {
-  const res = await fetch("/api/status");
+  const res = await fetch(withWorkspace("/api/status"));
   const data = await res.json();
   for (const event of data.lastEvents) updateDesk(event);
   runMode = data.runMode ?? (data.runEnabled === false ? "disabled" : "local");
@@ -443,7 +486,11 @@ function setRunning(running) {
 runBtn.addEventListener("click", async () => {
   if (runMode === "dispatch") {
     runBtn.disabled = true;
-    const res = await fetch("/api/run", { method: "POST" });
+    const res = await fetch("/api/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workspaceId: currentWorkspaceId() }),
+    });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
       showToast(
@@ -459,7 +506,11 @@ runBtn.addEventListener("click", async () => {
 
   setRunning(true);
   liveRunActive = true;
-  const res = await fetch("/api/run", { method: "POST" });
+  const res = await fetch("/api/run", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ workspaceId: currentWorkspaceId() }),
+  });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     showToast(data.error ?? "Não foi possível iniciar o pipeline.", "error");
@@ -468,7 +519,7 @@ runBtn.addEventListener("click", async () => {
 });
 
 function connectEvents() {
-  const source = new EventSource("/api/events");
+  const source = new EventSource(withWorkspace("/api/events"));
   source.onmessage = (msg) => {
     const event = JSON.parse(msg.data);
     updateDesk(event);
@@ -499,16 +550,28 @@ function connectEvents() {
   };
 }
 
-buildDesks();
-loadHistory();
-loadRuns();
-loadUsage();
-loadConversions();
-loadStatus();
-loadPerformance();
-connectEvents();
+async function init() {
+  try {
+    await initWorkspaceSelector();
+    buildDesks();
+    loadHistory();
+    loadRuns();
+    loadUsage();
+    loadConversions();
+    loadStatus();
+    loadPerformance();
+    connectEvents();
 
-// Painel hospedado: recarrega as execuções periodicamente para pegar novas
-// publicações da Action sem precisar dar refresh na página.
-setInterval(loadRuns, 60000);
-setInterval(loadUsage, 60000);
+    // Painel hospedado: recarrega as execuções periodicamente para pegar novas
+    // publicações da Action sem precisar dar refresh na página.
+    setInterval(loadRuns, 60000);
+    setInterval(loadUsage, 60000);
+  } catch (error) {
+    // Sem isto, qualquer falha aqui (ex: /api/workspaces fora do ar) deixava o
+    // painel em branco, sem nenhuma mensagem para o usuário.
+    showToast(error.message ?? "Falha ao carregar o painel.", "error");
+    if (topicLine) topicLine.textContent = `Não foi possível carregar o painel: ${error.message ?? "erro desconhecido"}`;
+  }
+}
+
+init();

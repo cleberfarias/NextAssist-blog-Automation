@@ -2,23 +2,51 @@ name: Post diário do blog
 
 on:
   schedule:
-          # 13:18 UTC = 10:18 no horario de Brasilia (UTC-3)
-          - cron: "18 13 * * *" # Executa as 10:18 BRT
-  workflow_dispatch: {} # permite disparar manualmente pela aba Actions
+    - cron: "18 13 * * *" # 10:18 BRT
+  workflow_dispatch:
+    inputs:
+      workspace_id:
+        description: "Rodar só este workspace (vazio = todos os ativos)"
+        required: false
+        type: string
 
-# Necessário para o passo final conseguir commitar de volta os arquivos
-# de estado (content-calendar.json / post-history.json).
 permissions:
   contents: write
 
-# Evita que duas execuções rodem ao mesmo tempo e peguem o mesmo tema.
-concurrency:
-  group: daily-post
-  cancel-in-progress: false
-
 jobs:
-  publish:
+  list-workspaces:
     runs-on: ubuntu-latest
+    outputs:
+      workspaces: ${{ steps.list.outputs.workspaces }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        # O input vai por env, nunca interpolado direto no script — evita injeção
+        # de shell num job com contents:write e acesso a segredos.
+        env:
+          WORKSPACE_ID_INPUT: ${{ github.event.inputs.workspace_id }}
+        run: |
+          if [ -n "$WORKSPACE_ID_INPUT" ]; then
+            echo "workspaces=$(jq -nc --arg id "$WORKSPACE_ID_INPUT" '[$id]')" >> "$GITHUB_OUTPUT"
+          else
+            ids=$(for f in workspaces/*/workspace.json; do
+              active=$(jq -r '.active' "$f")
+              if [ "$active" = "true" ]; then jq -r '.id' "$f"; fi
+            done | jq -R . | jq -sc .)
+            echo "workspaces=$ids" >> "$GITHUB_OUTPUT"
+          fi
+
+  publish:
+    needs: list-workspaces
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace: ${{ fromJson(needs.list-workspaces.outputs.workspaces) }}
+    environment: ${{ matrix.workspace }}
+    concurrency:
+      group: daily-post-${{ matrix.workspace }}
+      cancel-in-progress: false
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v4
@@ -34,17 +62,14 @@ jobs:
 
       - name: Rodar pipeline (gera e publica o post do dia)
         env:
+          WORKSPACE_ID: ${{ matrix.workspace }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          AI_PROVIDER_PRIMARY: openai
-          OPENAI_MODEL: gpt-5.6
           FIREBASE_WEB_API_KEY: ${{ secrets.FIREBASE_WEB_API_KEY }}
           FIREBASE_ADMIN_EMAIL: ${{ secrets.FIREBASE_ADMIN_EMAIL }}
           FIREBASE_ADMIN_PASSWORD: ${{ secrets.FIREBASE_ADMIN_PASSWORD }}
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
           FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
-          IMAGE_GEN_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          IMAGE_GEN_PROVIDER: openai
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -53,42 +78,34 @@ jobs:
           PANEL_INGEST_TOKEN: ${{ secrets.PANEL_INGEST_TOKEN }}
         run: npm run run
 
-      # Roda mesmo se o pipeline falhar, para registrar a execução (com o
-      # erro) em runs-history.json e o painel conseguir mostrar a falha.
       - name: Commitar estado atualizado (calendário, histórico e execuções)
         if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add content-calendar.json post-history.json runs-history.json
+          git add "workspaces/${{ matrix.workspace }}"/*.json
           if git diff --staged --quiet; then
             echo "Nada mudou no estado — nenhum commit necessário."
           else
-            git commit -m "chore: registro de execução do pipeline [skip ci]"
+            git commit -m "chore: registro de execução do pipeline (${{ matrix.workspace }}) [skip ci]"
 
-            # A main pode receber outro commit enquanto o pipeline roda.
-            # Sincroniza o commit gerado e repete se houver uma corrida entre
-            # o rebase e o push.
             for tentativa in 1 2 3; do
               echo "Tentativa ${tentativa} de publicar o estado..."
-
               if git pull --rebase origin main; then
                 if git push origin HEAD:main; then
                   exit 0
                 fi
               else
-                # Limpa um possível rebase com conflito antes de repetir.
-                if git diff --name-only --diff-filter=U | grep -qx "runs-history.json"; then
-                  git show :2:runs-history.json > /tmp/runs-remote.json
-                  git show :3:runs-history.json > /tmp/runs-local.json
-                  jq -s 'add | unique_by(.id) | sort_by(.iniciadoEm) | reverse | .[:100]' /tmp/runs-remote.json /tmp/runs-local.json > runs-history.json
-                  git add runs-history.json
+                if git diff --name-only --diff-filter=U | grep -qx "workspaces/${{ matrix.workspace }}/runs-history.json"; then
+                  git show :2:"workspaces/${{ matrix.workspace }}/runs-history.json" > /tmp/runs-remote.json
+                  git show :3:"workspaces/${{ matrix.workspace }}/runs-history.json" > /tmp/runs-local.json
+                  jq -s 'add | unique_by(.id) | sort_by(.iniciadoEm) | reverse | .[:100]' /tmp/runs-remote.json /tmp/runs-local.json > "workspaces/${{ matrix.workspace }}/runs-history.json"
+                  git add "workspaces/${{ matrix.workspace }}/runs-history.json"
                   GIT_EDITOR=true git -c core.editor=true rebase --continue
                 else
                   git rebase --abort || true
                 fi
               fi
-
               sleep 5
             done
 

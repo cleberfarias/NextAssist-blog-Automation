@@ -19,10 +19,10 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=build /app/dist ./dist
 COPY web/public ./web/public
-COPY content-calendar.json post-history.json ./
+COPY workspaces ./workspaces
 
 # O painel grava relatórios e arquivos de estado no diretório /app.
-RUN chown node:node /app /app/content-calendar.json /app/post-history.json
+RUN chown -R node:node /app/workspaces && chown node:node /app
 
 USER node
 EXPOSE 8080

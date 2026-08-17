@@ -44,6 +44,20 @@ test("rejeita CTAs sem atribuição individual", () => {
   );
 });
 
+test("só exige requiredLinks quando o workspace declara a lista", () => {
+  const conteudo = validPost().conteudo.replace('<a href="/#funcionalidades">Conheça as funcionalidades</a>', "");
+  const options = { palavraChaveAlvo: "sistema para assistência técnica", demoPath: "/demo" };
+  assert.doesNotThrow(() => validateFinalPost(validPost({ conteudo }), ["controle-estoque"], options));
+  assert.throws(
+    () =>
+      validateFinalPost(validPost({ conteudo }), ["controle-estoque"], {
+        ...options,
+        requiredLinks: ["/#funcionalidades"],
+      }),
+    /precisa conter link para "\/#funcionalidades"/,
+  );
+});
+
 test("rejeita post que não usa a palavra-chave no título ou meta description", () => {
   assert.throws(
     () =>
