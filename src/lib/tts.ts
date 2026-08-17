@@ -1,25 +1,16 @@
+// src/lib/tts.ts
 import OpenAI from "openai";
-import { config } from "../config.js";
+import type { WorkspaceContext } from "../context.js";
 
-const openai = config.openaiApiKey ? new OpenAI({ apiKey: config.openaiApiKey }) : null;
+export async function generateNarration(ctx: WorkspaceContext, text: string): Promise<Buffer> {
+  const apiKey = await ctx.secrets.get(ctx.workspace.id, "OPENAI_API_KEY");
+  if (!apiKey) throw new Error(`Workspace "${ctx.workspace.id}": OPENAI_API_KEY não configurada — necessária para gerar a narração do Reel.`);
 
-/**
- * Gera a narração em áudio (MP3) para o Reel do Instagram, a partir de um
- * texto curto. Usa o TTS da OpenAI (mesma credencial da API principal).
- */
-export async function generateNarration(text: string): Promise<Buffer> {
-  if (!openai) {
-    throw new Error("OPENAI_API_KEY não configurada — necessária para gerar a narração do Reel.");
-  }
-
+  const openai = new OpenAI({ apiKey });
   const response = await openai.audio.speech.create({
-    model: "gpt-4o-mini-tts",
-    voice: "nova",
-    input: text,
+    model: "gpt-4o-mini-tts", voice: "nova", input: text,
     instructions: "Fale em português do Brasil, tom animado e natural, ritmo rápido.",
     response_format: "mp3",
   });
-
-  const arrayBuffer = await response.arrayBuffer();
-  return Buffer.from(arrayBuffer);
+  return Buffer.from(await response.arrayBuffer());
 }
