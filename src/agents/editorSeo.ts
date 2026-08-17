@@ -2,6 +2,13 @@ import { runAgent, extractJson } from "../lib/anthropic.js";
 import type { WorkspaceContext } from "../context.js";
 import type { ContentPlan } from "./topicPlanner.js";
 
+/** Instrução extra só quando o workspace declara links obrigatórios em brand.requiredLinks. */
+function requiredLinksRule(ctx: WorkspaceContext): string {
+  const links = ctx.workspace.brand.requiredLinks ?? [];
+  if (!links.length) return "";
+  return `\n- O HTML precisa conter um link <a href="..."> para cada um destes caminhos: ${links.join(", ")}`;
+}
+
 const SYSTEM_TEMPLATE = (ctx: WorkspaceContext) => `Você é o editor de SEO do blog do ${ctx.workspace.brand.name}. Revise o rascunho HTML
 recebido e devolva a versão final pronta para publicar, aplicando:
 - Slug curto em kebab-case, sem acentos, baseado no título
@@ -15,7 +22,7 @@ recebido e devolva a versão final pronta para publicar, aplicando:
   <a href="/blog/...">, usando exclusivamente slugs dessa lista — nunca
   invente um slug que não esteja nela. Se a lista tiver menos de 2 itens,
   use os que houver (ou nenhum) e não invente.
-- Não repita o título dentro do HTML do conteúdo
+- Não repita o título dentro do HTML do conteúdo${requiredLinksRule(ctx)}
 
 Responda SOMENTE em JSON, sem texto antes ou depois, no formato:
 {

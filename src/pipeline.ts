@@ -80,7 +80,10 @@ export async function runPipeline(workspaceId: string, onEvent?: OnEvent): Promi
       palavraChaveAlvo: topic.palavraChaveAlvo,
       slugsPublicados: publishedSlugs,
     });
-    validateFinalPost(finalPost, publishedSlugs, { palavraChaveAlvo: topic.palavraChaveAlvo });
+    validateFinalPost(finalPost, publishedSlugs, {
+      palavraChaveAlvo: topic.palavraChaveAlvo,
+      requiredLinks: ctx.workspace.brand.requiredLinks,
+    });
     emit(onEvent, { agent: "editor-seo", status: "done", message: `Slug: ${finalPost.slug} · Tags: ${finalPost.tags.join(", ")}` });
 
     emit(onEvent, { agent: "publicador", status: "working", message: "Gerando capa e publicando no blog..." });

@@ -3,6 +3,8 @@ import type { FinalPost } from "../agents/editorSeo.js";
 interface QualityContext {
   palavraChaveAlvo?: string;
   demoPath?: string;
+  /** Fragmentos de caminho que o HTML final precisa linkar — declarados por workspace. */
+  requiredLinks?: string[];
 }
 
 function normalize(value: string): string {
@@ -33,8 +35,10 @@ export function validateFinalPost(
   if (post.metaDescription.trim().length < 120 || post.metaDescription.trim().length > 165) {
     throw new Error("Meta description fora do intervalo recomendado de 120 a 165 caracteres.");
   }
-  if (!post.conteudo.includes("/#funcionalidades")) {
-    throw new Error("O artigo precisa conter link para a seção de funcionalidades.");
+  for (const link of context.requiredLinks ?? []) {
+    if (!post.conteudo.includes(link)) {
+      throw new Error(`O artigo precisa conter link para "${link}".`);
+    }
   }
 
   const ctas = trackedCtas(post.conteudo, demoPath);

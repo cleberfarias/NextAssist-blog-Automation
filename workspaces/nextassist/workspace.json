@@ -7,7 +7,8 @@
     "description": "Sistema de gestão para assistências técnicas de celular no Brasil.",
     "toneOfVoice": "Direto e prático, focado em dono de assistência técnica solo ou com equipe pequena — sem jargão corporativo.",
     "targetAudience": ["donos de assistência técnica de celular", "gestores de pequenas equipes de conserto"],
-    "competitors": ["AnaDita", "MarkupEmpresa", "GestãoClick"]
+    "competitors": ["AnaDita", "MarkupEmpresa", "GestãoClick"],
+    "requiredLinks": ["/#funcionalidades"]
   },
   "goals": {
     "primary": "leads"

@@ -12,6 +12,8 @@ export interface MarketingWorkspace {
     competitors: string[];
     forbiddenTerms?: string[];
     valuePropositions?: string[];
+    /** Fragmentos de caminho que o HTML final precisa linkar (ex: ["/#funcionalidades"]). */
+    requiredLinks?: string[];
   };
   goals: {
     primary: "leads" | "traffic" | "brand" | "sales";
