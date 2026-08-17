@@ -5,6 +5,7 @@ import { loadWorkspace } from "./workspace.js";
 import { EnvSecretProvider } from "./lib/secrets.js";
 import { buildWorkspaceContext, type AnthropicUsage } from "./context.js";
 import { pushEventToPanel } from "./lib/panelIngest.js";
+import type { BacklogResult } from "./backlog.js";
 
 const workspaceId = process.env.WORKSPACE_ID ?? "nextassist";
 const eventos: PipelineEvent[] = [];
@@ -23,10 +24,10 @@ const ctx = await (async () => {
 })();
 
 /** Grava o registro de execução, reaproveitando o mesmo WorkspaceContext da execução. */
-function finalize(status: RunStatus, tema: string | null, slug: string | null, erro: string | null, usage?: AnthropicUsage) {
+function finalize(status: RunStatus, tema: string | null, slug: string | null, erro: string | null, usage?: AnthropicUsage, backlog?: BacklogResult) {
   const record: RunRecord = {
     id: iniciadoEm, origem, iniciadoEm, finalizadoEm: new Date().toISOString(),
-    tema, status, slug, erro, eventos, usage,
+    tema, status, slug, erro, eventos, usage, backlog,
   };
   return appendRun(ctx, record);
 }
@@ -38,12 +39,12 @@ try {
     void pushEventToPanel(workspaceId, event);
   });
 
-  if (result) {
+  if (result.slugPublicado) {
     console.log(`Post publicado: /blog/${result.slugPublicado}`);
-    await finalize("publicado", result.tema, result.slugPublicado, null, result.usage);
+    await finalize("publicado", result.tema, result.slugPublicado, null, result.usage, result.backlog);
   } else {
     console.log("Nenhum tópico pendente no calendário.");
-    await finalize("sem-tema", null, null, null, undefined);
+    await finalize("sem-tema", null, null, null, result.usage, result.backlog);
   }
   process.exit(0);
 } catch (err) {

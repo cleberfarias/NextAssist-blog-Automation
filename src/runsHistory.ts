@@ -3,6 +3,7 @@ import { readStateJson } from "./lib/dataSource.js";
 import type { WorkspaceContext } from "./context.js";
 import type { PipelineEvent } from "./pipeline.js";
 import type { AnthropicUsage } from "./context.js";
+import type { BacklogResult } from "./backlog.js";
 
 const MAX_RUNS = 100;
 
@@ -19,6 +20,7 @@ export interface RunRecord {
   erro: string | null;
   eventos: PipelineEvent[];
   usage?: AnthropicUsage;
+  backlog?: BacklogResult;
 }
 
 async function loadLocal(ctx: WorkspaceContext): Promise<RunRecord[]> {
