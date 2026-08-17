@@ -1,66 +1,39 @@
-import { config } from "../config.js";
 import { googleFetch } from "../lib/google.js";
+import type { WorkspaceContext } from "../context.js";
 
-/** URL pública completa de um post a partir do slug. */
-export function postUrl(slug: string): string {
-  return `${config.siteBaseUrl}/blog/${slug}`;
+export function postUrl(ctx: WorkspaceContext, slug: string): string {
+  return `${ctx.workspace.integrations.siteUrl}/blog/${slug}`;
 }
 
 async function validatePublishedUrl(url: string): Promise<void> {
   const response = await fetch(url, { redirect: "follow" });
-  if (!response.ok) {
-    throw new Error(`URL pública respondeu HTTP ${response.status}`);
-  }
+  if (!response.ok) throw new Error(`URL pública respondeu HTTP ${response.status}`);
 }
 
-async function validateUrlInSitemap(url: string): Promise<void> {
-  const response = await fetch(config.sitemapUrl, { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`sitemap respondeu HTTP ${response.status}`);
-  }
-
+async function validateUrlInSitemap(ctx: WorkspaceContext, url: string): Promise<void> {
+  const sitemapUrl = ctx.workspace.integrations.searchConsole?.sitemapUrl;
+  if (!sitemapUrl) throw new Error(`Workspace "${ctx.workspace.id}": sitemapUrl não configurado.`);
+  const response = await fetch(sitemapUrl, { cache: "no-store" });
+  if (!response.ok) throw new Error(`sitemap respondeu HTTP ${response.status}`);
   const sitemap = await response.text();
-  if (!sitemap.includes(`<loc>${url}</loc>`)) {
-    throw new Error("URL publicada ainda não aparece no sitemap");
-  }
+  if (!sitemap.includes(`<loc>${url}</loc>`)) throw new Error("URL publicada ainda não aparece no sitemap");
 }
 
-/**
- * Reenvia o sitemap ao Search Console para provocar um recrawl. O sitemap em
- * si é servido pelo frontend do blog (gerado dinamicamente) — aqui só pedimos
- * ao Google para lê-lo de novo.
- */
-async function resubmitSitemap(): Promise<void> {
-  const site = encodeURIComponent(config.searchConsoleSiteUrl);
-  const sitemap = encodeURIComponent(config.sitemapUrl);
-  await googleFetch(
-    `https://www.googleapis.com/webmasters/v3/sites/${site}/sitemaps/${sitemap}`,
-    { method: "PUT" },
-  );
+async function resubmitSitemap(ctx: WorkspaceContext): Promise<void> {
+  const sc = ctx.workspace.integrations.searchConsole;
+  if (!sc) throw new Error(`Workspace "${ctx.workspace.id}": integrations.searchConsole não configurado.`);
+  const site = encodeURIComponent(sc.siteUrl);
+  const sitemap = encodeURIComponent(sc.sitemapUrl);
+  await googleFetch(ctx, `https://www.googleapis.com/webmasters/v3/sites/${site}/sitemaps/${sitemap}`, { method: "PUT" });
 }
 
 export interface IndexResult {
-  url: string;
-  urlPublicaOk: boolean;
-  sitemapContemUrl: boolean;
-  sitemapOk: boolean;
-  detalhes: string;
+  url: string; urlPublicaOk: boolean; sitemapContemUrl: boolean; sitemapOk: boolean; detalhes: string;
 }
 
-/**
- * Confirma que o post está público e presente no sitemap antes de reenviá-lo
- * ao Search Console. Não promete indexação imediata: o Google decide quando
- * rastrear e indexar cada URL.
- */
-export async function indexPublishedPost(slug: string): Promise<IndexResult> {
-  const url = postUrl(slug);
-  const result: IndexResult = {
-    url,
-    urlPublicaOk: false,
-    sitemapContemUrl: false,
-    sitemapOk: false,
-    detalhes: "",
-  };
+export async function indexPublishedPost(ctx: WorkspaceContext, slug: string): Promise<IndexResult> {
+  const url = postUrl(ctx, slug);
+  const result: IndexResult = { url, urlPublicaOk: false, sitemapContemUrl: false, sitemapOk: false, detalhes: "" };
   const notas: string[] = [];
 
   try {
@@ -73,7 +46,7 @@ export async function indexPublishedPost(slug: string): Promise<IndexResult> {
 
   if (result.urlPublicaOk) {
     try {
-      await validateUrlInSitemap(url);
+      await validateUrlInSitemap(ctx, url);
       result.sitemapContemUrl = true;
       notas.push("URL no sitemap: confirmada");
     } catch (err) {
@@ -83,7 +56,7 @@ export async function indexPublishedPost(slug: string): Promise<IndexResult> {
 
   if (result.sitemapContemUrl) {
     try {
-      await resubmitSitemap();
+      await resubmitSitemap(ctx);
       result.sitemapOk = true;
       notas.push("sitemap enviado ao Search Console");
     } catch (err) {

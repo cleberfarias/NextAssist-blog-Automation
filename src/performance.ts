@@ -88,12 +88,12 @@ export async function refreshPerformance(
   const publishedPosts = await getPublishedBlogPosts(ctx);
 
   const posts = await Promise.all(publishedPosts.map(async (entry): Promise<PostPerformance> => {
-    const url = postUrl(entry.slug);
+    const url = postUrl(ctx, entry.slug);
     const base = { slug: entry.slug, titulo: entry.titulo, url };
     try {
       const [status, metrics] = await Promise.all([
-        getIndexStatus(url),
-        getUrlMetrics(url, inicio, fim),
+        getIndexStatus(ctx, url),
+        getUrlMetrics(ctx, url, inicio, fim),
       ]);
       return {
         ...base,
@@ -126,7 +126,7 @@ export async function refreshPerformance(
     posts,
   };
   if (config.dataSource === "github") {
-    await writeStateJson(PERFORMANCE_FILE, report);
+    await writeStateJson(ctx, PERFORMANCE_FILE, report);
   } else {
     await writeFile(ctx.paths.performance, JSON.stringify(report, null, 2) + "\n");
   }
@@ -138,6 +138,7 @@ export async function getPerformance(ctx: WorkspaceContext): Promise<Performance
   try {
     if (config.dataSource === "github") {
       return await readStoredStateJson<PerformanceReport | null>(
+        ctx,
         PERFORMANCE_FILE,
         null,
       );
