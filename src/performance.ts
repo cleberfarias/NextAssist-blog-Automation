@@ -3,8 +3,8 @@ import { postUrl } from "./agents/indexer.js";
 import { config } from "./config.js";
 import { getUrlMetrics, getIndexStatus } from "./lib/searchConsole.js";
 import { readStoredStateJson, writeStateJson } from "./lib/storage.js";
+import type { WorkspaceContext } from "./context.js";
 
-const PERFORMANCE_PATH = new URL("../post-performance.json", import.meta.url);
 const PERFORMANCE_FILE = "post-performance.json";
 
 export interface PostPerformance {
@@ -32,8 +32,8 @@ interface PublishedBlogPost {
   titulo: string;
 }
 
-async function getPublishedBlogPosts(): Promise<PublishedBlogPost[]> {
-  const response = await fetch(`${config.blogApiUrl}/blog/posts`, {
+async function getPublishedBlogPosts(ctx: WorkspaceContext): Promise<PublishedBlogPost[]> {
+  const response = await fetch(`${ctx.workspace.integrations.cms.apiUrl}/blog/posts`, {
     headers: { Accept: "application/json" },
   });
   if (!response.ok) {
@@ -45,7 +45,6 @@ async function getPublishedBlogPosts(): Promise<PublishedBlogPost[]> {
     throw new Error("API do blog retornou uma lista de posts inválida.");
   }
 
-  // Slugs duplicados apontam para a mesma URL e não devem repetir métricas.
   return [...new Map(payload.data.map((post) => [post.slug, post])).values()];
 }
 
@@ -77,15 +76,16 @@ export function validatePerformancePeriod(inicio: string, fim: string): void {
 
 /**
  * Consulta o Search Console para cada post publicado na API do blog e grava um relatório
- * em `post-performance.json`. Falhas por post são registradas no campo `erro`
+ * no arquivo de performance do workspace. Falhas por post são registradas no campo `erro`
  * sem interromper os demais.
  */
 export async function refreshPerformance(
+  ctx: WorkspaceContext,
   inicio = isoDate(-28),
   fim = isoDate(0),
 ): Promise<PerformanceReport> {
   validatePerformancePeriod(inicio, fim);
-  const publishedPosts = await getPublishedBlogPosts();
+  const publishedPosts = await getPublishedBlogPosts(ctx);
 
   const posts = await Promise.all(publishedPosts.map(async (entry): Promise<PostPerformance> => {
     const url = postUrl(entry.slug);
@@ -128,13 +128,13 @@ export async function refreshPerformance(
   if (config.dataSource === "github") {
     await writeStateJson(PERFORMANCE_FILE, report);
   } else {
-    await writeFile(PERFORMANCE_PATH, JSON.stringify(report, null, 2) + "\n");
+    await writeFile(ctx.paths.performance, JSON.stringify(report, null, 2) + "\n");
   }
   return report;
 }
 
 /** Lê o último relatório salvo (ou null se ainda não foi gerado). */
-export async function getPerformance(): Promise<PerformanceReport | null> {
+export async function getPerformance(ctx: WorkspaceContext): Promise<PerformanceReport | null> {
   try {
     if (config.dataSource === "github") {
       return await readStoredStateJson<PerformanceReport | null>(
@@ -142,7 +142,7 @@ export async function getPerformance(): Promise<PerformanceReport | null> {
         null,
       );
     }
-    const raw = await readFile(PERFORMANCE_PATH, "utf-8");
+    const raw = await readFile(ctx.paths.performance, "utf-8");
     return JSON.parse(raw) as PerformanceReport;
   } catch {
     return null;

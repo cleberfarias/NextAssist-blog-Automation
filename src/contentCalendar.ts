@@ -1,6 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
-
-const CALENDAR_PATH = new URL("../content-calendar.json", import.meta.url);
+import type { WorkspaceContext } from "./context.js";
 
 export interface CalendarTopic {
   tema: string;
@@ -13,37 +12,37 @@ interface Calendar {
   topicos: CalendarTopic[];
 }
 
-async function load(): Promise<Calendar> {
-  const raw = await readFile(CALENDAR_PATH, "utf-8");
+async function load(ctx: WorkspaceContext): Promise<Calendar> {
+  const raw = await readFile(ctx.paths.calendar, "utf-8");
   return JSON.parse(raw) as Calendar;
 }
 
-async function save(calendar: Calendar): Promise<void> {
-  await writeFile(CALENDAR_PATH, JSON.stringify(calendar, null, 2) + "\n");
+async function save(ctx: WorkspaceContext, calendar: Calendar): Promise<void> {
+  await writeFile(ctx.paths.calendar, JSON.stringify(calendar, null, 2) + "\n");
 }
 
 /** Pega o próximo tópico não publicado. */
-export async function getNextTopic(): Promise<CalendarTopic | null> {
-  const calendar = await load();
+export async function getNextTopic(ctx: WorkspaceContext): Promise<CalendarTopic | null> {
+  const calendar = await load(ctx);
   return calendar.topicos.find((t) => !t.publicado) ?? null;
 }
 
 /** Marca um tópico como publicado. */
-export async function markTopicPublished(tema: string): Promise<void> {
-  const calendar = await load();
+export async function markTopicPublished(ctx: WorkspaceContext, tema: string): Promise<void> {
+  const calendar = await load(ctx);
   const topic = calendar.topicos.find((t) => t.tema === tema);
   if (topic) {
     topic.publicado = true;
     topic.publicadoEm = new Date().toISOString();
-    await save(calendar);
+    await save(ctx, calendar);
   }
 }
 
 /** Adiciona novos tópicos descobertos pelo agente de pesquisa de mercado. */
-export async function addTopics(newTopics: CalendarTopic[]): Promise<void> {
-  const calendar = await load();
+export async function addTopics(ctx: WorkspaceContext, newTopics: CalendarTopic[]): Promise<void> {
+  const calendar = await load(ctx);
   const existing = new Set(calendar.topicos.map((t) => t.tema.toLowerCase()));
   const toAdd = newTopics.filter((t) => !existing.has(t.tema.toLowerCase()));
   calendar.topicos.push(...toAdd);
-  await save(calendar);
+  await save(ctx, calendar);
 }
