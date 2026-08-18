@@ -1,5 +1,141 @@
 [
   {
+    "id": "2026-08-18T01:41:31.497Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-18T01:41:31.497Z",
+    "finalizadoEm": "2026-08-18T01:47:21.733Z",
+    "tema": "Recibo de conserto de celular: modelo pronto e informações obrigatórias",
+    "status": "publicado",
+    "slug": "recibo-conserto-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 0 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace...",
+        "timestamp": "2026-08-18T01:41:31.510Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Identificou 15 oportunidade(s) de conteúdo.",
+        "timestamp": "2026-08-18T01:42:03.156Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "done",
+        "message": "15 nova(s) pauta(s) adicionada(s) ao calendário.",
+        "timestamp": "2026-08-18T01:42:03.166Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Recibo de conserto de celular: modelo pronto e informações obrigatórias",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-18T01:42:03.167Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **GestãoClick tem a cobertura mais completa e recente**: o artigo atualizado em **8 de julho de 2026** apresenta uma OS preenchida para um Galaxy A54, com IMEI, condição visual, defeito relatado, diagnóstico, peça com referência, valores ",
+        "timestamp": "2026-08-18T01:42:43.187Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-18T01:42:43.188Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Recibo de conserto de celular: modelo e itens obrigatórios",
+        "timestamp": "2026-08-18T01:42:57.055Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-18T01:42:57.056Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Um recibo de conserto de celular comprova que o cliente pagou pelo serviço. Porém, para evitar dúvidas e reclamações, ele deve trazer mais do que a frase “recebi o valor de R$ 300”. O ideal é identifi...",
+        "timestamp": "2026-08-18T01:44:11.022Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-18T01:44:11.023Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: recibo-conserto-celular · Tags: recibo de conserto, ordem de serviço, assistência técnica, garantia, gestão de pagamentos",
+        "timestamp": "2026-08-18T01:45:03.985Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-18T01:45:03.985Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/recibo-conserto-celular",
+        "timestamp": "2026-08-18T01:45:58.265Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-18T01:45:58.266Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcKd09BiqoC/",
+        "timestamp": "2026-08-18T01:47:19.703Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-18T01:47:19.704Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-18T01:47:21.731Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 48749,
+      "outputTokens": 13382,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 5,
+      "estimatedUsd": 0.281318,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 0,
+      "generated": 15,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 15,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-17T19:55:23.988Z",
     "origem": "action",
     "iniciadoEm": "2026-08-17T19:55:23.988Z",
