@@ -44,7 +44,11 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
   const backlog = await ensureContentBacklog(ctx, onEvent);
   const topic = await getNextTopic(ctx);
   if (!topic) {
-    const detail = backlog.error ? ` Motivo do reabastecimento não ter resolvido: ${backlog.error}` : "";
+    const detail = backlog.error
+      ? ` Motivo do reabastecimento não ter resolvido: ${backlog.error}`
+      : !backlog.skipped && backlog.generated === 0
+        ? ` O Marketing Director rodou mas nenhuma pauta passou na validação (${backlog.discardedDuplicates} duplicada(s), ${backlog.discardedForbidden} com termo proibido, ${backlog.discardedInvalid} inválida(s)).`
+        : "";
     emit(onEvent, { agent: "pesquisa-pauta", status: "error", message: `Nenhum tópico pendente no calendário.${detail}` });
     return { tema: null, slugPublicado: null, usage: ctx.usage.get(), backlog };
   }
@@ -106,7 +110,8 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
     const message = err instanceof Error ? err.message : String(err);
     emit(onEvent, { agent: "publicador", status: "error", message });
     const wrapped = err instanceof Error ? err : new Error(message);
-    (wrapped as Error & { usage?: AnthropicUsage }).usage = ctx.usage.get();
+    (wrapped as Error & { usage?: AnthropicUsage; backlog?: BacklogResult }).usage = ctx.usage.get();
+    (wrapped as Error & { usage?: AnthropicUsage; backlog?: BacklogResult }).backlog = backlog;
     throw wrapped;
   }
 }

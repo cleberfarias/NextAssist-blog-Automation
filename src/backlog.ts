@@ -39,6 +39,9 @@ function isWellFormed(opportunity: ContentOpportunity): boolean {
   return Boolean(opportunity.tema?.trim()) && Boolean(opportunity.palavraChaveAlvo?.trim());
 }
 
+const containsForbiddenTerm = (text: string, terms: string[]): boolean =>
+  terms.some((term) => new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(text));
+
 /**
  * Aplica as regras de negócio antes de persistir: descarta tema/palavra-chave
  * duplicados, pautas muito parecidas com temas/títulos existentes (via
@@ -67,7 +70,7 @@ export function validateOpportunities(
     const temaNorm = normalizeText(opportunity.tema);
     const keywordNorm = normalizeText(opportunity.palavraChaveAlvo);
 
-    if (forbiddenNorm.some((term) => temaNorm.includes(term) || keywordNorm.includes(term))) {
+    if (containsForbiddenTerm(temaNorm, forbiddenNorm) || containsForbiddenTerm(keywordNorm, forbiddenNorm)) {
       discardedForbidden++;
       continue;
     }
@@ -101,10 +104,13 @@ export interface EnsureContentBacklogOptions {
 
 /**
  * Garante que o calendário sempre tenha pautas suficientes para o pipeline
- * seguir rodando. NUNCA lança — qualquer falha do Marketing Director vira um
- * evento "error" e um `BacklogResult.error`, deixando o pipeline decidir o
- * que fazer (seguir com um tópico pendente antigo, ou encerrar se não sobrou
- * nenhum — essa decisão é do chamador, não desta função).
+ * seguir rodando. NUNCA lança por falha do Marketing Director — qualquer
+ * falha do LLM/validação vira um evento "error" e um `BacklogResult.error`,
+ * deixando o pipeline decidir o que fazer (seguir com um tópico pendente
+ * antigo, ou encerrar se não sobrou nenhum — essa decisão é do chamador,
+ * não desta função). Falha de leitura/parse do próprio calendário (antes do
+ * `try`) continua propagando — igual ao `getNextTopic` logo em seguida no
+ * pipeline, que lê o mesmo arquivo pelo mesmo caminho desprotegido.
  */
 export async function ensureContentBacklog(
   ctx: WorkspaceContext,

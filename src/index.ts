@@ -52,6 +52,7 @@ try {
   console.error("Falha no pipeline:", message);
   const tema = eventos.find((e) => e.tema)?.tema ?? null;
   const usage = (err as Error & { usage?: AnthropicUsage }).usage;
-  await finalize("falhou", tema, null, message, usage);
+  const backlog = (err as Error & { backlog?: BacklogResult }).backlog;
+  await finalize("falhou", tema, null, message, usage, backlog);
   process.exit(1);
 }
