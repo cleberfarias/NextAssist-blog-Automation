@@ -91,11 +91,12 @@
     {
       "tema": "Recibo para assistência técnica: como preencher e evitar problemas com o cliente",
       "palavraChaveAlvo": "recibo assistência técnica celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "A busca já gera impressões na primeira página, mas ainda não recebe cliques. A pauta atende uma intenção prática sem repetir o conteúdo sobre garantia.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-08-18T13:39:59.899Z"
     },
     {
       "tema": "NextAssist: como funciona a gestão de uma assistência técnica na prática",
