@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-18T13:33:45.468Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-18T13:33:45.468Z",
+    "finalizadoEm": "2026-08-18T13:39:59.900Z",
+    "tema": "Recibo para assistência técnica: como preencher e evitar problemas com o cliente",
+    "status": "publicado",
+    "slug": "recibo-assistencia-tecnica-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Recibo para assistência técnica: como preencher e evitar problemas com o cliente",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-18T13:33:45.481Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A cobertura atual fala muito mais de Ordem de Serviço do que de recibo.** MarkupEmpresa e GestãoClick tratam a OS como principal prova do combinado, registrando cliente, IMEI, estado do aparelho, defeito relatado, diagnóstico, peças, va",
+        "timestamp": "2026-08-18T13:34:19.275Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-18T13:34:19.276Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Recibo assistência técnica celular: como preencher",
+        "timestamp": "2026-08-18T13:35:20.178Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-18T13:35:20.179Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Um recibo assistência técnica celular bem preenchido comprova que o cliente pagou pelo conserto e deixa claro o que foi cobrado. Ele deve ser criado com base nos dados da ordem de serviço, evitando di...",
+        "timestamp": "2026-08-18T13:36:32.157Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-18T13:36:32.158Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: recibo-assistencia-tecnica-celular · Tags: Recibo, Assistência técnica de celular, Ordem de serviço, Gestão de pagamentos, Garantia",
+        "timestamp": "2026-08-18T13:37:17.242Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-18T13:37:17.242Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/recibo-assistencia-tecnica-celular",
+        "timestamp": "2026-08-18T13:38:30.984Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-18T13:38:30.984Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcLvYvtIHg1/",
+        "timestamp": "2026-08-18T13:39:57.402Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-18T13:39:57.403Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-18T13:39:59.898Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 42545,
+      "outputTokens": 10252,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.22761,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 14,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 14,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-18T01:41:31.497Z",
     "origem": "action",
     "iniciadoEm": "2026-08-18T01:41:31.497Z",
