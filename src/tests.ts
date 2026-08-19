@@ -1,6 +1,7 @@
 import "./backlog.test.js";
 import "./context.test.js";
 import "./contentCalendar.test.js";
+import "./contentRegistry.test.js";
 import "./conversions.test.js";
 import "./lib/cms.test.js";
 import "./lib/dataSource.test.js";

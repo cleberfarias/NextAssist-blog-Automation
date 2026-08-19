@@ -82,6 +82,7 @@ export interface WorkspacePaths {
   runs: URL;
   performance: URL;
   conversions: URL;
+  contentRegistry: URL;
 }
 
 export interface WorkspaceContext {
@@ -158,6 +159,7 @@ export async function buildWorkspaceContext(
     runs: new URL("runs-history.json", root),
     performance: new URL("post-performance.json", root),
     conversions: new URL("conversion-events.json", root),
+    contentRegistry: new URL("content-registry.json", root),
   };
 
   const firebaseWebApiKey = options.firebaseWebApiKeyOverride ?? (await secrets.get(workspace.id, "FIREBASE_WEB_API_KEY"));
