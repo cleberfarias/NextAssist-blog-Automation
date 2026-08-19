@@ -21,6 +21,7 @@
 - `registerContent()` é upsert por `contentId` — idempotente a reexecuções.
 - `attribution.ts` é uma função pura sem estado e sem chamada a LLM — não é um agente.
 - `conversions.json` continua retrocompatível: os 4 eventos já existentes (`demo_view`, `demo_submit`, `contact_submit`, `whatsapp_click`) não mudam de schema.
+- `npm test` executa `node --import tsx --test src/tests.ts` — um agregador que importa cada arquivo `.test.ts` explicitamente (ver `src/tests.ts`). Qualquer arquivo de teste **novo** (não é o caso de arquivos só modificados) precisa ganhar uma linha `import "./caminho/do/arquivo.test.js";` nesse agregador, senão `npm test` nunca o executa. Rodar um arquivo de teste isolado durante o desenvolvimento usa `node --import tsx --test src/caminho/arquivo.test.ts` diretamente.
 
 ---
 
@@ -75,7 +76,7 @@ test("getConversionEvents lê o array bruto de eventos, incluindo os campos de i
 
 - [ ] **Step 2: Rodar o teste e confirmar que falha**
 
-Run: `node --experimental-strip-types --test src/conversions.test.ts` (ou `npm test -- src/conversions.test.ts`, conforme o script configurado no `package.json`)
+Run: `node --import tsx --test src/conversions.test.ts`
 Expected: FAIL — `getConversionEvents` não existe.
 
 - [ ] **Step 3: Implementar**
@@ -117,7 +118,7 @@ export async function getConversionEvents(ctx: WorkspaceContext): Promise<Conver
 
 - [ ] **Step 4: Rodar o teste e confirmar que passa**
 
-Run: `node --experimental-strip-types --test src/conversions.test.ts`
+Run: `node --import tsx --test src/conversions.test.ts`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
@@ -251,7 +252,7 @@ test("registerContent preserva entradas de outros contentIds", async () => {
 
 - [ ] **Step 3: Rodar o teste e confirmar que falha**
 
-Run: `node --experimental-strip-types --test src/contentRegistry.test.ts`
+Run: `node --import tsx --test src/contentRegistry.test.ts`
 Expected: FAIL — módulo `src/contentRegistry.ts` não existe.
 
 - [ ] **Step 4: Implementar**
@@ -306,13 +307,17 @@ export async function getContentRegistry(ctx: WorkspaceContext): Promise<Content
 
 - [ ] **Step 5: Rodar o teste e confirmar que passa**
 
-Run: `node --experimental-strip-types --test src/contentRegistry.test.ts`
+Run: `node --import tsx --test src/contentRegistry.test.ts`
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 6: Registrar o arquivo de teste novo no agregador**
+
+`src/contentRegistry.test.ts` é um arquivo novo — `npm test` só o executa se estiver listado em `src/tests.ts`. Editar `src/tests.ts`, adicionando a linha `import "./contentRegistry.test.js";` (ordem alfabética entre os imports existentes é suficiente, não é estritamente exigida). Depois rodar `npm test` e confirmar que os testes novos aparecem na contagem total e passam.
+
+- [ ] **Step 7: Commit**
 
 ```bash
-git add src/contentRegistry.ts src/contentRegistry.test.ts src/context.ts
+git add src/contentRegistry.ts src/contentRegistry.test.ts src/context.ts src/tests.ts
 git commit -m "feat: adicionar content-registry.json com upsert por contentId"
 ```
 
@@ -351,7 +356,7 @@ test("usa 'meio' como fallback para valor inválido ou ausente", () => {
 
 - [ ] **Step 2: Rodar o teste e confirmar que falha**
 
-Run: `node --experimental-strip-types --test src/agents/topicPlanner.test.ts`
+Run: `node --import tsx --test src/agents/topicPlanner.test.ts`
 Expected: FAIL — `resolveFunnelStage` não está exportado.
 
 - [ ] **Step 3: Implementar**
@@ -422,18 +427,22 @@ ${marketResearch}`,
 
 - [ ] **Step 4: Rodar o teste e confirmar que passa**
 
-Run: `node --experimental-strip-types --test src/agents/topicPlanner.test.ts`
+Run: `node --import tsx --test src/agents/topicPlanner.test.ts`
 Expected: PASS
 
-- [ ] **Step 5: Rodar a suíte completa para checar que nada quebrou**
+- [ ] **Step 5: Registrar o arquivo de teste novo no agregador**
 
-Run: `node --experimental-strip-types --test src/**/*.test.ts` (ou o script `npm test` do projeto)
+`src/agents/topicPlanner.test.ts` é um arquivo novo — `npm test` só o executa se estiver listado em `src/tests.ts`. Editar `src/tests.ts`, adicionando a linha `import "./agents/topicPlanner.test.js";`.
+
+- [ ] **Step 6: Rodar a suíte completa para checar que nada quebrou**
+
+Run: `npm test`
 Expected: PASS em todos os arquivos, incluindo `src/pipeline.test.ts` (o cenário de calendário vazio não chama `planTopic`, então não é afetado).
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
-git add src/agents/topicPlanner.ts src/agents/topicPlanner.test.ts
+git add src/agents/topicPlanner.ts src/agents/topicPlanner.test.ts src/tests.ts
 git commit -m "feat: adicionar funnelStage ao ContentPlan com fallback determinístico"
 ```
 
@@ -478,7 +487,7 @@ test("usa campaignId quando informado", () => {
 
 - [ ] **Step 2: Rodar o teste e confirmar que falha**
 
-Run: `node --experimental-strip-types --test src/lib/editorSeo.test.ts`
+Run: `node --import tsx --test src/lib/editorSeo.test.ts`
 Expected: FAIL — a assinatura antiga de `ensureTrackedCtas` gera `utm_content=cta-inline`, não `utm_content=artigo-teste`.
 
 - [ ] **Step 3: Implementar**
@@ -533,7 +542,7 @@ Substitua SLUG_DO_ARTIGO pelo mesmo slug devolvido no JSON.
 
 - [ ] **Step 4: Rodar o teste e confirmar que passa**
 
-Run: `node --experimental-strip-types --test src/lib/editorSeo.test.ts`
+Run: `node --import tsx --test src/lib/editorSeo.test.ts`
 Expected: PASS
 
 - [ ] **Step 5: Commit**
@@ -764,7 +773,7 @@ test("rateReliable é false abaixo de MIN_TRIALS_FOR_RATE e as taxas não divide
 
 - [ ] **Step 2: Rodar os testes e confirmar que falham**
 
-Run: `node --experimental-strip-types --test src/attribution.test.ts`
+Run: `node --import tsx --test src/attribution.test.ts`
 Expected: FAIL — módulo `src/attribution.ts` não existe.
 
 - [ ] **Step 3: Implementar**
@@ -949,13 +958,17 @@ export async function computeAttribution(ctx: WorkspaceContext): Promise<{ rows:
 
 - [ ] **Step 4: Rodar os testes e confirmar que passam**
 
-Run: `node --experimental-strip-types --test src/attribution.test.ts`
+Run: `node --import tsx --test src/attribution.test.ts`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: Registrar o arquivo de teste novo no agregador**
+
+`src/attribution.test.ts` é um arquivo novo — `npm test` só o executa se estiver listado em `src/tests.ts`. Editar `src/tests.ts`, adicionando a linha `import "./attribution.test.js";`. Rodar `npm test` e confirmar que passa.
+
+- [ ] **Step 6: Commit**
 
 ```bash
-git add src/attribution.ts src/attribution.test.ts
+git add src/attribution.ts src/attribution.test.ts src/tests.ts
 git commit -m "feat: adicionar attribution.ts com join first-touch determinístico"
 ```
 
@@ -1152,7 +1165,7 @@ test("buildPrompt prioriza clientes > ativados > trials > visitas, citando a amo
 
 - [ ] **Step 2: Rodar o teste e confirmar que falha**
 
-Run: `node --experimental-strip-types --test src/lib/marketingDirector.test.ts`
+Run: `node --import tsx --test src/lib/marketingDirector.test.ts`
 Expected: FAIL — `buildPrompt` não está exportado e ainda espera `conversions`/`getConversionSummary`, não `attribution`.
 
 - [ ] **Step 3: Implementar**
@@ -1253,7 +1266,7 @@ export async function generateContentBacklog(
 
 - [ ] **Step 4: Rodar os testes e confirmar que passam**
 
-Run: `node --experimental-strip-types --test src/lib/marketingDirector.test.ts`
+Run: `node --import tsx --test src/lib/marketingDirector.test.ts`
 Expected: PASS
 
 - [ ] **Step 5: Rodar a suíte inteira (todos os módulos tocados neste plano)**
