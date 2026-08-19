@@ -40,3 +40,37 @@ test("agrega chaves especiais sem corromper contadores", () => {
   assert.equal(summary.byContent[0].content, "constructor");
   assert.equal(summary.byContent[0].demoViews, 1);
 });
+
+test("getConversionEvents lê o array bruto de eventos, incluindo os campos de identidade novos", async () => {
+  const { getConversionEvents } = await import("./conversions.js");
+  const { buildWorkspaceContext } = await import("./context.js");
+  const { createTempWorkspace } = await import("./testing/tempWorkspace.js");
+
+  const temp = await createTempWorkspace("acme", {
+    "conversion-events.json": [
+      { name: "trial_started", anonymousId: "anon-1", content: "post-a", createdAt: "2026-08-01T00:00:00Z" },
+      { name: "signup_completed", anonymousId: "anon-1", userId: "user-1", createdAt: "2026-08-01T00:05:00Z" },
+    ],
+  });
+  try {
+    const ctx = await buildWorkspaceContext(
+      {
+        id: "acme", name: "Acme", active: true,
+        brand: { name: "Acme", description: "d", toneOfVoice: "t", targetAudience: [], competitors: [] },
+        goals: { primary: "leads" },
+        channels: { blog: true, instagram: false, linkedin: false },
+        integrations: { siteUrl: "https://acme.test", cms: { provider: "nextassist", apiUrl: "https://api.acme.test" } },
+        autonomy: { mode: "copilot" },
+        secrets: { required: [] },
+      },
+      { async get() { return undefined; } },
+      { workspacesRoot: temp.root, requireAiProvider: false },
+    );
+    const events = await getConversionEvents(ctx);
+    assert.equal(events.length, 2);
+    assert.equal(events[1].userId, "user-1");
+    assert.equal(events[1].anonymousId, "anon-1");
+  } finally {
+    await temp.cleanup();
+  }
+});

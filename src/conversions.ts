@@ -1,14 +1,23 @@
 import { readFile, writeFile } from "node:fs/promises";
 import type { WorkspaceContext } from "./context.js";
 
-export type ConversionEventName = "demo_view" | "demo_submit" | "contact_submit" | "whatsapp_click";
+export type ConversionEventName =
+  | "page_view" | "cta_click"
+  | "demo_view" | "demo_submit" | "contact_submit" | "whatsapp_click"
+  | "trial_started" | "signup_completed"
+  | "first_customer_created" | "first_device_linked" | "first_order_created"
+  | "returning_user" | "subscription_started";
+
 export interface ConversionEvent {
   name: ConversionEventName;
+  anonymousId?: string;
+  userId?: string;
   path?: string;
   source?: string;
   medium?: string;
   campaign?: string;
   content?: string;
+  ctaId?: string;
   createdAt: string;
 }
 
@@ -25,6 +34,11 @@ async function load(ctx: WorkspaceContext): Promise<ConversionEvent[]> {
   } catch {
     return [];
   }
+}
+
+/** Lê o array bruto de eventos — usado por `attribution.ts` para o join por contentId/identidade. */
+export async function getConversionEvents(ctx: WorkspaceContext): Promise<ConversionEvent[]> {
+  return load(ctx);
 }
 
 export async function recordConversion(ctx: WorkspaceContext, event: Omit<ConversionEvent, "createdAt">): Promise<void> {
