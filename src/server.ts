@@ -137,17 +137,37 @@ app.post("/api/conversions", express.json(), asyncHandler(async (req, res) => {
   // site público (outro repositório) já postava aqui antes do multi-workspace e
   // não conhece o parâmetro — exigi-lo quebraria o rastreio de conversões ao vivo.
   const workspaceId = String(req.body?.workspaceId ?? "nextassist");
-  const allowed: ConversionEventName[] = ["demo_view", "demo_submit", "contact_submit", "whatsapp_click"];
+  const allowed: ConversionEventName[] = [
+    "page_view", "cta_click",
+    "demo_view", "demo_submit", "contact_submit", "whatsapp_click",
+    "trial_started", "signup_completed",
+    "first_customer_created", "first_device_linked", "first_order_created",
+    "returning_user", "subscription_started",
+  ];
   if (!allowed.includes(req.body?.name)) { res.status(400).json({ error: "Evento inválido" }); return; }
   const campaign = String(req.body.campaign ?? "").slice(0, 80);
   const content = String(req.body.content ?? "").slice(0, 80);
+  const ctaId = String(req.body.ctaId ?? "").slice(0, 80);
   const utmValue = /^[a-z0-9-]*$/;
-  if (!utmValue.test(campaign) || !utmValue.test(content)) {
+  if (!utmValue.test(campaign) || !utmValue.test(content) || !utmValue.test(ctaId)) {
     res.status(400).json({ error: "Parâmetros UTM inválidos" });
     return;
   }
+  // anonymousId/userId são opacos (gerados pelo site/produto) — só limitamos o
+  // tamanho para não deixar o arquivo de eventos crescer sem controle.
+  const anonymousId = String(req.body.anonymousId ?? "").slice(0, 100);
+  const userId = String(req.body.userId ?? "").slice(0, 100);
   const ctx = await contextFor(workspaceId);
-  await recordConversion(ctx, { name: req.body.name, path: String(req.body.path ?? "").slice(0, 200), source: String(req.body.source ?? "").slice(0, 80), medium: String(req.body.medium ?? "").slice(0, 80), campaign, content });
+  await recordConversion(ctx, {
+    name: req.body.name,
+    path: String(req.body.path ?? "").slice(0, 200),
+    source: String(req.body.source ?? "").slice(0, 80),
+    medium: String(req.body.medium ?? "").slice(0, 80),
+    campaign, content,
+    ...(ctaId ? { ctaId } : {}),
+    ...(anonymousId ? { anonymousId } : {}),
+    ...(userId ? { userId } : {}),
+  });
   res.status(204).end();
 }));
 
