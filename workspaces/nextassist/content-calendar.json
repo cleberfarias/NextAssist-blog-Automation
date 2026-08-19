@@ -101,11 +101,12 @@
     {
       "tema": "NextAssist: como funciona a gestão de uma assistência técnica na prática",
       "palavraChaveAlvo": "nextassist",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "A marca já é pesquisada, mas aparece em posição baixa. Um conteúdo demonstrativo pode ocupar esse espaço e levar visitantes com alta intenção para teste ou cadastro.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-08-19T13:39:27.288Z"
     },
     {
       "tema": "Modelo de orçamento para conserto de celular: o que incluir antes da aprovação",
