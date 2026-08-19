@@ -1,5 +1,377 @@
 [
   {
+    "id": "2026-08-19T13:34:09.186Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-19T13:34:09.186Z",
+    "finalizadoEm": "2026-08-19T13:39:27.290Z",
+    "tema": "NextAssist: como funciona a gestão de uma assistência técnica na prática",
+    "status": "publicado",
+    "slug": "nextassist-na-pratica",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "NextAssist: como funciona a gestão de uma assistência técnica na prática",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-19T13:34:09.197Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A OS é apresentada como o centro da operação.** GestãoClick, MarkupEmpresa e Ordita descrevem praticamente o mesmo fluxo: entrada do aparelho, diagnóstico, orçamento, aprovação, reparo, registro das peças, pagamento, garantia e entrega.",
+        "timestamp": "2026-08-19T13:34:44.951Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-19T13:34:44.952Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: NextAssist na prática: um dia na assistência técnica",
+        "timestamp": "2026-08-19T13:34:57.139Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-19T13:34:57.139Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Na prática, o NextAssist organiza a assistência técnica em torno da ordem de serviço. É nela que ficam a entrada do aparelho, o diagnóstico, o orçamento, as peças usadas, os pagamentos, a garantia e a...",
+        "timestamp": "2026-08-19T13:36:02.849Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-19T13:36:02.850Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: nextassist-na-pratica · Tags: NextAssist, ordem de serviço, gestão de assistência técnica, estoque e pagamentos, indicadores",
+        "timestamp": "2026-08-19T13:36:59.258Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-19T13:36:59.258Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/nextassist-na-pratica",
+        "timestamp": "2026-08-19T13:38:00.089Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-19T13:38:00.089Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcOUH4WDf5Z/",
+        "timestamp": "2026-08-19T13:39:25.263Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-19T13:39:25.264Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-19T13:39:27.287Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 33329,
+      "outputTokens": 11325,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0.209908,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 13,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 13,
+      "error": null
+    }
+  },
+  {
+    "id": "2026-08-18T13:33:45.468Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-18T13:33:45.468Z",
+    "finalizadoEm": "2026-08-18T13:39:59.900Z",
+    "tema": "Recibo para assistência técnica: como preencher e evitar problemas com o cliente",
+    "status": "publicado",
+    "slug": "recibo-assistencia-tecnica-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Recibo para assistência técnica: como preencher e evitar problemas com o cliente",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-18T13:33:45.481Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A cobertura atual fala muito mais de Ordem de Serviço do que de recibo.** MarkupEmpresa e GestãoClick tratam a OS como principal prova do combinado, registrando cliente, IMEI, estado do aparelho, defeito relatado, diagnóstico, peças, va",
+        "timestamp": "2026-08-18T13:34:19.275Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-18T13:34:19.276Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Recibo assistência técnica celular: como preencher",
+        "timestamp": "2026-08-18T13:35:20.178Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-18T13:35:20.179Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Um recibo assistência técnica celular bem preenchido comprova que o cliente pagou pelo conserto e deixa claro o que foi cobrado. Ele deve ser criado com base nos dados da ordem de serviço, evitando di...",
+        "timestamp": "2026-08-18T13:36:32.157Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-18T13:36:32.158Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: recibo-assistencia-tecnica-celular · Tags: Recibo, Assistência técnica de celular, Ordem de serviço, Gestão de pagamentos, Garantia",
+        "timestamp": "2026-08-18T13:37:17.242Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-18T13:37:17.242Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/recibo-assistencia-tecnica-celular",
+        "timestamp": "2026-08-18T13:38:30.984Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-18T13:38:30.984Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcLvYvtIHg1/",
+        "timestamp": "2026-08-18T13:39:57.402Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-18T13:39:57.403Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-18T13:39:59.898Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 42545,
+      "outputTokens": 10252,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.22761,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 14,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 14,
+      "error": null
+    }
+  },
+  {
+    "id": "2026-08-18T01:41:31.497Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-18T01:41:31.497Z",
+    "finalizadoEm": "2026-08-18T01:47:21.733Z",
+    "tema": "Recibo de conserto de celular: modelo pronto e informações obrigatórias",
+    "status": "publicado",
+    "slug": "recibo-conserto-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 0 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace...",
+        "timestamp": "2026-08-18T01:41:31.510Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Identificou 15 oportunidade(s) de conteúdo.",
+        "timestamp": "2026-08-18T01:42:03.156Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "done",
+        "message": "15 nova(s) pauta(s) adicionada(s) ao calendário.",
+        "timestamp": "2026-08-18T01:42:03.166Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Recibo de conserto de celular: modelo pronto e informações obrigatórias",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-18T01:42:03.167Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **GestãoClick tem a cobertura mais completa e recente**: o artigo atualizado em **8 de julho de 2026** apresenta uma OS preenchida para um Galaxy A54, com IMEI, condição visual, defeito relatado, diagnóstico, peça com referência, valores ",
+        "timestamp": "2026-08-18T01:42:43.187Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-18T01:42:43.188Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Recibo de conserto de celular: modelo e itens obrigatórios",
+        "timestamp": "2026-08-18T01:42:57.055Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-18T01:42:57.056Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Um recibo de conserto de celular comprova que o cliente pagou pelo serviço. Porém, para evitar dúvidas e reclamações, ele deve trazer mais do que a frase “recebi o valor de R$ 300”. O ideal é identifi...",
+        "timestamp": "2026-08-18T01:44:11.022Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-18T01:44:11.023Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: recibo-conserto-celular · Tags: recibo de conserto, ordem de serviço, assistência técnica, garantia, gestão de pagamentos",
+        "timestamp": "2026-08-18T01:45:03.985Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-18T01:45:03.985Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/recibo-conserto-celular",
+        "timestamp": "2026-08-18T01:45:58.265Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-18T01:45:58.266Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcKd09BiqoC/",
+        "timestamp": "2026-08-18T01:47:19.703Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-18T01:47:19.704Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-18T01:47:21.731Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 48749,
+      "outputTokens": 13382,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 5,
+      "estimatedUsd": 0.281318,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 0,
+      "generated": 15,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 15,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-17T19:55:23.988Z",
     "origem": "action",
     "iniciadoEm": "2026-08-17T19:55:23.988Z",

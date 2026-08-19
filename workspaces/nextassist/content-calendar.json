@@ -77,6 +77,144 @@
       "palavraChaveAlvo": "atendimento whatsapp assistência técnica",
       "publicado": true,
       "publicadoEm": "2026-08-15T13:35:55.406Z"
+    },
+    {
+      "tema": "Recibo de conserto de celular: modelo pronto e informações obrigatórias",
+      "palavraChaveAlvo": "recibo de conserto de celular",
+      "publicado": true,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "É o termo com mais impressões no Search Console e já aparece na posição 4,4. Um modelo para baixar pode melhorar o CTR e captar leads.",
+      "priority": "high",
+      "publicadoEm": "2026-08-18T01:47:21.731Z"
+    },
+    {
+      "tema": "Recibo para assistência técnica: como preencher e evitar problemas com o cliente",
+      "palavraChaveAlvo": "recibo assistência técnica celular",
+      "publicado": true,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "A busca já gera impressões na primeira página, mas ainda não recebe cliques. A pauta atende uma intenção prática sem repetir o conteúdo sobre garantia.",
+      "priority": "high",
+      "publicadoEm": "2026-08-18T13:39:59.899Z"
+    },
+    {
+      "tema": "NextAssist: como funciona a gestão de uma assistência técnica na prática",
+      "palavraChaveAlvo": "nextassist",
+      "publicado": true,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "A marca já é pesquisada, mas aparece em posição baixa. Um conteúdo demonstrativo pode ocupar esse espaço e levar visitantes com alta intenção para teste ou cadastro.",
+      "priority": "high",
+      "publicadoEm": "2026-08-19T13:39:27.288Z"
+    },
+    {
+      "tema": "Modelo de orçamento para conserto de celular: o que incluir antes da aprovação",
+      "palavraChaveAlvo": "modelo de orçamento conserto de celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "É uma busca com potencial de material para download e captura de lead, além de resolver uma etapa anterior à abertura do serviço.",
+      "priority": "high"
+    },
+    {
+      "tema": "Modelo de laudo técnico para celular: como documentar defeitos e testes",
+      "palavraChaveAlvo": "modelo de laudo técnico celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "Um modelo editável atrai donos de assistência que precisam profissionalizar a documentação e cria uma oportunidade direta de apresentar o NextAssist.",
+      "priority": "high"
+    },
+    {
+      "tema": "Cliente não buscou o celular consertado: o que a assistência pode fazer",
+      "palavraChaveAlvo": "cliente não buscou celular consertado",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "Aparelhos abandonados ocupam espaço e prendem dinheiro da assistência. O tema tem dor clara, intenção prática e conexão com registro de prazos e comunicação.",
+      "priority": "high"
+    },
+    {
+      "tema": "Como controlar o fluxo de caixa de uma assistência técnica de celular",
+      "palavraChaveAlvo": "fluxo de caixa assistência técnica",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "Complementa o cluster de gestão sem repetir precificação ou indicadores e alcança donos que ainda controlam entradas e saídas de forma improvisada.",
+      "priority": "high"
+    },
+    {
+      "tema": "Orçamento aprovado pelo cliente: como registrar a autorização do conserto",
+      "palavraChaveAlvo": "autorização de conserto de celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "A falta de autorização comprovável causa discussões sobre preço e serviço executado. O conteúdo aproxima uma dor jurídica de uma função típica de gestão.",
+      "priority": "high"
+    },
+    {
+      "tema": "Como avisar o status do conserto sem responder cada cliente manualmente",
+      "palavraChaveAlvo": "acompanhar conserto de celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "Ataca o excesso de mensagens sobre andamento do reparo e abre espaço para mostrar automação de status e consulta pelo cliente.",
+      "priority": "high"
+    },
+    {
+      "tema": "Nota fiscal em assistência técnica: quando emitir e como separar peça e serviço",
+      "palavraChaveAlvo": "nota fiscal assistência técnica celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "É uma dúvida recorrente de operação e formalização, com boa ligação a cadastro de serviços, peças e controle financeiro.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Como calcular comissão de técnico sem prejudicar a margem da assistência",
+      "palavraChaveAlvo": "comissão para técnico de celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "Donos com pequenas equipes precisam remunerar produtividade sem perder lucro. A pauta alcança um público mais maduro e próximo de contratar um sistema.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Como organizar a bancada e a fila de aparelhos em conserto",
+      "palavraChaveAlvo": "organização de assistência técnica celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "Perda de aparelhos, troca de peças e serviços fora de ordem são dores operacionais fortes. O tema permite conectar organização física ao controle digital.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Assistência técnica no Google: como aparecer nas buscas da sua cidade",
+      "palavraChaveAlvo": "como divulgar assistência técnica de celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "Ajuda o dono a gerar demanda local e atrai potenciais clientes do NextAssist em fase de crescimento, diretamente alinhados ao objetivo de leads.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Alternativa ao AnaDita para assistência técnica: o que comparar antes de escolher",
+      "palavraChaveAlvo": "alternativa ao AnaDita",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "Captura buscas com intenção comercial de quem já conhece um concorrente e está avaliando trocar ou contratar uma solução.",
+      "priority": "medium"
+    },
+    {
+      "tema": "GestãoClick serve para assistência técnica de celular? Recursos que fazem diferença",
+      "palavraChaveAlvo": "GestãoClick para assistência técnica",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-18T01:42:03.165Z",
+      "reason": "Aborda um concorrente generalista em uma busca de comparação e permite mostrar por que recursos específicos para consertos importam.",
+      "priority": "medium"
     }
   ]
 }
