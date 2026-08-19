@@ -1,3 +1,4 @@
+import "./agents/topicPlanner.test.js";
 import "./backlog.test.js";
 import "./context.test.js";
 import "./contentCalendar.test.js";
