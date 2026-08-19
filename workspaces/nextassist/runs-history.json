@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-19T13:34:09.186Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-19T13:34:09.186Z",
+    "finalizadoEm": "2026-08-19T13:39:27.290Z",
+    "tema": "NextAssist: como funciona a gestão de uma assistência técnica na prática",
+    "status": "publicado",
+    "slug": "nextassist-na-pratica",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "NextAssist: como funciona a gestão de uma assistência técnica na prática",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-19T13:34:09.197Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A OS é apresentada como o centro da operação.** GestãoClick, MarkupEmpresa e Ordita descrevem praticamente o mesmo fluxo: entrada do aparelho, diagnóstico, orçamento, aprovação, reparo, registro das peças, pagamento, garantia e entrega.",
+        "timestamp": "2026-08-19T13:34:44.951Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-19T13:34:44.952Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: NextAssist na prática: um dia na assistência técnica",
+        "timestamp": "2026-08-19T13:34:57.139Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-19T13:34:57.139Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Na prática, o NextAssist organiza a assistência técnica em torno da ordem de serviço. É nela que ficam a entrada do aparelho, o diagnóstico, o orçamento, as peças usadas, os pagamentos, a garantia e a...",
+        "timestamp": "2026-08-19T13:36:02.849Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-19T13:36:02.850Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: nextassist-na-pratica · Tags: NextAssist, ordem de serviço, gestão de assistência técnica, estoque e pagamentos, indicadores",
+        "timestamp": "2026-08-19T13:36:59.258Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-19T13:36:59.258Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/nextassist-na-pratica",
+        "timestamp": "2026-08-19T13:38:00.089Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-19T13:38:00.089Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcOUH4WDf5Z/",
+        "timestamp": "2026-08-19T13:39:25.263Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-19T13:39:25.264Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-19T13:39:27.287Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 33329,
+      "outputTokens": 11325,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0.209908,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 13,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 13,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-18T13:33:45.468Z",
     "origem": "action",
     "iniciadoEm": "2026-08-18T13:33:45.468Z",
