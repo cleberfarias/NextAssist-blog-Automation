@@ -53,7 +53,7 @@ export function parseContentOpportunities(raw: unknown): ContentOpportunity[] {
   return valid;
 }
 
-const SYSTEM_TEMPLATE = (ctx: WorkspaceContext) => `Você é o Marketing Director do ${ctx.workspace.brand.name} — ${ctx.workspace.brand.description}
+export const SYSTEM_TEMPLATE = (ctx: WorkspaceContext) => `Você é o Marketing Director do ${ctx.workspace.brand.name} — ${ctx.workspace.brand.description}
 Tom de voz: ${ctx.workspace.brand.toneOfVoice}
 Público-alvo: ${ctx.workspace.brand.targetAudience.join(", ") || "não especificado"}
 Concorrentes diretos: ${ctx.workspace.brand.competitors.join(", ") || "não especificado"}
