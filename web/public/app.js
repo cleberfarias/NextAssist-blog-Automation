@@ -71,6 +71,8 @@ const usageUpdated = document.getElementById("usage-updated");
 const conversionKpis = document.getElementById("conversion-kpis");
 const conversionUpdated = document.getElementById("conversion-updated");
 const conversionAttribution = document.getElementById("conversion-attribution");
+const attributionTable = document.getElementById("attribution-table");
+const attributionUpdated = document.getElementById("attribution-updated");
 const activeAgent = document.getElementById("active-agent");
 const historyPagination = document.getElementById("history-pagination");
 const runsPagination = document.getElementById("runs-pagination");
@@ -464,6 +466,36 @@ async function loadConversions() {
   conversionUpdated.textContent = `Atualizado ${new Date(data.updatedAt).toLocaleString("pt-BR")}`;
 }
 
+async function loadAttribution() {
+  const res = await fetch(withWorkspace("/api/attribution"));
+  if (!res.ok) return;
+  const data = await res.json();
+  const rows = [...(data.rows ?? [])].sort((a, b) => b.customers - a.customers || b.activated - a.activated);
+  attributionTable.innerHTML = rows.length
+    ? `<div class="perf-table-wrap"><table><thead><tr>
+        <th>Conteúdo</th><th>Canal</th><th>Tema</th><th>Visitas</th><th>Trials</th><th>Cadastros</th><th>Ativados</th><th>Clientes</th>
+        <th>Visita→Trial</th><th>Trial→Ativação</th><th>Ativação→Cliente</th>
+      </tr></thead><tbody>${rows
+        .map((row) => `<tr>
+          <td>${escapeHtml(row.contentId)}</td>
+          <td>${escapeHtml(row.channel)}</td>
+          <td>${escapeHtml(row.tema)}</td>
+          <td>${nf.format(row.visits)}</td>
+          <td>${nf.format(row.trials)}</td>
+          <td>${nf.format(row.signups)}</td>
+          <td>${nf.format(row.activated)}</td>
+          <td>${nf.format(row.customers)}</td>
+          <td>${(row.visitToTrialRate * 100).toFixed(1)}%</td>
+          <td>${row.rateReliable ? `${(row.trialToActivationRate * 100).toFixed(1)}%` : "amostra insuficiente"}</td>
+          <td>${(row.activationToCustomerRate * 100).toFixed(1)}%</td>
+        </tr>`)
+        .join("")}</tbody></table></div>`
+    : "<p class=\"empty\">Nenhum conteúdo publicado com registro de atribuição ainda.</p>";
+  attributionUpdated.textContent = data.unattributedEvents
+    ? `${data.unattributedEvents} evento(s) sem conteúdo/identidade atribuível`
+    : "";
+}
+
 let runMode = "local";
 
 async function loadStatus() {
@@ -559,6 +591,7 @@ async function init() {
     loadRuns();
     loadUsage();
     loadConversions();
+    loadAttribution();
     loadStatus();
     loadPerformance();
     connectEvents();
