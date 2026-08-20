@@ -1,15 +1,27 @@
 import { runAgent, extractJson } from "../lib/anthropic.js";
 import type { WorkspaceContext } from "../context.js";
 
+export type FunnelStage = "topo" | "meio" | "fundo";
+const FUNNEL_STAGES = new Set<FunnelStage>(["topo", "meio", "fundo"]);
+
+/** Guarda determinística contra o LLM omitir ou inventar um valor fora do enum — nunca lança, cai para "meio". */
+export function resolveFunnelStage(value: unknown): FunnelStage {
+  return typeof value === "string" && FUNNEL_STAGES.has(value as FunnelStage) ? (value as FunnelStage) : "meio";
+}
+
 const SYSTEM_TEMPLATE = (ctx: WorkspaceContext) => `Você é o planejador editorial do blog do ${ctx.workspace.brand.name}. Com base no tema do
 dia e na pesquisa de mercado fornecida, defina o ângulo específico do
-post, o título, a meta description e a estrutura de H2s. Responda
+post, o título, a meta description, a estrutura de H2s e o estágio de
+funil do post ("topo": descoberta/educação de quem ainda não sabia que
+tinha o problema; "meio": comparação/consideração de soluções; "fundo":
+decisão, pronto para testar um produto). Responda
 SOMENTE em JSON, sem texto antes ou depois, no formato:
 {
   "titulo": "...",
   "metaDescription": "... (150-160 caracteres)",
   "h2s": ["...", "...", "..."],
-  "anguloEditorial": "..."
+  "anguloEditorial": "...",
+  "funnelStage": "topo" | "meio" | "fundo"
 }`;
 
 export interface ContentPlan {
@@ -17,6 +29,7 @@ export interface ContentPlan {
   metaDescription: string;
   h2s: string[];
   anguloEditorial: string;
+  funnelStage: FunnelStage;
 }
 
 function normalize(value: string): string {
@@ -34,7 +47,7 @@ function fitTitle(title: string, keyword: string): string {
 }
 
 export async function planTopic(ctx: WorkspaceContext, tema: string, palavraChaveAlvo: string, marketResearch: string): Promise<ContentPlan> {
-  const raw = await runAgent(ctx, {
+  const raw = extractJson<ContentPlan & { funnelStage?: unknown }>(await runAgent(ctx, {
     system: SYSTEM_TEMPLATE(ctx),
     prompt: `Tema: "${tema}"
 Palavra-chave principal: "${palavraChaveAlvo}"
@@ -46,7 +59,6 @@ Priorize a intenção de busca de quem precisa resolver esse problema e inclua H
 Pesquisa de mercado:
 ${marketResearch}`,
     maxTokens: 2000,
-  });
-  const plan = extractJson<ContentPlan>(raw);
-  return { ...plan, titulo: fitTitle(plan.titulo, palavraChaveAlvo) };
+  }));
+  return { ...raw, titulo: fitTitle(raw.titulo, palavraChaveAlvo), funnelStage: resolveFunnelStage(raw.funnelStage) };
 }

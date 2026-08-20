@@ -44,13 +44,28 @@ export interface EditorialContext {
   palavraChaveAlvo?: string;
   slugsPublicados: string[];
   demoPath?: string;
+  /** Agrupamento temático opcional (utm_campaign). Sempre `null`/ausente no P0. */
+  campaignId?: string | null;
 }
 
-export function ensureTrackedCtas(post: FinalPost, demoPath = "/demo"): FinalPost {
-  const base = `${demoPath}?utm_source=blog&utm_medium=article&utm_campaign=${encodeURIComponent(post.slug)}`;
+export interface CtaOptions {
+  demoPath?: string;
+  campaignId?: string | null;
+}
+
+/**
+ * utm_campaign = campaignId (agrupamento temático); utm_content = contentId
+ * (= slug, chave do join com content-registry/attribution). A posição do CTA
+ * é identificada por `cta_id`, deliberadamente fora do padrão UTM — ele
+ * descreve a interação dentro do conteúdo, não a origem da aquisição.
+ */
+export function ensureTrackedCtas(post: FinalPost, options: CtaOptions = {}): FinalPost {
+  const demoPath = options.demoPath ?? "/demo";
+  const campaignId = options.campaignId ?? "sem-campanha";
+  const base = `${demoPath}?utm_source=blog&utm_medium=article&utm_campaign=${encodeURIComponent(campaignId)}&utm_content=${encodeURIComponent(post.slug)}`;
   let conteudo = post.conteudo;
-  if (!conteudo.includes(`${base}&utm_content=cta-inline`)) conteudo += `<p><a href="${base}&utm_content=cta-inline">Teste grátis por 7 dias</a></p>`;
-  if (!conteudo.includes(`${base}&utm_content=cta-final`)) conteudo += `<p><a href="${base}&utm_content=cta-final">Comece seu teste grátis</a></p>`;
+  if (!conteudo.includes(`${base}&cta_id=cta-inline`)) conteudo += `<p><a href="${base}&cta_id=cta-inline">Teste grátis por 7 dias</a></p>`;
+  if (!conteudo.includes(`${base}&cta_id=cta-final`)) conteudo += `<p><a href="${base}&cta_id=cta-final">Comece seu teste grátis</a></p>`;
   return conteudo === post.conteudo ? post : { ...post, conteudo };
 }
 
@@ -72,11 +87,11 @@ Slugs publicados disponíveis para link interno (use somente estes, nunca invent
       context.slugsPublicados.length ? context.slugsPublicados.map((slug) => `/blog/${slug}`).join(", ") : "nenhum ainda — não inclua links /blog/... neste artigo"
     }
 Palavra-chave principal: "${context.palavraChaveAlvo ?? ""}". Ela deve aparecer naturalmente no título e na meta description.
-Inclua dois links para o teste grátis. Em ambos, use ${context.demoPath ?? "/demo"}?utm_source=blog&utm_medium=article&utm_campaign=SLUG_DO_ARTIGO e identifique a posição:
-- CTA no meio do artigo: utm_content=cta-inline
-- CTA ao final do artigo: utm_content=cta-final
+Inclua dois links para o teste grátis. Em ambos, use ${context.demoPath ?? "/demo"}?utm_source=blog&utm_medium=article&utm_campaign=${context.campaignId ?? "sem-campanha"}&utm_content=SLUG_DO_ARTIGO e identifique a posição com cta_id:
+- CTA no meio do artigo: cta_id=cta-inline
+- CTA ao final do artigo: cta_id=cta-final
 Substitua SLUG_DO_ARTIGO pelo mesmo slug devolvido no JSON.`,
     maxTokens: 8000,
   });
-  return ensureTrackedCtas(extractJson<FinalPost>(raw), context.demoPath);
+  return ensureTrackedCtas(extractJson<FinalPost>(raw), { demoPath: context.demoPath, campaignId: context.campaignId });
 }

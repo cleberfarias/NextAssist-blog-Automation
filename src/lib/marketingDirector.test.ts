@@ -48,3 +48,45 @@ test("lança erro quando uma lista não vazia não tem nenhum item válido", () 
     /nenhuma/i,
   );
 });
+
+import { buildPrompt, SYSTEM_TEMPLATE } from "./marketingDirector.js";
+import { MIN_TRIALS_FOR_RATE } from "../attribution.js";
+
+const baseWorkspace = {
+  id: "acme", name: "Acme", active: true,
+  brand: { name: "Acme", description: "d", toneOfVoice: "t", targetAudience: [], competitors: [], forbiddenTerms: [] },
+  goals: { primary: "leads" as const },
+  channels: { blog: true, instagram: false, linkedin: false },
+  integrations: { siteUrl: "https://acme.test", cms: { provider: "nextassist" as const, apiUrl: "https://api.acme.test" } },
+  autonomy: { mode: "copilot" as const },
+  secrets: { required: [] },
+};
+
+test("buildPrompt prioriza clientes > ativados > trials > visitas", () => {
+  const ctx = { workspace: baseWorkspace } as any;
+  const prompt = buildPrompt(
+    ctx,
+    { count: 5, existingThemes: [], existingKeywords: [], publishedTitles: [] },
+    null,
+    {
+      rows: [
+        { contentId: "post-a", campaignId: null, tema: "Precificação", channel: "blog", formato: "blog", funnelStage: "fundo", visits: 240, trials: 21, signups: 18, activated: 13, customers: 4, visitToTrialRate: 0.09, trialToActivationRate: 0.62, activationToCustomerRate: 0.31, rateReliable: true },
+        { contentId: "post-b", campaignId: null, tema: "Agência com IA", channel: "instagram", formato: "instagram-reel", funnelStage: "topo", visits: 1800, trials: 7, signups: 1, activated: 1, customers: 0, visitToTrialRate: 0.003, trialToActivationRate: 0.2, activationToCustomerRate: 0, rateReliable: true },
+      ],
+      unattributedEvents: 0,
+    },
+    [],
+  );
+  assert.match(prompt, /clientes/i);
+  assert.match(prompt, /post-a/);
+  const posA = prompt.indexOf("post-a");
+  const posB = prompt.indexOf("post-b");
+  assert.ok(posA < posB, "post-a (4 clientes) deve aparecer antes de post-b (0 clientes) na lista priorizada");
+});
+
+test("SYSTEM_TEMPLATE cita MIN_TRIALS_FOR_RATE deterministicamente — o LLM é instruído, não adivinha", () => {
+  const ctx = { workspace: baseWorkspace } as any;
+  const system = SYSTEM_TEMPLATE(ctx);
+  assert.match(system, new RegExp(`${MIN_TRIALS_FOR_RATE}`), "o valor numérico precisa aparecer no texto que vai pro LLM");
+  assert.match(system, /amostra insuficiente/i, "a regra de confiabilidade precisa estar em linguagem explícita, não implícita");
+});

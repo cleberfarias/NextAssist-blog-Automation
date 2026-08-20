@@ -1,7 +1,7 @@
 // src/lib/marketingDirector.ts
 import { runAgent, extractJson } from "./anthropic.js";
 import { getPerformance } from "../performance.js";
-import { getConversionSummary } from "../conversions.js";
+import { computeAttribution, MIN_TRIALS_FOR_RATE, type AttributionRow } from "../attribution.js";
 import { getTopSearchQueries } from "./searchConsole.js";
 import type { WorkspaceContext } from "../context.js";
 import type { PerformanceReport } from "../performance.js";
@@ -53,7 +53,7 @@ export function parseContentOpportunities(raw: unknown): ContentOpportunity[] {
   return valid;
 }
 
-const SYSTEM_TEMPLATE = (ctx: WorkspaceContext) => `Você é o Marketing Director do ${ctx.workspace.brand.name} — ${ctx.workspace.brand.description}
+export const SYSTEM_TEMPLATE = (ctx: WorkspaceContext) => `Você é o Marketing Director do ${ctx.workspace.brand.name} — ${ctx.workspace.brand.description}
 Tom de voz: ${ctx.workspace.brand.toneOfVoice}
 Público-alvo: ${ctx.workspace.brand.targetAudience.join(", ") || "não especificado"}
 Concorrentes diretos: ${ctx.workspace.brand.competitors.join(", ") || "não especificado"}
@@ -64,12 +64,12 @@ Sua responsabilidade é perceber quando o backlog de pautas do blog está
 ficando baixo e propor novas oportunidades de conteúdo com potencial real de
 impacto nesse objetivo — nunca gere temas aleatórios ou genéricos.
 
-Priorize, nesta ordem quando o contexto disponível permitir:
-1. Oportunidades do Search Console (termos com impressões altas e posição ou CTR ruins).
-2. Temas relacionados a conteúdo que já converte bem (campanhas/CTAs com mais leads).
-3. Lacunas em relação aos concorrentes.
-4. Atualização de clusters de conteúdo já existentes.
-5. Outras oportunidades alinhadas ao objetivo principal do workspace.
+Priorize, nesta ordem, sempre que houver dado suficiente:
+1. Conteúdos que já geraram clientes pagantes (assinatura) — nunca deixe alcance bruto superar isso.
+2. Entre os que ainda não geraram cliente, os com mais usuários ativados (criaram a 1ª Ordem de Serviço).
+3. Entre os que ainda não ativaram ninguém, os com mais trials.
+4. Taxas de conversão calculadas com menos de ${MIN_TRIALS_FOR_RATE} trials têm amostra insuficiente — NÃO as use para priorizar, mesmo que pareçam altas.
+5. Só quando não houver sinal comercial suficiente (poucos ou nenhum dado de atribuição), use Search Console, concorrentes ou clusters de conteúdo como critério.
 
 Responda SOMENTE com um array JSON, sem texto antes ou depois, no formato:
 [
@@ -82,11 +82,11 @@ Responda SOMENTE com um array JSON, sem texto antes ou depois, no formato:
   }
 ]`;
 
-function buildPrompt(
+export function buildPrompt(
   ctx: WorkspaceContext,
   options: GenerateContentBacklogOptions,
   performance: PerformanceReport | null,
-  conversions: Awaited<ReturnType<typeof getConversionSummary>> | null,
+  attribution: { rows: AttributionRow[]; unattributedEvents: number } | null,
   topQueries: Awaited<ReturnType<typeof getTopSearchQueries>>,
 ): string {
   const forbidden = ctx.workspace.brand.forbiddenTerms ?? [];
@@ -97,10 +97,13 @@ function buildPrompt(
     .map((p) => `- "${p.titulo}" (${p.clicks} cliques, posição média ${p.position.toFixed(1)})`)
     .join("\n") || "(sem dados de performance ainda)";
 
-  const topByCampaign = (conversions?.byCampaign ?? [])
+  const topByAttribution = [...(attribution?.rows ?? [])]
+    .sort((a, b) => b.customers - a.customers || b.activated - a.activated || b.trials - a.trials || b.visits - a.visits)
     .slice(0, 5)
-    .map((c) => `- ${c.campaign}: ${c.leads} leads (taxa de demo ${(c.demoRate * 100).toFixed(0)}%)`)
-    .join("\n") || "(sem dados de conversão ainda)";
+    .map((r) => `- ${r.tema} (${r.contentId}, ${r.channel}): ${r.customers} cliente(s), ${r.activated} ativado(s), ${r.trials} trial(s), ${r.visits} visita(s)${
+      r.rateReliable ? ` — trial→ativação ${(r.trialToActivationRate * 100).toFixed(0)}%` : " — amostra de trials insuficiente para taxa confiável"
+    }`)
+    .join("\n") || "(sem dados de atribuição ainda)";
 
   const searchOpportunities = topQueries
     .slice(0, 10)
@@ -121,8 +124,8 @@ ${options.publishedTitles.map((t) => `- ${t}`).join("\n") || "(nenhum)"}
 Posts com melhor desempenho no Search Console (últimos 28 dias):
 ${topByClicks}
 
-Campanhas/conteúdo com melhor conversão em lead:
-${topByCampaign}
+Conteúdos com melhor resultado comercial (clientes > ativados > trials > visitas):
+${topByAttribution}
 
 Termos de busca com maior potencial (impressões altas, posição ou CTR ruins):
 ${searchOpportunities}
@@ -139,15 +142,15 @@ export async function generateContentBacklog(
   ctx: WorkspaceContext,
   options: GenerateContentBacklogOptions,
 ): Promise<ContentOpportunity[]> {
-  const [performance, conversions, topQueries] = await Promise.all([
+  const [performance, attribution, topQueries] = await Promise.all([
     getPerformance(ctx),
-    getConversionSummary(ctx),
+    computeAttribution(ctx),
     getTopSearchQueries(ctx).catch(() => []),
   ]);
 
   const raw = await runAgent(ctx, {
     system: SYSTEM_TEMPLATE(ctx),
-    prompt: buildPrompt(ctx, options, performance, conversions, topQueries),
+    prompt: buildPrompt(ctx, options, performance, attribution, topQueries),
     maxTokens: 3000,
   });
 

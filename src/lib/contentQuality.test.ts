@@ -12,9 +12,9 @@ function validPost(overrides: Partial<FinalPost> = {}): FinalPost {
       '<p>Um sistema para assistência técnica reduz retrabalho.</p>',
       '<a href="/blog/controle-estoque">Veja como controlar o estoque</a>',
       '<a href="/#funcionalidades">Conheça as funcionalidades</a>',
-      '<a href="/demo?utm_source=blog&utm_medium=article&utm_campaign=sistema-assistencia-tecnica&utm_content=cta-inline">Teste grátis por 7 dias</a>',
+      '<a href="/demo?utm_source=blog&utm_medium=article&utm_campaign=sem-campanha&utm_content=sistema-assistencia-tecnica&cta_id=cta-inline">Teste grátis por 7 dias</a>',
       '<p>Organize sua operação e acompanhe cada aparelho.</p>',
-      '<a href="/demo?utm_source=blog&utm_medium=article&utm_campaign=sistema-assistencia-tecnica&utm_content=cta-final">Comece seu teste grátis</a>',
+      '<a href="/demo?utm_source=blog&utm_medium=article&utm_campaign=sem-campanha&utm_content=sistema-assistencia-tecnica&cta_id=cta-final">Comece seu teste grátis</a>',
     ].join(""),
     tags: ["assistência técnica", "gestão"],
     metaTitle: "Sistema para assistência técnica: como escolher",
@@ -33,7 +33,7 @@ test("aceita CTAs com campanha do artigo e posições distintas", () => {
 });
 
 test("rejeita CTAs sem atribuição individual", () => {
-  const conteudo = validPost().conteudo.replaceAll("cta-final", "cta-inline");
+  const conteudo = validPost().conteudo.replaceAll("cta_id=cta-final", "cta_id=cta-inline");
   assert.throws(
     () =>
       validateFinalPost(validPost({ conteudo }), ["controle-estoque"], {

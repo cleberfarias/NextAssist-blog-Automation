@@ -9,6 +9,7 @@ import { publishPost } from "./agents/publisher.js";
 import { publishToInstagram } from "./agents/instagramPublisher.js";
 import { indexPublishedPost, postUrl } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
+import { registerContent } from "./contentRegistry.js";
 import { validateFinalPost } from "./lib/contentQuality.js";
 import { emit, type OnEvent } from "./pipelineEvents.js";
 import type { BacklogResult } from "./backlog.js";
@@ -104,6 +105,17 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
 
     if (published.publicado) await markTopicPublished(ctx, topic.tema);
     await appendHistory(ctx, { tema: topic.tema, titulo: finalPost.titulo, slug: publishedSlug, publicadoEm: new Date().toISOString() });
+    await registerContent(ctx, {
+      contentId: publishedSlug,
+      campaignId: null,
+      tema: topic.tema,
+      formato: "blog",
+      channel: "blog",
+      funnelStage: plan.funnelStage,
+      publicadoEm: new Date().toISOString(),
+      status: published.publicado ? "published" : "draft-pending-approval",
+      url: postUrl(ctx, publishedSlug),
+    });
 
     return { tema: topic.tema, slugPublicado: publishedSlug, usage: ctx.usage.get(), backlog };
   } catch (err) {
