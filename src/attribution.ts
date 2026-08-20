@@ -25,6 +25,11 @@ export interface AttributionRow {
   rateReliable: boolean;
 }
 
+export interface AttributionResult {
+  rows: AttributionRow[];
+  unattributedEvents: number;
+}
+
 const FUNNEL_EVENT_NAMES = new Set<ConversionEvent["name"]>([
   "page_view", "trial_started", "signup_completed", "first_order_created", "subscription_started",
 ]);
@@ -66,8 +71,9 @@ function resolveContentId(
   return event.content || undefined;
 }
 
-function entityKey(event: ConversionEvent): string | undefined {
-  return event.userId ?? event.anonymousId;
+function entityKey(event: ConversionEvent, userToAnonymous: Map<string, string>): string | undefined {
+  if (event.userId) return userToAnonymous.get(event.userId) ?? event.userId;
+  return event.anonymousId;
 }
 
 /** Agrupa entidades únicas (Set<anonymousId|userId>) por contentId, para um nome de evento. Nunca conta eventos brutos. */
@@ -81,7 +87,7 @@ function uniqueEntitiesByContent(
   for (const event of events) {
     if (event.name !== name) continue;
     const contentId = resolveContentId(event, firstTouch, userToAnonymous);
-    const key = entityKey(event);
+    const key = entityKey(event, userToAnonymous);
     if (!contentId || !key) continue;
     if (!map.has(contentId)) map.set(contentId, new Set());
     map.get(contentId)!.add(key);
@@ -106,9 +112,10 @@ export function computeAttributionFromData(
   registry: ContentRegistryEntry[],
   events: ConversionEvent[],
   performance: PerformanceLike | null,
-): AttributionRow[] {
+): AttributionResult {
   const userToAnonymous = buildIdentityMap(events);
   const firstTouch = buildFirstTouchMap(events);
+  const registryIds = new Set(registry.map((e) => e.contentId));
 
   const pageViewsByContent = uniqueEntitiesByContent(events, "page_view", firstTouch, userToAnonymous);
   const trialsByContent = uniqueEntitiesByContent(events, "trial_started", firstTouch, userToAnonymous);
@@ -118,8 +125,7 @@ export function computeAttributionFromData(
 
   const performanceBySlug = new Map((performance?.posts ?? []).map((p) => [p.slug, p.clicks]));
 
-  return registry.map((entry): AttributionRow => {
-    // Precedência de visitas: post-performance (SEO) > page_view atribuível > 0. demo_view nunca conta como visita.
+  const rows = registry.map((entry): AttributionRow => {
     const visits = performanceBySlug.has(entry.contentId)
       ? performanceBySlug.get(entry.contentId)!
       : (pageViewsByContent.get(entry.contentId)?.size ?? 0);
@@ -142,32 +148,26 @@ export function computeAttributionFromData(
       rateReliable: trials >= MIN_TRIALS_FOR_RATE,
     };
   });
-}
 
-function countUnattributed(
-  events: ConversionEvent[],
-  firstTouch: Map<string, string>,
-  userToAnonymous: Map<string, string>,
-): number {
-  let count = 0;
+  // Every funnel event lands in exactly one place: a row above, or here.
+  // Never both, never neither — that's what makes unattributedEvents trustworthy.
+  let unattributedEvents = 0;
   for (const event of events) {
     if (!FUNNEL_EVENT_NAMES.has(event.name)) continue;
-    if (!resolveContentId(event, firstTouch, userToAnonymous)) count++;
+    const contentId = resolveContentId(event, firstTouch, userToAnonymous);
+    const key = entityKey(event, userToAnonymous);
+    if (!contentId || !key || !registryIds.has(contentId)) unattributedEvents++;
   }
-  return count;
+
+  return { rows, unattributedEvents };
 }
 
 /** Carrega registro + eventos + performance do workspace e computa a atribuição. Chamado sob demanda pelo dashboard e pelo Marketing Director. */
-export async function computeAttribution(ctx: WorkspaceContext): Promise<{ rows: AttributionRow[]; unattributedEvents: number }> {
+export async function computeAttribution(ctx: WorkspaceContext): Promise<AttributionResult> {
   const [registry, events, performance] = await Promise.all([
     getContentRegistry(ctx),
     getConversionEvents(ctx),
     getPerformance(ctx),
   ]);
-  const userToAnonymous = buildIdentityMap(events);
-  const firstTouch = buildFirstTouchMap(events);
-  return {
-    rows: computeAttributionFromData(registry, events, performance),
-    unattributedEvents: countUnattributed(events, firstTouch, userToAnonymous),
-  };
+  return computeAttributionFromData(registry, events, performance);
 }
