@@ -7,6 +7,7 @@ import { runPipeline, type AgentId, type AgentStatus, type PipelineEvent } from 
 import { getHistory } from "./history.js";
 import { getRuns } from "./runsHistory.js";
 import { getPerformance, refreshPerformance } from "./performance.js";
+import { computeAttribution } from "./attribution.js";
 import { config } from "./config.js";
 import { getConversionSummary, recordConversion, type ConversionEventName } from "./conversions.js";
 import { triggerDailyPostWorkflow } from "./lib/githubDispatch.js";
@@ -308,6 +309,13 @@ app.get("/api/performance", asyncHandler(async (req, res) => {
   const workspaceId = requireWorkspaceId(req, res);
   if (!workspaceId) return;
   res.json(await getPerformance(await contextFor(workspaceId)));
+}));
+
+app.get("/api/attribution", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  const ctx = await contextFor(workspaceId);
+  res.json(await computeAttribution(ctx));
 }));
 
 app.post("/api/performance/refresh", express.json(), asyncHandler(async (req, res) => {
