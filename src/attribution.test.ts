@@ -33,6 +33,17 @@ test("visitas: sem post-performance, usa page_view atribuível; demo_view nunca 
   assert.equal(row.visits, 2);
 });
 
+test("visitas: clicks: 0 no post-performance nao suprime o fallback de page_view", () => {
+  const events: ConversionEvent[] = [
+    { name: "page_view", anonymousId: "a1", content: "post-a", createdAt: "2026-08-01T00:00:00Z" },
+    { name: "page_view", anonymousId: "a2", content: "post-a", createdAt: "2026-08-01T00:01:00Z" },
+  ];
+  const performance = { posts: [{ slug: "post-a", clicks: 0 }] };
+  const { rows } = computeAttributionFromData(registry, events, performance);
+  const [row] = rows;
+  assert.equal(row.visits, 2);
+});
+
 test("trials/ativação/clientes contam entidades únicas, não eventos brutos", () => {
   const events: ConversionEvent[] = [
     { name: "trial_started", anonymousId: "a1", content: "post-a", createdAt: "2026-08-01T00:00:00Z" },

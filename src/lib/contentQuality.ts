@@ -45,12 +45,12 @@ export function validateFinalPost(
   if (ctas.length < 2) {
     throw new Error("O artigo precisa conter pelo menos dois CTAs rastreáveis para o teste grátis.");
   }
-  if (ctas.some((params) => params.get("utm_campaign") !== post.slug)) {
-    throw new Error("Cada CTA precisa usar o slug do artigo como utm_campaign.");
+  if (ctas.some((params) => params.get("utm_content") !== post.slug)) {
+    throw new Error("Cada CTA precisa usar o slug do artigo como utm_content.");
   }
-  const positions = ctas.map((params) => params.get("utm_content")).filter(Boolean);
+  const positions = ctas.map((params) => params.get("cta_id")).filter(Boolean);
   if (new Set(positions).size < 2) {
-    throw new Error("Os CTAs precisam identificar posições diferentes em utm_content.");
+    throw new Error("Os CTAs precisam identificar posições diferentes em cta_id.");
   }
 
   const blogLinks = [...post.conteudo.matchAll(/href=["']\/blog\/([^"'#?]+)["']/g)]

@@ -126,9 +126,8 @@ export function computeAttributionFromData(
   const performanceBySlug = new Map((performance?.posts ?? []).map((p) => [p.slug, p.clicks]));
 
   const rows = registry.map((entry): AttributionRow => {
-    const visits = performanceBySlug.has(entry.contentId)
-      ? performanceBySlug.get(entry.contentId)!
-      : (pageViewsByContent.get(entry.contentId)?.size ?? 0);
+    const clicks = performanceBySlug.get(entry.contentId);
+    const visits = clicks && clicks > 0 ? clicks : (pageViewsByContent.get(entry.contentId)?.size ?? 0);
     const trials = trialsByContent.get(entry.contentId)?.size ?? 0;
     const signups = signupsByContent.get(entry.contentId)?.size ?? 0;
     const activated = activatedByContent.get(entry.contentId)?.size ?? 0;

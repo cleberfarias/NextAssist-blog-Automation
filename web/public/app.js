@@ -485,9 +485,9 @@ async function loadAttribution() {
           <td>${nf.format(row.signups)}</td>
           <td>${nf.format(row.activated)}</td>
           <td>${nf.format(row.customers)}</td>
-          <td>${(row.visitToTrialRate * 100).toFixed(1)}%</td>
+          <td>${row.rateReliable ? `${(row.visitToTrialRate * 100).toFixed(1)}%` : "amostra insuficiente"}</td>
           <td>${row.rateReliable ? `${(row.trialToActivationRate * 100).toFixed(1)}%` : "amostra insuficiente"}</td>
-          <td>${(row.activationToCustomerRate * 100).toFixed(1)}%</td>
+          <td>${row.rateReliable ? `${(row.activationToCustomerRate * 100).toFixed(1)}%` : "amostra insuficiente"}</td>
         </tr>`)
         .join("")}</tbody></table></div>`
     : "<p class=\"empty\">Nenhum conteúdo publicado com registro de atribuição ainda.</p>";

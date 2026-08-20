@@ -235,6 +235,11 @@ Passa a receber `AttributionRow[]` de `computeAttribution(ctx)` no lugar do
 - Enquanto o app NextAssist não emitir os eventos de produto (trial/signup/
   OS/assinatura), as colunas correspondentes ficam zeradas — o P0 entrega o
   contrato e a tubulação prontos, não o dado em si.
+- Conteúdo publicado **antes** desta funcionalidade não tem entrada em
+  `content-registry.json` (só é escrito daqui em diante) — o dashboard de
+  atribuição começa vazio para esses posts até que sejam republicados/
+  editados, ou até que um script de backfill seja escrito como tarefa
+  própria (fora do escopo do P0).
 
 ## Corte de tarefas
 
