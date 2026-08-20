@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-20T13:35:59.432Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-20T13:35:59.432Z",
+    "finalizadoEm": "2026-08-20T13:41:53.480Z",
+    "tema": "Modelo de orçamento para conserto de celular: o que incluir antes da aprovação",
+    "status": "publicado",
+    "slug": "modelo-orcamento-conserto-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Modelo de orçamento para conserto de celular: o que incluir antes da aprovação",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-20T13:35:59.516Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **Campos básicos já bem cobertos:** GestãoClick e MarkupEmpresa recomendam identificar cliente e aparelho — marca, modelo e IMEI —, descrever diagnóstico e serviço, discriminar peças, mão de obra, total, forma de pagamento, prazo e garant",
+        "timestamp": "2026-08-20T13:36:42.344Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-20T13:36:42.345Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Modelo de orçamento conserto de celular antes da aprovação",
+        "timestamp": "2026-08-20T13:37:03.364Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-20T13:37:03.365Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Um bom modelo de orçamento conserto de celular precisa mostrar, antes da aprovação, quanto será cobrado, qual serviço será realizado, qual peça será usada e o que pode mudar durante o reparo. Quanto m...",
+        "timestamp": "2026-08-20T13:38:05.812Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-20T13:38:05.813Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: modelo-orcamento-conserto-celular · Tags: Orçamento, Conserto de celular, Ordem de serviço, Gestão de assistência técnica, Atendimento ao cliente",
+        "timestamp": "2026-08-20T13:39:01.026Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-20T13:39:01.026Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/modelo-orcamento-conserto-celular",
+        "timestamp": "2026-08-20T13:40:21.167Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-20T13:40:21.167Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcQ5MGcDieD/",
+        "timestamp": "2026-08-20T13:41:51.597Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-20T13:41:51.597Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-20T13:41:53.477Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 42221,
+      "outputTokens": 11690,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.24134200000000003,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 12,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 12,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-19T13:34:09.186Z",
     "origem": "action",
     "iniciadoEm": "2026-08-19T13:34:09.186Z",

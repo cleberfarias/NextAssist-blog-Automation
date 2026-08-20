@@ -111,11 +111,12 @@
     {
       "tema": "Modelo de orçamento para conserto de celular: o que incluir antes da aprovação",
       "palavraChaveAlvo": "modelo de orçamento conserto de celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "É uma busca com potencial de material para download e captura de lead, além de resolver uma etapa anterior à abertura do serviço.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-08-20T13:41:53.478Z"
     },
     {
       "tema": "Modelo de laudo técnico para celular: como documentar defeitos e testes",
