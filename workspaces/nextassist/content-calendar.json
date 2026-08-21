@@ -121,11 +121,12 @@
     {
       "tema": "Modelo de laudo técnico para celular: como documentar defeitos e testes",
       "palavraChaveAlvo": "modelo de laudo técnico celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Um modelo editável atrai donos de assistência que precisam profissionalizar a documentação e cria uma oportunidade direta de apresentar o NextAssist.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-08-21T13:39:55.900Z"
     },
     {
       "tema": "Cliente não buscou o celular consertado: o que a assistência pode fazer",

@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-21T13:34:46.385Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-21T13:34:46.385Z",
+    "finalizadoEm": "2026-08-21T13:39:55.902Z",
+    "tema": "Modelo de laudo técnico para celular: como documentar defeitos e testes",
+    "status": "publicado",
+    "slug": "modelo-laudo-tecnico-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Modelo de laudo técnico para celular: como documentar defeitos e testes",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-21T13:34:46.400Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A MarkupEmpresa tem o conteúdo mais diretamente alinhado ao tema:** recomenda registrar identificação da assistência e do cliente, marca/modelo/IMEI, estado físico, defeito relatado, diagnóstico, testes realizados e conclusão — incluind",
+        "timestamp": "2026-08-21T13:35:20.068Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-21T13:35:20.069Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Modelo de laudo técnico celular: checklist e exemplo",
+        "timestamp": "2026-08-21T13:35:33.240Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-21T13:35:33.241Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Um bom modelo de laudo técnico celular registra o que foi relatado, o que realmente foi verificado e quais evidências sustentam a conclusão. Ele evita frases vagas como “placa queimada” e ajuda a assi...",
+        "timestamp": "2026-08-21T13:36:27.352Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-21T13:36:27.353Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: modelo-laudo-tecnico-celular · Tags: Laudo técnico, Assistência técnica, Checklist de testes, Ordem de serviço, Conserto de celular",
+        "timestamp": "2026-08-21T13:37:21.918Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-21T13:37:21.918Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/modelo-laudo-tecnico-celular",
+        "timestamp": "2026-08-21T13:38:19.251Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-21T13:38:19.251Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcTdw0Tj663/",
+        "timestamp": "2026-08-21T13:39:53.765Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-21T13:39:53.766Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-21T13:39:55.898Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 49499,
+      "outputTokens": 11375,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 5,
+      "estimatedUsd": 0.262748,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 11,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 11,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-20T13:35:59.432Z",
     "origem": "action",
     "iniciadoEm": "2026-08-20T13:35:59.432Z",
