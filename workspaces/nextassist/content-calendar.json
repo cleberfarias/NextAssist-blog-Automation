@@ -131,11 +131,12 @@
     {
       "tema": "Cliente não buscou o celular consertado: o que a assistência pode fazer",
       "palavraChaveAlvo": "cliente não buscou celular consertado",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Aparelhos abandonados ocupam espaço e prendem dinheiro da assistência. O tema tem dor clara, intenção prática e conexão com registro de prazos e comunicação.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-08-22T13:37:03.345Z"
     },
     {
       "tema": "Como controlar o fluxo de caixa de uma assistência técnica de celular",

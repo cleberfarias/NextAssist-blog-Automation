@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-22T13:30:58.108Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-22T13:30:58.108Z",
+    "finalizadoEm": "2026-08-22T13:37:03.347Z",
+    "tema": "Cliente não buscou o celular consertado: o que a assistência pode fazer",
+    "status": "publicado",
+    "slug": "cliente-nao-buscou-celular-consertado",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Cliente não buscou o celular consertado: o que a assistência pode fazer",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-22T13:30:58.122Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A AnaDita é quem aborda o problema de forma mais direta.** Em artigo publicado em **28 de junho de 2026** e atualizado em **5 de julho**, recomenda uma sequência de três contatos: aviso assim que o celular ficar pronto; lembrete após tr",
+        "timestamp": "2026-08-22T13:31:42.741Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-22T13:31:42.742Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Cliente não buscou celular consertado: como agir",
+        "timestamp": "2026-08-22T13:32:04.258Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-22T13:32:04.259Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Quando o cliente não buscou celular consertado, a primeira reação não deve ser vender o aparelho, desmontá-lo ou ameaçar o cliente. Na maioria dos casos, a retirada atrasou por esquecimento, falta de ...",
+        "timestamp": "2026-08-22T13:32:54.897Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-22T13:32:54.898Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: cliente-nao-buscou-celular-consertado · Tags: gestão de assistência técnica, ordem de serviço, atendimento ao cliente, celular não retirado",
+        "timestamp": "2026-08-22T13:33:49.604Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-22T13:33:49.605Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/cliente-nao-buscou-celular-consertado",
+        "timestamp": "2026-08-22T13:34:45.684Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-22T13:34:45.685Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcWCOE-DD0V/",
+        "timestamp": "2026-08-22T13:37:01.621Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-22T13:37:01.621Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-22T13:37:03.344Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 50761,
+      "outputTokens": 9594,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 5,
+      "estimatedUsd": 0.24746200000000002,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 10,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 10,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-21T13:34:46.385Z",
     "origem": "action",
     "iniciadoEm": "2026-08-21T13:34:46.385Z",
