@@ -85,7 +85,10 @@ const app = express();
 
 if (config.panelPassword) {
   app.use((req, res, next) => {
-    if (req.path === "/api/events/ingest") return next();
+    // These are the two intentionally public ingestion endpoints:
+    // pipeline events use their own X-Panel-Ingest-Token check below, while
+    // conversions are protected by the workspace CORS allowlist.
+    if (req.path === "/api/events/ingest" || req.path === "/api/conversions") return next();
     const [scheme, encoded] = (req.headers.authorization ?? "").split(" ");
     if (scheme?.toLowerCase() === "basic" && encoded) {
       const credentials = Buffer.from(encoded, "base64").toString("utf8");
