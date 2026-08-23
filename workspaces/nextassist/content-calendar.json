@@ -141,11 +141,12 @@
     {
       "tema": "Como controlar o fluxo de caixa de uma assistência técnica de celular",
       "palavraChaveAlvo": "fluxo de caixa assistência técnica",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Complementa o cluster de gestão sem repetir precificação ou indicadores e alcança donos que ainda controlam entradas e saídas de forma improvisada.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-08-23T13:36:21.895Z"
     },
     {
       "tema": "Orçamento aprovado pelo cliente: como registrar a autorização do conserto",

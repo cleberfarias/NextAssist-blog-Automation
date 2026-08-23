@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-23T13:30:55.784Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-23T13:30:55.784Z",
+    "finalizadoEm": "2026-08-23T13:36:21.896Z",
+    "tema": "Como controlar o fluxo de caixa de uma assistência técnica de celular",
+    "status": "publicado",
+    "slug": "fluxo-caixa-assistencia-tecnica",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como controlar o fluxo de caixa de uma assistência técnica de celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-23T13:30:55.797Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **AnaDita — simplicidade e acessibilidade:** no conteúdo atualizado em **5 de julho de 2026**, propõe o método diário de três perguntas — “o que entrou, o que saiu e o que sobrou” — com registro por voz no WhatsApp. Usa o exemplo de um té",
+        "timestamp": "2026-08-23T13:31:38.909Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-23T13:31:38.910Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Fluxo de caixa assistência técnica: guia prático",
+        "timestamp": "2026-08-23T13:31:56.514Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-23T13:31:56.515Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "O controle de fluxo de caixa assistência técnica mostra quanto dinheiro realmente entrou, quanto saiu e qual valor está disponível para pagar peças, aluguel, impostos e retiradas do dono. Ele é difere...",
+        "timestamp": "2026-08-23T13:32:56.202Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-23T13:32:56.203Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: fluxo-caixa-assistencia-tecnica · Tags: Fluxo de caixa, Gestão financeira, Assistência técnica, Ordem de serviço, Contas a receber",
+        "timestamp": "2026-08-23T13:33:47.157Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-23T13:33:47.157Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/fluxo-caixa-assistencia-tecnica",
+        "timestamp": "2026-08-23T13:34:41.573Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-23T13:34:41.573Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcYm8ZzESRd/",
+        "timestamp": "2026-08-23T13:36:19.984Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-23T13:36:19.984Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-23T13:36:21.894Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 50133,
+      "outputTokens": 11100,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 5,
+      "estimatedUsd": 0.261266,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 9,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 9,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-22T13:30:58.108Z",
     "origem": "action",
     "iniciadoEm": "2026-08-22T13:30:58.108Z",
