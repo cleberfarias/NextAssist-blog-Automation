@@ -89,6 +89,8 @@ export function summarizeConversions(events: ConversionEvent[]) {
     demoSubmits,
     contactSubmits: count("contact_submit"),
     whatsappClicks: count("whatsapp_click"),
+    trials: count("trial_started"),
+    signups: count("signup_completed"),
     demoRate: demoViews ? demoSubmits / demoViews : 0,
     byCampaign: attribution(events, "campaign"),
     byContent: attribution(events, "content"),

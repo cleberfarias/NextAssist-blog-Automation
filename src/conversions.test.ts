@@ -41,6 +41,15 @@ test("agrega chaves especiais sem corromper contadores", () => {
   assert.equal(summary.byContent[0].demoViews, 1);
 });
 
+test("inclui trials e cadastros no resumo do escritório", () => {
+  const summary = summarizeConversions([
+    { name: "trial_started", anonymousId: "anon-1", createdAt: "2026-08-01T00:00:00Z" },
+    { name: "signup_completed", anonymousId: "anon-1", userId: "user-1", createdAt: "2026-08-01T00:01:00Z" },
+  ]);
+  assert.equal(summary.trials, 1);
+  assert.equal(summary.signups, 1);
+});
+
 test("getConversionEvents lê o array bruto de eventos, incluindo os campos de identidade novos", async () => {
   const { getConversionEvents } = await import("./conversions.js");
   const { buildWorkspaceContext } = await import("./context.js");

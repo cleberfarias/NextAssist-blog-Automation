@@ -440,6 +440,8 @@ async function loadConversions() {
     kpiTile("Testes iniciados", nf.format(data.demoSubmits)),
     kpiTile("Contatos enviados", nf.format(data.contactSubmits)),
     kpiTile("Cliques WhatsApp", nf.format(data.whatsappClicks)),
+    kpiTile("Trials iniciados", nf.format(data.trials)),
+    kpiTile("Cadastros concluídos", nf.format(data.signups)),
     kpiTile("Conversão", `${(data.demoRate * 100).toFixed(1)}%`),
   ].join("");
   const campaigns = (data.byCampaign ?? []).filter((row) => row.campaign !== "(não informado)").slice(0, 5);
