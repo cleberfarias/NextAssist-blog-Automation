@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-24T13:38:04.862Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-24T13:38:04.862Z",
+    "finalizadoEm": "2026-08-24T13:42:46.848Z",
+    "tema": "Orçamento aprovado pelo cliente: como registrar a autorização do conserto",
+    "status": "publicado",
+    "slug": "autorizacao-conserto-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Orçamento aprovado pelo cliente: como registrar a autorização do conserto",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-24T13:38:04.874Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **Fluxo mais usado:** diagnóstico → orçamento detalhado → aprovação do cliente → mudança de status da OS → início do reparo. MarkupEmpresa e GestãoClick destacam a conversão automática do orçamento aprovado em ordem de serviço, evitando r",
+        "timestamp": "2026-08-24T13:39:05.902Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-24T13:39:05.903Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Autorização de conserto de celular: como registrar",
+        "timestamp": "2026-08-24T13:39:17.521Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-24T13:39:17.522Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Receber um “pode fazer” no WhatsApp parece suficiente, mas a autorização de conserto de celular precisa ficar ligada à ordem de serviço. Sem esse registro, a conversa pode se perder, outro técnico pod...",
+        "timestamp": "2026-08-24T13:40:06.596Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-24T13:40:06.597Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: autorizacao-conserto-celular · Tags: Ordem de serviço, Autorização de conserto, Orçamento, WhatsApp, Gestão de assistência técnica",
+        "timestamp": "2026-08-24T13:40:49.170Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-24T13:40:49.170Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/autorizacao-conserto-celular",
+        "timestamp": "2026-08-24T13:41:46.130Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-24T13:41:46.130Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcbMdVUAFiE/",
+        "timestamp": "2026-08-24T13:42:45.470Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-24T13:42:45.470Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-24T13:42:46.845Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 40981,
+      "outputTokens": 9154,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.213502,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 8,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 8,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-23T13:30:55.784Z",
     "origem": "action",
     "iniciadoEm": "2026-08-23T13:30:55.784Z",

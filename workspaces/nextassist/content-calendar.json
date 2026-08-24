@@ -151,11 +151,12 @@
     {
       "tema": "Orçamento aprovado pelo cliente: como registrar a autorização do conserto",
       "palavraChaveAlvo": "autorização de conserto de celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "A falta de autorização comprovável causa discussões sobre preço e serviço executado. O conteúdo aproxima uma dor jurídica de uma função típica de gestão.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-08-24T13:42:46.846Z"
     },
     {
       "tema": "Como avisar o status do conserto sem responder cada cliente manualmente",
