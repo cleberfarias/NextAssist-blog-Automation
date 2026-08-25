@@ -53,5 +53,16 @@
     "publicadoEm": "2026-08-24T13:42:46.847Z",
     "status": "published",
     "url": "https://www.nextassist-app.com.br/blog/autorizacao-conserto-celular"
+  },
+  {
+    "contentId": "acompanhar-conserto-celular",
+    "campaignId": null,
+    "tema": "Como avisar o status do conserto sem responder cada cliente manualmente",
+    "formato": "blog",
+    "channel": "blog",
+    "funnelStage": "meio",
+    "publicadoEm": "2026-08-25T13:41:38.749Z",
+    "status": "published",
+    "url": "https://www.nextassist-app.com.br/blog/acompanhar-conserto-celular"
   }
 ]

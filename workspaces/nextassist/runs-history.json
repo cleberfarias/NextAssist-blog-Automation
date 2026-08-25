@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-25T13:37:03.134Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-25T13:37:03.134Z",
+    "finalizadoEm": "2026-08-25T13:41:38.750Z",
+    "tema": "Como avisar o status do conserto sem responder cada cliente manualmente",
+    "status": "publicado",
+    "slug": "acompanhar-conserto-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como avisar o status do conserto sem responder cada cliente manualmente",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-25T13:37:03.149Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **O ângulo dominante é “mudou o status, disparou o WhatsApp”.** Sinfone, byTechOS e SmartConserto apresentam mensagens automáticas para etapas como orçamento pronto, reparo iniciado, aguardando peça e aparelho disponível para retirada — s",
+        "timestamp": "2026-08-25T13:37:35.991Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-25T13:37:35.992Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Como acompanhar conserto de celular sem respostas manuais",
+        "timestamp": "2026-08-25T13:37:48.291Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-25T13:37:48.291Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Quando o cliente quer acompanhar conserto de celular, normalmente ele manda uma mensagem simples: “Já ficou pronto?”. O problema é que, para responder, alguém precisa parar o atendimento ou a bancada,...",
+        "timestamp": "2026-08-25T13:38:44.867Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-25T13:38:44.868Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: acompanhar-conserto-celular · Tags: Ordem de serviço, WhatsApp, Automação, Atendimento ao cliente, Assistência técnica",
+        "timestamp": "2026-08-25T13:39:28.595Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-25T13:39:28.596Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/acompanhar-conserto-celular",
+        "timestamp": "2026-08-25T13:40:46.765Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-25T13:40:46.765Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcdxIhWCU8D/",
+        "timestamp": "2026-08-25T13:41:36.598Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-25T13:41:36.598Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-25T13:41:38.747Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 41332,
+      "outputTokens": 10121,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.223874,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 7,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 7,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-24T13:38:04.862Z",
     "origem": "action",
     "iniciadoEm": "2026-08-24T13:38:04.862Z",

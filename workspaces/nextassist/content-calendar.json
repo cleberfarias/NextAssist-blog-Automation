@@ -161,11 +161,12 @@
     {
       "tema": "Como avisar o status do conserto sem responder cada cliente manualmente",
       "palavraChaveAlvo": "acompanhar conserto de celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Ataca o excesso de mensagens sobre andamento do reparo e abre espaço para mostrar automação de status e consulta pelo cliente.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-08-25T13:41:38.748Z"
     },
     {
       "tema": "Nota fiscal em assistência técnica: quando emitir e como separar peça e serviço",
