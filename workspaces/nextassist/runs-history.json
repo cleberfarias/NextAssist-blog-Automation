@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-26T13:39:48.327Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-26T13:39:48.327Z",
+    "finalizadoEm": "2026-08-26T13:44:49.680Z",
+    "tema": "Nota fiscal em assistência técnica: quando emitir e como separar peça e serviço",
+    "status": "publicado",
+    "slug": "nota-fiscal-assistencia-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Nota fiscal em assistência técnica: quando emitir e como separar peça e serviço",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-26T13:39:48.339Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **Tarefio é quem explora o tema com maior profundidade e volume:** publicou vários conteúdos em maio de 2026 explicando NFS-e para mão de obra, NF-e para peças vendidas a empresas e NFC-e para consumidor final. Usa exemplos simples — troc",
+        "timestamp": "2026-08-26T13:40:41.336Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-26T13:40:41.337Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Nota fiscal assistência técnica celular: peças e serviços",
+        "timestamp": "2026-08-26T13:40:55.024Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-26T13:40:55.025Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Emitir nota fiscal assistência técnica celular não é apenas registrar o valor total do conserto. Em muitos reparos, existe uma parte referente à mercadoria — como tela, bateria ou conector — e outra r...",
+        "timestamp": "2026-08-26T13:42:04.744Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-26T13:42:04.745Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: nota-fiscal-assistencia-celular · Tags: Nota fiscal, Gestão fiscal, Assistência técnica, Ordem de serviço, Peças e serviços",
+        "timestamp": "2026-08-26T13:43:04.663Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-26T13:43:04.664Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/nota-fiscal-assistencia-celular",
+        "timestamp": "2026-08-26T13:43:59.351Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-26T13:43:59.351Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcgWS1sDhcd/",
+        "timestamp": "2026-08-26T13:44:47.804Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-26T13:44:47.805Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-26T13:44:49.677Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 49214,
+      "outputTokens": 11368,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 5,
+      "estimatedUsd": 0.262108,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 6,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 6,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-25T13:37:03.134Z",
     "origem": "action",
     "iniciadoEm": "2026-08-25T13:37:03.134Z",

@@ -171,11 +171,12 @@
     {
       "tema": "Nota fiscal em assistência técnica: quando emitir e como separar peça e serviço",
       "palavraChaveAlvo": "nota fiscal assistência técnica celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "É uma dúvida recorrente de operação e formalização, com boa ligação a cadastro de serviços, peças e controle financeiro.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-08-26T13:44:49.678Z"
     },
     {
       "tema": "Como calcular comissão de técnico sem prejudicar a margem da assistência",
