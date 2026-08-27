@@ -161,29 +161,32 @@
     {
       "tema": "Como avisar o status do conserto sem responder cada cliente manualmente",
       "palavraChaveAlvo": "acompanhar conserto de celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Ataca o excesso de mensagens sobre andamento do reparo e abre espaço para mostrar automação de status e consulta pelo cliente.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-08-25T13:41:38.748Z"
     },
     {
       "tema": "Nota fiscal em assistência técnica: quando emitir e como separar peça e serviço",
       "palavraChaveAlvo": "nota fiscal assistência técnica celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "É uma dúvida recorrente de operação e formalização, com boa ligação a cadastro de serviços, peças e controle financeiro.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-08-26T13:44:49.678Z"
     },
     {
       "tema": "Como calcular comissão de técnico sem prejudicar a margem da assistência",
       "palavraChaveAlvo": "comissão para técnico de celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Donos com pequenas equipes precisam remunerar produtividade sem perder lucro. A pauta alcança um público mais maduro e próximo de contratar um sistema.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-08-27T17:07:05.582Z"
     },
     {
       "tema": "Como organizar a bancada e a fila de aparelhos em conserto",

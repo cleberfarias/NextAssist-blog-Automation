@@ -53,5 +53,38 @@
     "publicadoEm": "2026-08-24T13:42:46.847Z",
     "status": "published",
     "url": "https://www.nextassist-app.com.br/blog/autorizacao-conserto-celular"
+  },
+  {
+    "contentId": "acompanhar-conserto-celular",
+    "campaignId": null,
+    "tema": "Como avisar o status do conserto sem responder cada cliente manualmente",
+    "formato": "blog",
+    "channel": "blog",
+    "funnelStage": "meio",
+    "publicadoEm": "2026-08-25T13:41:38.749Z",
+    "status": "published",
+    "url": "https://www.nextassist-app.com.br/blog/acompanhar-conserto-celular"
+  },
+  {
+    "contentId": "nota-fiscal-assistencia-celular",
+    "campaignId": null,
+    "tema": "Nota fiscal em assistência técnica: quando emitir e como separar peça e serviço",
+    "formato": "blog",
+    "channel": "blog",
+    "funnelStage": "meio",
+    "publicadoEm": "2026-08-26T13:44:49.679Z",
+    "status": "published",
+    "url": "https://www.nextassist-app.com.br/blog/nota-fiscal-assistencia-celular"
+  },
+  {
+    "contentId": "comissao-tecnico-celular",
+    "campaignId": null,
+    "tema": "Como calcular comissão de técnico sem prejudicar a margem da assistência",
+    "formato": "blog",
+    "channel": "blog",
+    "funnelStage": "meio",
+    "publicadoEm": "2026-08-27T17:07:05.583Z",
+    "status": "published",
+    "url": "https://www.nextassist-app.com.br/blog/comissao-tecnico-celular"
   }
 ]
