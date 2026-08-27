@@ -1,5 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import type { WorkspaceContext } from "./context.js";
+import { config } from "./config.js";
+import { readStoredStateJson, writeStateJson } from "./lib/storage.js";
 
 export type ConversionEventName =
   | "page_view" | "cta_click"
@@ -29,6 +31,9 @@ interface AttributionRow {
 }
 
 async function load(ctx: WorkspaceContext): Promise<ConversionEvent[]> {
+  if (config.dataSource === "github") {
+    return readStoredStateJson<ConversionEvent[]>(ctx, "conversion-events.json", []);
+  }
   try {
     return JSON.parse(await readFile(ctx.paths.conversions, "utf8")) as ConversionEvent[];
   } catch {
@@ -44,6 +49,10 @@ export async function getConversionEvents(ctx: WorkspaceContext): Promise<Conver
 export async function recordConversion(ctx: WorkspaceContext, event: Omit<ConversionEvent, "createdAt">): Promise<void> {
   const events = await load(ctx);
   const updated = [{ ...event, createdAt: new Date().toISOString() }, ...events].slice(0, 10000);
+  if (config.dataSource === "github") {
+    await writeStateJson(ctx, "conversion-events.json", updated);
+    return;
+  }
   await writeFile(ctx.paths.conversions, `${JSON.stringify(updated, null, 2)}\n`);
 }
 
