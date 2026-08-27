@@ -181,11 +181,12 @@
     {
       "tema": "Como calcular comissão de técnico sem prejudicar a margem da assistência",
       "palavraChaveAlvo": "comissão para técnico de celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Donos com pequenas equipes precisam remunerar produtividade sem perder lucro. A pauta alcança um público mais maduro e próximo de contratar um sistema.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-08-27T17:07:05.582Z"
     },
     {
       "tema": "Como organizar a bancada e a fila de aparelhos em conserto",

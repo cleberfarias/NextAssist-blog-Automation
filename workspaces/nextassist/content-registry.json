@@ -75,5 +75,16 @@
     "publicadoEm": "2026-08-26T13:44:49.679Z",
     "status": "published",
     "url": "https://www.nextassist-app.com.br/blog/nota-fiscal-assistencia-celular"
+  },
+  {
+    "contentId": "comissao-tecnico-celular",
+    "campaignId": null,
+    "tema": "Como calcular comissão de técnico sem prejudicar a margem da assistência",
+    "formato": "blog",
+    "channel": "blog",
+    "funnelStage": "meio",
+    "publicadoEm": "2026-08-27T17:07:05.583Z",
+    "status": "published",
+    "url": "https://www.nextassist-app.com.br/blog/comissao-tecnico-celular"
   }
 ]

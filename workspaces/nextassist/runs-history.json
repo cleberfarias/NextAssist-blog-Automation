@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-27T17:02:19.378Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-27T17:02:19.378Z",
+    "finalizadoEm": "2026-08-27T17:07:05.583Z",
+    "tema": "Como calcular comissão de técnico sem prejudicar a margem da assistência",
+    "status": "publicado",
+    "slug": "comissao-tecnico-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como calcular comissão de técnico sem prejudicar a margem da assistência",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-27T17:02:19.390Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A cobertura direta ainda é fraca:** os concorrentes falam bastante de precificação, margem e automação da comissão, mas não apresentam um método completo para definir **quanto o técnico pode receber sem tornar a OS deficitária**. O Gest",
+        "timestamp": "2026-08-27T17:02:53.807Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-27T17:02:53.808Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Comissão para técnico de celular sem perder margem",
+        "timestamp": "2026-08-27T17:03:04.125Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-27T17:03:04.125Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Definir a comissão para técnico de celular apenas como uma porcentagem do valor cobrado parece simples, mas pode transformar uma ordem de serviço movimentada em prejuízo. Antes de calcular a comissão,...",
+        "timestamp": "2026-08-27T17:04:12.297Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-27T17:04:12.298Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: comissao-tecnico-celular · Tags: Comissão de técnicos, Margem de contribuição, Gestão financeira, Precificação, Assistência técnica",
+        "timestamp": "2026-08-27T17:04:50.667Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-27T17:04:50.668Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/comissao-tecnico-celular",
+        "timestamp": "2026-08-27T17:05:53.213Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-27T17:05:53.214Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcjSPg_khD-/",
+        "timestamp": "2026-08-27T17:07:04.059Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-27T17:07:04.059Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-27T17:07:05.580Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 43440,
+      "outputTokens": 10520,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.23208,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 5,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 5,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-26T13:39:48.327Z",
     "origem": "action",
     "iniciadoEm": "2026-08-26T13:39:48.327Z",
