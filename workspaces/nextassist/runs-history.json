@@ -1,5 +1,141 @@
 [
   {
+    "id": "2026-08-28T17:25:00.819Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-28T17:25:00.819Z",
+    "finalizadoEm": "2026-08-28T17:29:55.203Z",
+    "tema": "Como organizar a bancada e a fila de aparelhos em conserto",
+    "status": "publicado",
+    "slug": "organizacao-assistencia-tecnica-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 4 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace...",
+        "timestamp": "2026-08-28T17:25:00.847Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Identificou 15 oportunidade(s) de conteúdo.",
+        "timestamp": "2026-08-28T17:25:37.836Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "done",
+        "message": "15 nova(s) pauta(s) adicionada(s) ao calendário.",
+        "timestamp": "2026-08-28T17:25:37.850Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como organizar a bancada e a fila de aparelhos em conserto",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-28T17:25:37.852Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **Fluxo por etapas/status é o ângulo dominante.** MarkupEmpresa propõe acompanhar o aparelho por “em análise”, “aguardando aprovação”, “em reparo” e “pronto para retirada”; o GestãoClick acrescenta prazo e técnico responsável. Vale transf",
+        "timestamp": "2026-08-28T17:26:08.685Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-28T17:26:08.686Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Organização de assistência técnica celular: bancada e fila",
+        "timestamp": "2026-08-28T17:26:20.414Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-28T17:26:20.415Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Uma boa organização de assistência técnica celular não depende de uma bancada enorme. O que faz diferença é cada aparelho ter um lugar físico, uma ordem de serviço atualizada e uma próxima ação defini...",
+        "timestamp": "2026-08-28T17:27:21.116Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-28T17:27:21.116Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: organizacao-assistencia-tecnica-celular · Tags: gestão de assistência técnica, ordem de serviço, organização de bancada, fila de consertos",
+        "timestamp": "2026-08-28T17:28:04.839Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-28T17:28:04.839Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/organizacao-assistencia-tecnica-celular",
+        "timestamp": "2026-08-28T17:28:59.842Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-28T17:28:59.842Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/Dcl5o7airi5/",
+        "timestamp": "2026-08-28T17:29:52.574Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-28T17:29:52.574Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-28T17:29:55.200Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 43878,
+      "outputTokens": 12966,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.257416,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 4,
+      "generated": 15,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 19,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-27T17:02:19.378Z",
     "origem": "action",
     "iniciadoEm": "2026-08-27T17:02:19.378Z",

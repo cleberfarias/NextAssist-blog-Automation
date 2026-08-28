@@ -191,11 +191,12 @@
     {
       "tema": "Como organizar a bancada e a fila de aparelhos em conserto",
       "palavraChaveAlvo": "organização de assistência técnica celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Perda de aparelhos, troca de peças e serviços fora de ordem são dores operacionais fortes. O tema permite conectar organização física ao controle digital.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-08-28T17:29:55.202Z"
     },
     {
       "tema": "Assistência técnica no Google: como aparecer nas buscas da sua cidade",
@@ -222,6 +223,141 @@
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Aborda um concorrente generalista em uma busca de comparação e permite mostrar por que recursos específicos para consertos importam.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+      "palavraChaveAlvo": "ordem de serviço online assistência técnica",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Pauta de fundo de funil ligada diretamente ao uso de um sistema e à criação da primeira OS, principal ação de ativação do NextAssist.",
+      "priority": "high"
+    },
+    {
+      "tema": "MarkupEmpresa serve para assistência técnica de celular? Veja o que avaliar",
+      "palavraChaveAlvo": "MarkupEmpresa assistência técnica",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Completa a cobertura dos concorrentes diretos e alcança donos de assistência que já estão comparando sistemas para contratar.",
+      "priority": "high"
+    },
+    {
+      "tema": "Como controlar o lucro de cada ordem de serviço",
+      "palavraChaveAlvo": "lucro por ordem de serviço",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Mostra como unir custos de peças, mão de obra e valor cobrado, problema com forte ligação ao uso diário de um sistema de gestão.",
+      "priority": "high"
+    },
+    {
+      "tema": "Como fazer follow-up de orçamento sem pressionar o cliente",
+      "palavraChaveAlvo": "follow up de orçamento assistência técnica",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Ajuda a recuperar serviços parados antes da aprovação e abre espaço para apresentar histórico, lembretes e acompanhamento centralizado.",
+      "priority": "high"
+    },
+    {
+      "tema": "LGPD na assistência técnica: como proteger os dados do cliente e do aparelho",
+      "palavraChaveAlvo": "LGPD assistência técnica celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Cobre um risco comum no recebimento de aparelhos e permite conectar cadastro, acesso aos dados e registro de consentimento na OS.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Senha do celular na ordem de serviço: como solicitar e armazenar com segurança",
+      "palavraChaveAlvo": "senha do celular na ordem de serviço",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Resolve uma dúvida prática sobre testes no aparelho e ajuda a demonstrar a importância de registrar informações sensíveis com controle.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Como registrar IMEI e número de série na entrada do aparelho",
+      "palavraChaveAlvo": "registrar IMEI na ordem de serviço",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Evita troca de aparelhos e problemas de identificação, além de reforçar uma função essencial do cadastro de OS.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Checklist de entrega do celular consertado: testes e confirmação do cliente",
+      "palavraChaveAlvo": "checklist entrega celular consertado",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Complementa o processo após o reparo, reduz contestações e incentiva o registro da conclusão e entrega do serviço.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Como reduzir retornos e retrabalho na assistência técnica",
+      "palavraChaveAlvo": "reduzir retrabalho assistência técnica",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Retrabalho consome peças e horas sem gerar nova receita; a pauta pode mostrar como histórico, testes e responsáveis ajudam a encontrar as causas.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Como calcular a taxa de aprovação de orçamentos da assistência técnica",
+      "palavraChaveAlvo": "taxa de aprovação de orçamento assistência técnica",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Transforma orçamentos enviados, aprovados e recusados em um indicador comercial prático, sem repetir o conteúdo sobre montagem do orçamento.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Controle de compras de peças: como evitar pedidos duplicados e urgências",
+      "palavraChaveAlvo": "controle de compras de peças celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Ataca a etapa anterior ao estoque e mostra como relacionar compras, fornecedores e ordens de serviço abertas.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+      "palavraChaveAlvo": "fornecedores de peças para assistência técnica",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Ajuda o dono a comparar preço, prazo e índice de defeitos, fatores que afetam diretamente a margem e o tempo do conserto.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Contas a pagar e receber na assistência técnica: controle sem complicação",
+      "palavraChaveAlvo": "contas a pagar e receber assistência técnica",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Aprofunda o controle financeiro operacional e aproxima o leitor de recursos usados diariamente em sistemas de gestão.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Como dividir ordens de serviço entre técnicos e acompanhar responsabilidades",
+      "palavraChaveAlvo": "distribuir ordens de serviço entre técnicos",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Atende assistências com equipe pequena que precisam saber quem está com cada aparelho e evitar serviços esquecidos.",
+      "priority": "medium"
+    },
+    {
+      "tema": "Histórico de consertos por cliente e aparelho: por que manter e como consultar",
+      "palavraChaveAlvo": "histórico de consertos de celular",
+      "publicado": false,
+      "generatedBy": "marketing-director",
+      "createdAt": "2026-08-28T17:25:37.849Z",
+      "reason": "Mostra o valor de centralizar atendimentos anteriores para diagnosticar reincidências, responder dúvidas e agilizar novas ordens.",
       "priority": "medium"
     }
   ]

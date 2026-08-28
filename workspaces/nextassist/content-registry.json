@@ -86,5 +86,16 @@
     "publicadoEm": "2026-08-27T17:07:05.583Z",
     "status": "published",
     "url": "https://www.nextassist-app.com.br/blog/comissao-tecnico-celular"
+  },
+  {
+    "contentId": "organizacao-assistencia-tecnica-celular",
+    "campaignId": null,
+    "tema": "Como organizar a bancada e a fila de aparelhos em conserto",
+    "formato": "blog",
+    "channel": "blog",
+    "funnelStage": "meio",
+    "publicadoEm": "2026-08-28T17:29:55.203Z",
+    "status": "published",
+    "url": "https://www.nextassist-app.com.br/blog/organizacao-assistencia-tecnica-celular"
   }
 ]
