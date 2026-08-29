@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-29T13:23:26.050Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-29T13:23:26.050Z",
+    "finalizadoEm": "2026-08-29T13:27:20.898Z",
+    "tema": "Assistência técnica no Google: como aparecer nas buscas da sua cidade",
+    "status": "publicado",
+    "slug": "divulgar-assistencia-celular-google",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Assistência técnica no Google: como aparecer nas buscas da sua cidade",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-29T13:23:26.062Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A MarkupEmpresa tem a cobertura mais diretamente concorrente.** O guia ensina criação e verificação do perfil, categoria principal, endereço ou área atendida, fotos reais, descrição com serviços, avaliações e publicações semanais. O pri",
+        "timestamp": "2026-08-29T13:23:58.967Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-29T13:23:58.968Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Como divulgar assistência técnica de celular no Google",
+        "timestamp": "2026-08-29T13:24:06.852Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-29T13:24:06.853Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Quem pesquisa “conserto de celular perto de mim” normalmente não está apenas procurando informação: está com um aparelho quebrado e quer resolver o problema. Por isso, entender como divulgar assistênc...",
+        "timestamp": "2026-08-29T13:25:00.767Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-29T13:25:00.768Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: divulgar-assistencia-celular-google · Tags: Marketing para assistência técnica, Google Meu Negócio, SEO local, Gestão de assistência técnica",
+        "timestamp": "2026-08-29T13:25:44.469Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-29T13:25:44.469Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/divulgar-assistencia-celular-google",
+        "timestamp": "2026-08-29T13:26:38.591Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-29T13:26:38.591Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcoCsZWj2Lz/",
+        "timestamp": "2026-08-29T13:27:18.819Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-29T13:27:18.819Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-29T13:27:20.895Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 50514,
+      "outputTokens": 11321,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 5,
+      "estimatedUsd": 0.264238,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 18,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 18,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-28T17:25:00.819Z",
     "origem": "action",
     "iniciadoEm": "2026-08-28T17:25:00.819Z",

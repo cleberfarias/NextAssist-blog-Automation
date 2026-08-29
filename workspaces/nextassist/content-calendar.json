@@ -201,11 +201,12 @@
     {
       "tema": "Assistência técnica no Google: como aparecer nas buscas da sua cidade",
       "palavraChaveAlvo": "como divulgar assistência técnica de celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Ajuda o dono a gerar demanda local e atrai potenciais clientes do NextAssist em fase de crescimento, diretamente alinhados ao objetivo de leads.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-08-29T13:27:20.897Z"
     },
     {
       "tema": "Alternativa ao AnaDita para assistência técnica: o que comparar antes de escolher",
