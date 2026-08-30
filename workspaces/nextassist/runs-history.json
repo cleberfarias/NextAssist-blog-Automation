@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-08-30T13:23:58.033Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-30T13:23:58.033Z",
+    "finalizadoEm": "2026-08-30T13:27:54.941Z",
+    "tema": "Alternativa ao AnaDita para assistência técnica: o que comparar antes de escolher",
+    "status": "publicado",
+    "slug": "alternativa-anadita",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Alternativa ao AnaDita para assistência técnica: o que comparar antes de escolher",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-30T13:23:58.049Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **Há espaço para um comparativo direto:** nas páginas recentes analisadas, os concorrentes abordam “melhor sistema”, “sistema barato” e “como escolher”, mas não fazem uma comparação específica com a AnaDita. O NextAssist pode capturar ess",
+        "timestamp": "2026-08-30T13:24:26.118Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-08-30T13:24:26.119Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Alternativa ao AnaDita: o que comparar antes de escolher",
+        "timestamp": "2026-08-30T13:24:37.453Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-08-30T13:24:37.454Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Buscar uma alternativa ao AnaDita não significa apenas procurar outro preço ou outra forma de criar orçamentos. A principal decisão é escolher entre uma assistente conversacional, operada pelo WhatsAp...",
+        "timestamp": "2026-08-30T13:25:26.549Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-08-30T13:25:26.550Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: alternativa-anadita · Tags: Gestão de assistência técnica, Ordem de serviço, Sistema para assistência técnica, Controle de estoque, AnaDita",
+        "timestamp": "2026-08-30T13:26:10.139Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-08-30T13:26:10.139Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/alternativa-anadita",
+        "timestamp": "2026-08-30T13:27:05.557Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Publicando no Instagram...",
+        "timestamp": "2026-08-30T13:27:05.557Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcqnjE2CoWG/",
+        "timestamp": "2026-08-30T13:27:52.323Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-08-30T13:27:52.323Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-08-30T13:27:54.938Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 44262,
+      "outputTokens": 11456,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.243084,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 17,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 17,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-29T13:23:26.050Z",
     "origem": "action",
     "iniciadoEm": "2026-08-29T13:23:26.050Z",
