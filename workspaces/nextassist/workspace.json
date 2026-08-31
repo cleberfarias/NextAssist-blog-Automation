@@ -35,6 +35,7 @@
   "autonomy": {
     "mode": "semi-autonomous"
   },
+  "aiFallbackProvider": "none",
   "contentStrategy": {
     "minimumPendingTopics": 5,
     "replenishAmount": 15

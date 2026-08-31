@@ -24,7 +24,8 @@ export async function runAgent(ctx: WorkspaceContext, params: {
   };
   const primary = ctx.aiPrimaryProvider;
   const fallback = primary === "openai" ? "anthropic" : "openai";
-  const fallbackAvailable = fallback === "openai" ? Boolean(ctx.ai.openai) : Boolean(ctx.ai.anthropic);
+  const fallbackEnabled = ctx.workspace.aiFallbackProvider === fallback;
+  const fallbackAvailable = fallbackEnabled && (fallback === "openai" ? Boolean(ctx.ai.openai) : Boolean(ctx.ai.anthropic));
 
   const result = await executeWithFallback({
     primary: providers[primary],

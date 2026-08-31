@@ -34,6 +34,7 @@ export interface MarketingWorkspace {
   autonomy: {
     mode: "copilot" | "semi-autonomous" | "autonomous";
   };
+  aiFallbackProvider?: "openai" | "anthropic" | "none";
   contentStrategy?: {
     minimumPendingTopics: number;
     replenishAmount: number;
@@ -118,6 +119,7 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
 
   const autonomyRaw = requireObject(w.autonomy, "autonomy");
   requireEnum(autonomyRaw.mode, "autonomy.mode", AUTONOMY_MODES);
+  if (w.aiFallbackProvider !== undefined) requireEnum(w.aiFallbackProvider, "aiFallbackProvider", new Set(["openai", "anthropic", "none"]));
 
   if (w.contentStrategy !== undefined) {
     const contentStrategyRaw = requireObject(w.contentStrategy, "contentStrategy");
