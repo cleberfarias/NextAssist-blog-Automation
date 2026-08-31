@@ -1,5 +1,50 @@
 [
   {
+    "id": "2026-08-31T16:21:28.182Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-31T16:21:28.182Z",
+    "finalizadoEm": "2026-08-31T16:21:36.004Z",
+    "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+    "status": "falhou",
+    "slug": null,
+    "erro": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011Ceb8fD7un6tJS1gZxGfmG\"}",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-31T16:21:28.199Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011Ceb8fD7un6tJS1gZxGfmG\"}",
+        "timestamp": "2026-08-31T16:21:36.002Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 15,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 15,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-31T13:30:03.854Z",
     "origem": "action",
     "iniciadoEm": "2026-08-31T13:30:03.854Z",
