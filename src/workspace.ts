@@ -38,6 +38,7 @@ export interface MarketingWorkspace {
     minimumPendingTopics: number;
     replenishAmount: number;
   };
+  instagramStrategy?: { frequencyPerWeek: number; pillars: string[]; preferredFormats: string[] };
   secrets: {
     required: string[];
     optional?: string[];
@@ -122,6 +123,12 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     const contentStrategyRaw = requireObject(w.contentStrategy, "contentStrategy");
     requirePositiveInteger(contentStrategyRaw.minimumPendingTopics, "contentStrategy.minimumPendingTopics");
     requirePositiveInteger(contentStrategyRaw.replenishAmount, "contentStrategy.replenishAmount");
+  }
+  if (w.instagramStrategy !== undefined) {
+    const instagramRaw = requireObject(w.instagramStrategy, "instagramStrategy");
+    requirePositiveInteger(instagramRaw.frequencyPerWeek, "instagramStrategy.frequencyPerWeek");
+    requireStringArray(instagramRaw.pillars, "instagramStrategy.pillars");
+    requireStringArray(instagramRaw.preferredFormats, "instagramStrategy.preferredFormats");
   }
 
   const secretsRaw = requireObject(w.secrets, "secrets");

@@ -16,8 +16,21 @@
       </div>
     </div>
     <select id="workspace-select" aria-label="Workspace"></select>
-    <button id="run-btn">▶ Rodar pipeline agora</button>
+    <div class="pipeline-actions" aria-label="Frentes de conteúdo">
+      <button id="run-blog-btn">▶ Rodar blog</button>
+      <button id="run-instagram-btn" class="secondary">📸 Rodar Instagram</button>
+    </div>
   </header>
+
+  <section class="channel-overview" aria-label="Frentes editoriais">
+    <article class="channel-card"><span class="channel-icon">📝</span><div><strong>Frente Blog</strong><p>SEO, artigo, capa, publicação e indexação.</p></div></article>
+    <article class="channel-card"><span class="channel-icon">📸</span><div><strong>Frente Instagram</strong><p>Reels, bastidores, dicas rápidas e conteúdo interativo.</p></div></article>
+  </section>
+
+  <aside class="player-dock" aria-label="Seu espaço e relatórios">
+    <button class="player-avatar" aria-label="Abrir meus relatórios"><span class="player-status"></span><span class="player-face">👨🏻‍💻</span><strong>Cleber</strong><small>seu espaço</small></button>
+    <div class="player-reports"><div class="reports-heading"><span>📊</span><div><strong>Meus relatórios</strong><small>visão geral da operação</small></div></div><div class="report-grid"><div><span>Blog</span><strong id="player-blog-count">—</strong><small>publicações</small></div><div><span>Instagram</span><strong id="player-ig-count">—</strong><small>Reels</small></div><div><span>Alcance</span><strong id="player-ig-reach">—</strong><small>Instagram</small></div><div><span>Leads</span><strong id="player-leads">—</strong><small>conversões</small></div></div><p class="reports-hint">Passe o mouse no seu personagem para consultar os números.</p></div>
+  </aside>
 
   <main class="office">
     <div class="floor" id="floor">
@@ -112,6 +125,11 @@
       </table>
     </div>
     <div id="perf-pagination" class="pagination" aria-label="Paginação do desempenho"></div>
+  </section>
+
+  <section class="usage-panel instagram-performance-panel">
+    <div class="usage-header"><div><h2>Desempenho no Instagram</h2><p>Insights dos Reels publicados.</p></div><button id="refresh-instagram-btn">↻ Atualizar métricas</button></div>
+    <div id="instagram-kpis" class="kpi-row"></div><div id="instagram-performance-list"><p class="empty">Nenhum Reel medido ainda.</p></div>
   </section>
 
   <div id="toast" class="toast hidden"></div>

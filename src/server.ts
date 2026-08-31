@@ -4,6 +4,8 @@ import { timingSafeEqual } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { runPipeline, type AgentId, type AgentStatus, type PipelineEvent } from "./pipeline.js";
+import { runInstagramPipeline } from "./instagramPipeline.js";
+import { getInstagramPerformance, refreshInstagramPerformance } from "./instagramPerformance.js";
 import { getHistory } from "./history.js";
 import { getRuns } from "./runsHistory.js";
 import { getPerformance, refreshPerformance } from "./performance.js";
@@ -236,6 +238,7 @@ app.post("/api/events/ingest", express.json(), (req, res) => {
 
 app.post("/api/run", express.json(), asyncHandler(async (req, res) => {
   const workspaceId = String(req.body?.workspaceId ?? "");
+  const channel = req.body?.channel === "instagram" ? "instagram" : "blog";
   if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
   const state = getRuntimeState(workspaceId);
 
@@ -268,7 +271,11 @@ app.post("/api/run", express.json(), asyncHandler(async (req, res) => {
     // exigências padrão (requireAiProvider: true).
     const workspace = await loadWorkspace(workspaceId);
     const runCtx = await buildWorkspaceContext(workspace, secrets);
-    await runPipeline(runCtx, (event) => broadcast(workspaceId, event));
+    if (channel === "instagram") {
+      broadcast(workspaceId, { agent: "instagram", status: "working", timestamp: new Date().toISOString(), message: "Gerando Reel a partir da fila do Instagram..." });
+      const result = await runInstagramPipeline(runCtx);
+      broadcast(workspaceId, { agent: "instagram", status: result.ok ? "done" : "error", timestamp: new Date().toISOString(), message: result.detalhes });
+    } else await runPipeline(runCtx, (event) => broadcast(workspaceId, event));
   } catch {
     // erro já foi transmitido como evento "error" pelo broadcast
   } finally {
@@ -306,6 +313,17 @@ app.get("/api/usage", asyncHandler(async (req, res) => {
     total: { estimatedUsd: sum(tracked, "estimatedUsd"), inputTokens: sum(tracked, "inputTokens"), outputTokens: sum(tracked, "outputTokens"), webSearchRequests: sum(tracked, "webSearchRequests") },
     averagePublishedUsd: published.length ? sum(published, "estimatedUsd") / published.length : 0,
   });
+}));
+
+app.get("/api/instagram-performance", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res); if (!workspaceId) return;
+  res.json(await getInstagramPerformance(await contextFor(workspaceId)));
+}));
+
+app.post("/api/instagram-performance/refresh", express.json(), asyncHandler(async (req, res) => {
+  const workspaceId = String(req.body?.workspaceId ?? "");
+  if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
+  res.json(await refreshInstagramPerformance(await contextFor(workspaceId)));
 }));
 
 app.get("/api/performance", asyncHandler(async (req, res) => {

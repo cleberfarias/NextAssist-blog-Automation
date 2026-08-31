@@ -83,6 +83,8 @@ export interface WorkspacePaths {
   performance: URL;
   conversions: URL;
   contentRegistry: URL;
+  instagramCalendar: URL;
+  instagramPerformance: URL;
 }
 
 export interface WorkspaceContext {
@@ -160,6 +162,8 @@ export async function buildWorkspaceContext(
     performance: new URL("post-performance.json", root),
     conversions: new URL("conversion-events.json", root),
     contentRegistry: new URL("content-registry.json", root),
+    instagramCalendar: new URL("instagram-calendar.json", root),
+    instagramPerformance: new URL("instagram-performance.json", root),
   };
 
   const firebaseWebApiKey = options.firebaseWebApiKeyOverride ?? (await secrets.get(workspace.id, "FIREBASE_WEB_API_KEY"));

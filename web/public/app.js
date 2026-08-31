@@ -53,7 +53,8 @@ const AGENTS = [
 ];
 
 const floor = document.getElementById("floor");
-const runBtn = document.getElementById("run-btn");
+const runBtn = document.getElementById("run-blog-btn");
+const runInstagramBtn = document.getElementById("run-instagram-btn");
 const topicLine = document.getElementById("topic-line");
 const historyList = document.getElementById("history-list");
 const toast = document.getElementById("toast");
@@ -77,6 +78,9 @@ const activeAgent = document.getElementById("active-agent");
 const historyPagination = document.getElementById("history-pagination");
 const runsPagination = document.getElementById("runs-pagination");
 const perfPagination = document.getElementById("perf-pagination");
+const instagramKpis = document.getElementById("instagram-kpis");
+const instagramList = document.getElementById("instagram-performance-list");
+const refreshInstagramBtn = document.getElementById("refresh-instagram-btn");
 
 const PAGE_SIZE = 6;
 const pageState = { history: 1, runs: 1, performance: 1 };
@@ -173,6 +177,8 @@ function renderPagination(container, key, total, onChange) {
 
 function renderHistory(entries) {
   historyEntries = entries ?? [];
+  const blogCount = document.getElementById("player-blog-count");
+  if (blogCount) blogCount.textContent = String(historyEntries.length);
   if (!historyEntries.length) {
     historyList.innerHTML = `<li class="empty">Nenhum post publicado ainda.</li>`;
     historyPagination.innerHTML = "";
@@ -300,6 +306,14 @@ async function loadPerformance() {
     renderPerformance(await res.json());
   } catch (error) { showToast(error.message, "error"); }
 }
+
+function renderInstagramPerformance(items) {
+  const total = (key) => (items ?? []).reduce((sum, item) => sum + (item[key] || 0), 0);
+  instagramKpis.innerHTML = [kpiTile("Reproduções", nf.format(total("plays"))), kpiTile("Alcance", nf.format(total("reach"))), kpiTile("Curtidas", nf.format(total("likes"))), kpiTile("Comentários", nf.format(total("comments"))), kpiTile("Compartilhamentos", nf.format(total("shares")))].join("");
+  instagramList.innerHTML = items?.length ? `<div class="perf-table-wrap"><table><thead><tr><th>Reel</th><th>Reproduções</th><th>Alcance</th><th>Curtidas</th><th>Comentários</th><th>Salvos</th></tr></thead><tbody>${items.map((item) => `<tr><td>${escapeHtml(item.tema)}</td><td>${nf.format(item.plays)}</td><td>${nf.format(item.reach)}</td><td>${nf.format(item.likes)}</td><td>${nf.format(item.comments)}</td><td>${nf.format(item.saved)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Nenhum Reel medido ainda.</p>`;
+}
+async function loadInstagramPerformance() { try { const res = await fetch(withWorkspace("/api/instagram-performance")); if (!res.ok) throw new Error("Não foi possível carregar as métricas do Instagram."); const items = await res.json(); renderInstagramPerformance(items); document.getElementById("player-ig-count").textContent = String(items.length); document.getElementById("player-ig-reach").textContent = nf.format(items.reduce((sum, item) => sum + (item.reach || 0), 0)); } catch (error) { showToast(error.message, "error"); } }
+refreshInstagramBtn.addEventListener("click", async () => { refreshInstagramBtn.disabled = true; try { const res = await fetch("/api/instagram-performance/refresh", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ workspaceId: currentWorkspaceId() }) }); if (!res.ok) throw new Error("Não foi possível atualizar as métricas do Instagram."); renderInstagramPerformance(await res.json()); } catch (error) { showToast(error.message, "error"); } finally { refreshInstagramBtn.disabled = false; } });
 
 refreshPerfBtn.addEventListener("click", async () => {
   if (!perfStart.value || !perfEnd.value) {
@@ -515,7 +529,7 @@ async function loadStatus() {
 
 function setRunning(running) {
   runBtn.disabled = running;
-  runBtn.textContent = running ? "⏳ Rodando..." : "▶ Rodar pipeline agora";
+  runBtn.textContent = running ? "⏳ Blog rodando..." : "▶ Rodar blog";
 }
 
 runBtn.addEventListener("click", async () => {
@@ -551,6 +565,14 @@ runBtn.addEventListener("click", async () => {
     showToast(data.error ?? "Não foi possível iniciar o pipeline.", "error");
     setRunning(false);
   }
+});
+
+runInstagramBtn.addEventListener("click", async () => {
+  runInstagramBtn.disabled = true;
+  const res = await fetch("/api/run", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ workspaceId: currentWorkspaceId(), channel: "instagram" }) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) showToast(data.error ?? "Não foi possível iniciar o Instagram.", "error");
+  setTimeout(() => { runInstagramBtn.disabled = false; }, 3000);
 });
 
 function connectEvents() {
@@ -596,6 +618,7 @@ async function init() {
     loadAttribution();
     loadStatus();
     loadPerformance();
+    loadInstagramPerformance();
     connectEvents();
 
     // Painel hospedado: recarrega as execuções periodicamente para pegar novas

@@ -26,7 +26,7 @@ body {
 .brand h1 { margin: 0; font-size: 18px; }
 .brand p { margin: 2px 0 0; font-size: 13px; color: #b7c3e0; }
 
-#run-btn {
+#run-blog-btn {
   background: #ffb020;
   color: #402700;
   border: none;
@@ -37,8 +37,8 @@ body {
   cursor: pointer;
   transition: transform 0.1s ease, background 0.2s ease;
 }
-#run-btn:hover:not(:disabled) { background: #ffc451; transform: translateY(-1px); }
-#run-btn:disabled { background: #7a8199; color: #d6dae6; cursor: not-allowed; }
+#run-blog-btn:hover:not(:disabled) { background: #ffc451; transform: translateY(-1px); }
+#run-blog-btn:disabled { background: #7a8199; color: #d6dae6; cursor: not-allowed; }
 
 .office {
   padding: 28px;
@@ -67,6 +67,19 @@ body {
 .floor-heading span:last-child { font-size: 12px; }
 .eyebrow { color: #70809d; font-size: 10px; font-weight: 800; letter-spacing: .12em; }
 .active-agent { color: #6d7585; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px; background: #eef1f6; }
+.pipeline-actions { display: flex; gap: 8px; align-items: center; }
+.pipeline-actions .secondary { background: #eef1f6; color: #6d7585; }
+.pipeline-actions button:disabled { cursor: not-allowed; opacity: .75; }
+.channel-overview { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 1180px; margin: 24px auto 0; padding: 0 24px; }
+.channel-card { display: flex; gap: 14px; align-items: center; padding: 18px 20px; border: 1px solid #e7eaf0; border-radius: 16px; background: #fff; }
+.channel-card p { margin: 5px 0 0; color: #6d7585; font-size: 13px; }
+.channel-icon { font-size: 24px; }
+.player-dock { position: fixed; right: 22px; bottom: 24px; z-index: 8; display: flex; align-items: flex-end; gap: 12px; }
+.player-avatar { width: 92px; min-height: 112px; padding: 10px 8px; border: 2px solid #7b61ff; border-radius: 18px; background: #fff; color: #172033; box-shadow: 0 10px 28px rgba(34,24,90,.2); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative; }
+.player-face { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 14px; background: #eeeafd; font-size: 34px; }.player-avatar strong { font-size: 12px; }.player-avatar small, .player-reports small { color: #8992a5; font-size: 10px; }.player-status { position: absolute; top: 8px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: #34b56b; box-shadow: 0 0 0 3px #dff7e9; }
+.player-reports { width: 270px; padding: 16px; border: 1px solid #e1e5ee; border-radius: 16px; background: rgba(255,255,255,.98); box-shadow: 0 12px 34px rgba(25,45,80,.16); opacity: 0; transform: translateY(8px) scale(.98); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }.player-dock:hover .player-reports, .player-avatar:focus + .player-reports { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }.reports-heading { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid #edf0f5; }.reports-heading > span { font-size: 22px; }.reports-heading strong, .reports-heading small { display: block; }.reports-heading strong { font-size: 14px; }.reports-heading small { margin-top: 2px; }.report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }.report-grid div { padding: 10px; border-radius: 10px; background: #f6f7fb; }.report-grid span, .report-grid strong, .report-grid small { display: block; }.report-grid span { font-size: 10px; color: #667085; }.report-grid strong { margin: 3px 0; font-size: 20px; color: #172033; }.reports-hint { margin: 12px 0 0; font-size: 10px; color: #8992a5; line-height: 1.4; }
+@media (max-width: 700px) { .player-dock { right: 14px; bottom: 14px; }.player-reports { position: absolute; right: 0; bottom: 124px; } }
+@media (max-width: 700px) { .channel-overview { grid-template-columns: 1fr; } .pipeline-actions { flex-wrap: wrap; justify-content: flex-end; } }
 .active-agent.is-active { color: #946900; background: #fff1cc; box-shadow: 0 0 0 3px rgba(255,176,32,.12); }
 
 .desk {
@@ -380,7 +393,7 @@ body {
   body { grid-template-columns: 1fr; }
   .topbar { padding: 14px 18px; gap: 14px; }
   .brand h1 { font-size: 16px; }
-  #run-btn { white-space: nowrap; padding: 9px 12px; font-size: 12px; }
+  #run-blog-btn { white-space: nowrap; padding: 9px 12px; font-size: 12px; }
   .history-panel { border-left: none; border-top: 1px solid #e2e6ee; }
   .floor { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-top: 88px; }
   .desk { min-width: 0; width: 100%; }
@@ -392,7 +405,7 @@ body {
 
 @media (max-width: 560px) {
   .topbar { align-items: flex-start; flex-direction: column; }
-  #run-btn { width: 100%; }
+  #run-blog-btn { width: 100%; }
   .office { padding: 14px; }
   .floor { grid-template-columns: 1fr; padding: 82px 14px 18px; min-height: 0; border-radius: 12px; gap: 12px; }
   .floor-heading { top: 18px; left: 16px; right: 16px; }
@@ -411,3 +424,30 @@ body {
   .kpi-value { font-size: 22px; }
   .bar-row { grid-template-columns: 1fr; gap: 4px; }
 }
+
+/* --- Layout do painel reorganizado --- */
+body { display: block; background: #f5f7fb; color: #172033; }
+.topbar { position: sticky; top: 0; z-index: 10; min-height: 76px; padding: 14px max(24px, calc((100vw - 1240px) / 2)); box-shadow: 0 1px 0 rgba(15, 30, 60, .12); }
+.brand h1 { font-size: 19px; letter-spacing: -.02em; }
+.pipeline-actions { margin-left: auto; }
+.pipeline-actions button, #refresh-instagram-btn, #refresh-perf-btn { border-radius: 10px; min-height: 40px; }
+.channel-overview { max-width: 1240px; margin: 24px auto 0; padding: 0 24px; }
+.channel-card { min-height: 82px; box-shadow: 0 4px 14px rgba(25, 45, 80, .05); }
+.channel-card:first-child { border-left: 4px solid #2a78d6; }
+.channel-card:last-child { border-left: 4px solid #d86c3c; }
+.office { max-width: 1240px; margin: 0 auto; padding: 24px; overflow: visible; }
+.floor { min-height: 0; padding: 82px 20px 20px; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #edf2f8; border: 1px solid #e0e7f0; box-shadow: 0 6px 22px rgba(25, 45, 80, .06); }
+.floor-heading { top: 22px; left: 22px; right: 22px; }
+.desk { box-shadow: 0 4px 14px rgba(25, 45, 80, .07); border-color: #e2e8f1; }
+.history-panel, .runs-panel, .usage-panel, .performance-panel { max-width: 1240px; margin: 18px auto 0; border: 1px solid #e1e7f0; border-radius: 16px; box-shadow: 0 5px 18px rgba(25, 45, 80, .05); }
+.history-panel { padding: 22px 24px; }
+.runs-panel, .usage-panel, .performance-panel { padding: 24px; }
+.runs-panel { background: #f8fafc; }
+.usage-panel { background: #fbfaff; }
+.performance-panel { background: #fff; }
+.instagram-performance-panel { margin-bottom: 28px; }
+.run-item, .kpi, .perf-chart-card { border: 1px solid #e5eaf2; box-shadow: none; }
+.run-item:hover, .channel-card:hover { box-shadow: 0 7px 18px rgba(25, 45, 80, .08); transform: translateY(-1px); transition: .18s ease; }
+.kpi { background: #fff; }
+@media (max-width: 860px) { .topbar { padding: 14px 18px; } .office { padding: 18px; } .floor { grid-template-columns: repeat(2, minmax(0, 1fr)); } .history-panel, .runs-panel, .usage-panel, .performance-panel { margin-left: 18px; margin-right: 18px; } }
+@media (max-width: 560px) { .channel-overview { padding: 0 14px; margin-top: 14px; } .office { padding: 14px; } .floor { grid-template-columns: 1fr; } .history-panel, .runs-panel, .usage-panel, .performance-panel { margin-left: 14px; margin-right: 14px; padding: 18px; } .pipeline-actions { width: 100%; } .pipeline-actions button { flex: 1; } }

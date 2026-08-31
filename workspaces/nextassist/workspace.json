@@ -39,6 +39,11 @@
     "minimumPendingTopics": 5,
     "replenishAmount": 15
   },
+  "instagramStrategy": {
+    "frequencyPerWeek": 5,
+    "pillars": ["dor operacional", "demonstração do produto", "bastidores", "educação prática", "prova social"],
+    "preferredFormats": ["reel", "carrossel", "story"]
+  },
   "secrets": {
     "required": [
       "OPENAI_API_KEY",

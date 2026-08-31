@@ -39,6 +39,16 @@ async function waitForContainer(ctx: WorkspaceContext, containerId: string, maxA
 
 export interface InstagramPostResult { mediaId: string; permalink: string | null; }
 
+export interface InstagramInsights {
+  plays: number; reach: number; likes: number; comments: number; shares: number; saved: number;
+}
+
+export async function getInstagramInsights(ctx: WorkspaceContext, mediaId: string): Promise<InstagramInsights> {
+  const data = await graphGet(ctx, `${mediaId}/insights`, "metric=plays,reach,likes,comments,shares,saved");
+  const values = new Map<string, number>((data.data ?? []).map((item: { name?: string; values?: Array<{ value?: number }> }) => [item.name ?? "", Number(item.values?.[0]?.value ?? 0)]));
+  return { plays: values.get("plays") ?? 0, reach: values.get("reach") ?? 0, likes: values.get("likes") ?? 0, comments: values.get("comments") ?? 0, shares: values.get("shares") ?? 0, saved: values.get("saved") ?? 0 };
+}
+
 export async function publishReelToInstagram(ctx: WorkspaceContext, videoUrl: string, caption: string): Promise<InstagramPostResult> {
   const userId = await ctx.secrets.get(ctx.workspace.id, "IG_USER_ID");
   if (!userId) throw new Error(`Workspace "${ctx.workspace.id}": IG_USER_ID não configurado.`);
