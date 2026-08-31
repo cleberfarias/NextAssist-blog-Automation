@@ -221,11 +221,12 @@
     {
       "tema": "GestãoClick serve para assistência técnica de celular? Recursos que fazem diferença",
       "palavraChaveAlvo": "GestãoClick para assistência técnica",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-18T01:42:03.165Z",
       "reason": "Aborda um concorrente generalista em uma busca de comparação e permite mostrar por que recursos específicos para consertos importam.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-08-31T13:34:56.151Z"
     },
     {
       "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
