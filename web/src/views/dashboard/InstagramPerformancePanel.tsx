@@ -23,7 +23,12 @@ export function InstagramPerformancePanel() {
   useEffect(() => {
     if (!workspace) return;
     const controller = new AbortController();
-    apiGet<InstagramPerformance[]>("/api/instagram-performance", workspace, controller.signal)
+    apiGet<InstagramPerformance[]>(
+      "/api/instagram-performance",
+      workspace,
+      controller.signal,
+      "Não foi possível carregar as métricas do Instagram.",
+    )
       .then(setItems)
       .catch((err) => { if ((err as Error).name !== "AbortError") showToast((err as Error).message, "error"); });
     return () => controller.abort();
@@ -32,7 +37,12 @@ export function InstagramPerformancePanel() {
   const refresh = async () => {
     setRefreshing(true);
     try {
-      const data = await apiPost<InstagramPerformance[]>("/api/instagram-performance/refresh", { workspaceId: workspace });
+      const data = await apiPost<InstagramPerformance[]>(
+        "/api/instagram-performance/refresh",
+        { workspaceId: workspace },
+        undefined,
+        "Não foi possível atualizar as métricas do Instagram.",
+      );
       setItems(data);
     } catch (err) {
       showToast((err as Error).message, "error");

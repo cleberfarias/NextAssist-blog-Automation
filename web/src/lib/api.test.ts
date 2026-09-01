@@ -36,6 +36,22 @@ describe("apiGet", () => {
 
     await expect(apiGet("/api/history")).rejects.toBeInstanceOf(ApiError);
   });
+
+  it("throws ApiError with the generic API message when no fallbackMessage is given", async () => {
+    const mockFetch = fetch as unknown as ReturnType<typeof vi.fn>;
+    mockFetch.mockResolvedValue({ ok: false, status: 500, json: async () => ({}) });
+
+    await expect(apiGet("/api/history")).rejects.toThrow("API 500: /api/history");
+  });
+
+  it("throws ApiError with the given fallbackMessage when the response is not ok", async () => {
+    const mockFetch = fetch as unknown as ReturnType<typeof vi.fn>;
+    mockFetch.mockResolvedValue({ ok: false, status: 500, json: async () => ({}) });
+
+    await expect(
+      apiGet("/api/history", undefined, undefined, "Não foi possível carregar os posts publicados."),
+    ).rejects.toThrow("Não foi possível carregar os posts publicados.");
+  });
 });
 
 describe("apiPost", () => {
@@ -63,5 +79,21 @@ describe("apiPost", () => {
     mockFetch.mockResolvedValue({ ok: false, status: 409, json: async () => ({ error: "já rodando" }) });
 
     await expect(apiPost("/api/run", {})).rejects.toThrow("já rodando");
+  });
+
+  it("falls back to the given fallbackMessage when the server sends no error field", async () => {
+    const mockFetch = fetch as unknown as ReturnType<typeof vi.fn>;
+    mockFetch.mockResolvedValue({ ok: false, status: 500, json: async () => ({}) });
+
+    await expect(apiPost("/api/run", {}, undefined, "Não foi possível disparar a execução.")).rejects.toThrow(
+      "Não foi possível disparar a execução.",
+    );
+  });
+
+  it("prefers the server-provided error over fallbackMessage", async () => {
+    const mockFetch = fetch as unknown as ReturnType<typeof vi.fn>;
+    mockFetch.mockResolvedValue({ ok: false, status: 409, json: async () => ({ error: "já rodando" }) });
+
+    await expect(apiPost("/api/run", {}, undefined, "fallback")).rejects.toThrow("já rodando");
   });
 });

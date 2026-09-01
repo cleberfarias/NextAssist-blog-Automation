@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useWorkspace } from "../../hooks/useWorkspace";
 import { useToast } from "../../components/ui/Toast";
-import { apiGet, apiPost } from "../../lib/api";
+import { apiGet, apiPost, ApiError } from "../../lib/api";
 import { usePagination } from "../../hooks/usePagination";
 import { nf, formatDateTime } from "../../lib/formatters";
 import type { PerformanceReport, PostPerformance } from "../../types/api";
@@ -79,7 +79,7 @@ export function PerformancePanel() {
   useEffect(() => {
     if (!workspace) return;
     const controller = new AbortController();
-    apiGet<PerformanceReport>("/api/performance", workspace, controller.signal)
+    apiGet<PerformanceReport>("/api/performance", workspace, controller.signal, "Não foi possível carregar o desempenho.")
       .then((data) => {
         setReport(data);
         if (data.posts.length) {
@@ -96,13 +96,21 @@ export function PerformancePanel() {
     if (start > end) { showToast("A data inicial não pode ser posterior à data final."); return; }
     setRefreshing(true);
     try {
-      const data = await apiPost<PerformanceReport>("/api/performance/refresh", { inicio: start, fim: end, workspaceId: workspace });
+      const data = await apiPost<PerformanceReport>(
+        "/api/performance/refresh",
+        { inicio: start, fim: end, workspaceId: workspace },
+        undefined,
+        "Falha ao atualizar métricas.",
+      );
       setReport(data);
       setStart(data.periodo.inicio);
       setEnd(data.periodo.fim);
       showToast("Métricas atualizadas com sucesso.", "success");
     } catch (err) {
-      showToast((err as Error).message ?? "Falha ao atualizar métricas.", "error");
+      // Falhas de rede (fetch nunca chega a responder) não passam pelo
+      // ApiError acima — mantém a mensagem original do painel antigo pra elas.
+      const message = err instanceof ApiError ? err.message : "Não foi possível consultar o Google. Tente novamente.";
+      showToast(message, "error");
     } finally {
       setRefreshing(false);
     }
