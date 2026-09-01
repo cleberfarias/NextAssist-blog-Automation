@@ -9,6 +9,7 @@ interface WorkspaceContextValue {
   workspaces: WorkspaceSummary[];
   setWorkspace: (id: string) => void;
   loading: boolean;
+  error: string | null;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
@@ -29,10 +30,16 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [workspaces, setWorkspaces] = useState<WorkspaceSummary[]>([]);
   const [workspace, setWorkspaceState] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
-    apiGet<WorkspaceSummary[]>("/api/workspaces", undefined, controller.signal)
+    apiGet<WorkspaceSummary[]>(
+      "/api/workspaces",
+      undefined,
+      controller.signal,
+      "Não foi possível carregar a lista de workspaces.",
+    )
       .then((list) => {
         setWorkspaces(list);
         const requested = readInitialWorkspaceId();
@@ -41,7 +48,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         if (initial) persistWorkspaceId(initial);
       })
       .catch((err) => {
-        if ((err as Error).name !== "AbortError") throw err;
+        if ((err as Error).name !== "AbortError") setError((err as Error).message);
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
@@ -53,11 +60,20 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   };
 
   const value = useMemo(
-    () => ({ workspace, workspaces, setWorkspace, loading }),
-    [workspace, workspaces, loading],
+    () => ({ workspace, workspaces, setWorkspace, loading, error }),
+    [workspace, workspaces, loading, error],
   );
 
-  return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;
+  return (
+    <WorkspaceContext.Provider value={value}>
+      {error && (
+        <p className="workspace-error-banner" role="alert">
+          Não foi possível carregar o painel: {error}
+        </p>
+      )}
+      {children}
+    </WorkspaceContext.Provider>
+  );
 }
 
 export function useWorkspace(): WorkspaceContextValue {

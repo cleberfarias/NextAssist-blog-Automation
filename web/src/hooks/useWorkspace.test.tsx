@@ -34,6 +34,25 @@ describe("WorkspaceProvider", () => {
     await waitFor(() => expect(screen.getByTestId("current")).toHaveTextContent("acme"));
   });
 
+  it("exposes an error and stops loading (without throwing) when /api/workspaces fails", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 500, json: async () => ({}) }));
+
+    function ErrorProbe() {
+      const { loading, error } = useWorkspace();
+      if (loading) return <p>carregando</p>;
+      return <p data-testid="error">{error}</p>;
+    }
+
+    render(<WorkspaceProvider><ErrorProbe /></WorkspaceProvider>);
+
+    await waitFor(() =>
+      expect(screen.getByTestId("error")).toHaveTextContent("Não foi possível carregar a lista de workspaces."),
+    );
+    // The provider itself also renders a visible banner (WorkspaceProvider sits
+    // outside ToastProvider, so it can't show a toast for this).
+    expect(screen.getByRole("alert")).toHaveTextContent("Não foi possível carregar a lista de workspaces.");
+  });
+
   it("switching workspace updates the selection without reloading the page", async () => {
     render(<WorkspaceProvider><Probe /></WorkspaceProvider>);
     await waitFor(() => expect(screen.getByTestId("current")).toHaveTextContent("acme"));
