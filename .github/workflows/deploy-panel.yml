@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - "src/**"
-      - "web/public/**"
+      - "web/**"
       - "Dockerfile"
       - ".dockerignore"
       - "package.json"
@@ -42,9 +42,15 @@ jobs:
         with:
           node-version: "22"
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            web/package-lock.json
 
       - name: Instalar dependências
         run: npm ci
+
+      - name: Instalar dependências do painel (web)
+        run: npm --prefix web ci
 
       - name: Validar build
         run: npm run build

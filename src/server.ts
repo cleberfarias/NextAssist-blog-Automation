@@ -107,7 +107,7 @@ if (config.panelPassword) {
   });
 }
 
-app.use(express.static(path.join(__dirname, "../web/public")));
+app.use(express.static(path.join(__dirname, "../web/dist")));
 
 /**
  * CORS por allowlist: só ecoa `Access-Control-Allow-Origin` quando o
