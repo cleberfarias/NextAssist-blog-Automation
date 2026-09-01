@@ -32,9 +32,10 @@ frontend e o item de menu que os sub-projetos 2/3 vão preencher depois.
 - Autenticação por empresa, criação de workspace pela UI, `react-router`
   ou qualquer gerenciador de estado global (Redux/Zustand) — YAGNI para
   duas views sem necessidade de URL própria.
-- Testes automatizados de frontend (não existem hoje; introduzir um
-  framework de teste de UI fica para quando houver lógica de frontend não
-  trivial o suficiente para justificar).
+- Suíte de teste de frontend abrangente (cobertura ampla, snapshot
+  testing, testes de todo componente visual). O escopo de teste desta
+  etapa é os comportamentos críticos listados em "Testes / verificação"
+  — não cada seção do painel.
 
 ## Arquitetura
 
@@ -197,12 +198,15 @@ identidade visual de "escritório".
 
 - `web/package.json` novo: `react`, `react-dom`, `vite`,
   `@vitejs/plugin-react`, `typescript`, `@types/react`,
-  `@types/react-dom`.
+  `@types/react-dom`, e como `devDependencies` de teste: `vitest`,
+  `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`.
 - Raiz `package.json`: novo script `build:web` (`npm --prefix web run
   build`); `build` passa a rodar `tsc && npm run build:web`. Novo script
   `web:dev` (`npm --prefix web run dev`) para desenvolvimento com hot
   reload — proxy do Vite dev server encaminha `/api/*` para
   `http://localhost:4173` (onde `npm run office` já roda o Express).
+  Novo script `test:web` (`npm --prefix web run test`, que roda
+  `vitest run`) — não substitui `npm test` (backend), é aditivo.
 - `Dockerfile`: novo estágio (ou passo adicional no estágio `build`) que
   roda `npm --prefix web ci && npm --prefix web run build`; o estágio
   `runtime` copia `web/dist` em vez de `web/public`.
@@ -211,17 +215,36 @@ identidade visual de "escritório".
 
 ## Testes / verificação
 
-Sem suíte de teste de frontend nova (nenhuma existe hoje para
-`web/public`; a migração não introduz lógica complexa o bastante para
-justificar montar um framework agora — YAGNI). `tests.ts` (backend)
-continua intacto, já que nenhuma rota muda de contrato.
+Nenhuma suíte de frontend existe hoje para `web/public` — mas é
+justamente numa migração DOM-imperativo → React que um teste de
+regressão vale mais (pega exatamente a classe de bug que o "Riscos"
+abaixo descreve: comportamento sutil quebrado durante o port). Vitest +
+React Testing Library (`jsdom`), cobrindo só os comportamentos críticos
+listados abaixo — não cada seção do painel:
 
-Verificação manual via `npm run web:dev` + `npm run office`, navegando
-pelo painel migrado e comparando com o comportamento atual: trocar
-workspace, rodar blog/Instagram (ou observar SSE), paginar histórico e
-execuções, atualizar métricas de performance/Instagram, conferir toasts
-de erro. Build de produção (`npm run build` + `node dist/server.js`)
-verificado servindo `web/dist` corretamente.
+1. **Cancelamento ao trocar workspace** — troca `workspace` no
+   `WorkspaceProvider` duas vezes em sequência rápida; a requisição da
+   primeira troca é abortada (mock de `fetch`/`AbortController`), só o
+   resultado da segunda é aplicado ao estado.
+2. **`usePagination`** — navegação `next`/`previous`, `totalPages`
+   correto, não ultrapassa os limites.
+3. **`POST /api/run`** — clique em "Rodar blog"/"Rodar Instagram" chama
+   o endpoint certo com o `workspaceId` certo e exibe toast de
+   sucesso/erro conforme a resposta mockada.
+4. **Reconexão do SSE** — trocar `workspace` fecha o `EventSource`
+   anterior (`close()` chamado) e abre um novo apontando para a
+   `?workspace=` correta.
+5. **Um painel de métricas** (`UsagePanel`) — dado um payload mockado de
+   `/api/usage`, os KPIs renderizados batem com os valores/formatação
+   esperados.
+
+Além disso, verificação manual via `npm run web:dev` + `npm run office`,
+navegando pelo painel migrado e comparando com o comportamento atual:
+trocar workspace, rodar blog/Instagram, paginar histórico e execuções,
+atualizar métricas de performance/Instagram, conferir toasts de erro.
+Build de produção (`npm run build` + `node dist/server.js`) verificado
+servindo `web/dist` corretamente. `tests.ts` (backend) continua intacto,
+já que nenhuma rota muda de contrato.
 
 ## Princípio de migração: comportamento 1:1, não implementação 1:1
 
@@ -248,7 +271,8 @@ por que é necessário.
   Dockerfile — precisa garantir que o cache de camadas do Docker não
   quebre (copiar `web/package*.json` antes do `COPY web/src` para cache
   de `npm ci`, mesmo padrão já usado para o backend).
-- Sem cancelamento de requisição (ver requisito acima), troca rápida de
-  workspace pode deixar a UI mostrando dados da empresa errada — risco
-  mais sério aqui do que num painel single-tenant, dado o objetivo de
-  produto multiempresa.
+- Sem cancelamento de requisição, troca rápida de workspace pode deixar
+  a UI mostrando dados da empresa errada — risco mais sério aqui do que
+  num painel single-tenant, dado o objetivo de produto multiempresa.
+  Mitigado pelo requisito de `AbortController` acima e coberto por teste
+  (item 1 de "Testes / verificação").
