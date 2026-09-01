@@ -1,5 +1,95 @@
 [
   {
+    "id": "2026-09-01T13:28:56.301Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-01T13:28:56.301Z",
+    "finalizadoEm": "2026-09-01T13:29:02.555Z",
+    "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-01T13:28:56.327Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-09-01T13:29:02.554Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 15,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 15,
+      "error": null
+    }
+  },
+  {
+    "id": "2026-08-31T17:26:17.148Z",
+    "origem": "action",
+    "iniciadoEm": "2026-08-31T17:26:17.148Z",
+    "finalizadoEm": "2026-08-31T17:26:22.141Z",
+    "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-08-31T17:26:17.181Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-08-31T17:26:22.139Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 15,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 15,
+      "error": null
+    }
+  },
+  {
     "id": "2026-08-31T16:21:28.182Z",
     "origem": "action",
     "iniciadoEm": "2026-08-31T16:21:28.182Z",
