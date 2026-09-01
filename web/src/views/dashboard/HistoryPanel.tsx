@@ -27,9 +27,9 @@ export function HistoryPanel() {
     <aside className="history-panel">
       <h2>Posts publicados</h2>
       {entries.length === 0 ? (
-        <ul><li className="empty">Nenhum post publicado ainda.</li></ul>
+        <ul id="history-list"><li className="empty">Nenhum post publicado ainda.</li></ul>
       ) : (
-        <ul>
+        <ul id="history-list">
           {pageItems.map((entry) => (
             <li key={entry.slug}>
               <span className="h-title">{entry.titulo}</span>

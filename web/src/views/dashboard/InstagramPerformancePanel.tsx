@@ -47,7 +47,7 @@ export function InstagramPerformancePanel() {
     <section className="usage-panel instagram-performance-panel">
       <div className="usage-header">
         <div><h2>Desempenho no Instagram</h2><p>Insights dos Reels publicados.</p></div>
-        <button onClick={() => void refresh()} disabled={refreshing}>↻ Atualizar métricas</button>
+        <button id="refresh-instagram-btn" onClick={() => void refresh()} disabled={refreshing}>↻ Atualizar métricas</button>
       </div>
       <div className="kpi-row">
         <Kpi label="Reproduções" value={nf.format(total("plays"))} />

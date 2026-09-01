@@ -26,7 +26,7 @@ export function Topbar() {
       </select>
       <div className="pipeline-actions" aria-label="Frentes de conteúdo">
         {runMode !== "disabled" && (
-          <button onClick={() => void runBlog()} disabled={running}>
+          <button id="run-blog-btn" onClick={() => void runBlog()} disabled={running}>
             {running ? "⏳ Blog rodando..." : "▶ Rodar blog"}
           </button>
         )}

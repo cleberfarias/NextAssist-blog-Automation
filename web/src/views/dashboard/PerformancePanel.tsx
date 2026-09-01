@@ -116,14 +116,14 @@ export function PerformancePanel() {
       <div className="perf-header">
         <h2>Desempenho no Google</h2>
         <div className="perf-meta">
-          <span>{report && posts.length ? `Atualizado ${formatDateTime(report.atualizadoEm)} · período ${report.periodo.inicio} a ${report.periodo.fim} · ${posts.length} posts` : "Nunca atualizado"}</span>
+          <span id="perf-updated">{report && posts.length ? `Atualizado ${formatDateTime(report.atualizadoEm)} · período ${report.periodo.inicio} a ${report.periodo.fim} · ${posts.length} posts` : "Nunca atualizado"}</span>
           <div className="perf-period">
             <label htmlFor="perf-start">De</label>
             <input id="perf-start" type="date" value={start} max={today} onChange={(e) => setStart(e.target.value)} />
             <label htmlFor="perf-end">até</label>
             <input id="perf-end" type="date" value={end} max={today} onChange={(e) => setEnd(e.target.value)} />
           </div>
-          <button onClick={() => void refresh()} disabled={refreshing}>
+          <button id="refresh-perf-btn" onClick={() => void refresh()} disabled={refreshing}>
             {refreshing ? "⏳ Consultando o Google..." : "↻ Atualizar métricas"}
           </button>
         </div>
@@ -139,7 +139,7 @@ export function PerformancePanel() {
       </div>
 
       <div className="perf-table-wrap">
-        <table>
+        <table id="perf-table">
           <thead><tr><th>Post</th><th>Indexado</th><th>Cliques</th><th>Impressões</th><th>CTR</th><th>Posição</th></tr></thead>
           <tbody>
             {posts.length === 0 ? (

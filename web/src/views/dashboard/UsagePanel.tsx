@@ -34,7 +34,7 @@ export function UsagePanel() {
           <h2>Consumo de IA</h2>
           <p>Estimativa calculada pelos tokens e pesquisas registrados pelo pipeline.</p>
         </div>
-        <span>
+        <span id="usage-updated">
           {report && report.trackedRuns
             ? `${report.trackedRuns} execução(ões) medidas · não representa o saldo restante`
             : "Aguardando a primeira execução com medição"}

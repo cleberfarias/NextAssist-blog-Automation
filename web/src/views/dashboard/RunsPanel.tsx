@@ -92,12 +92,12 @@ export function RunsPanel() {
     <section className="runs-panel">
       <div className="runs-header">
         <h2>Execuções recentes</h2>
-        <span>{runs.length > 0 ? `${runs.length} execução(ões) registradas` : ""}</span>
+        <span id="runs-updated">{runs.length > 0 ? `${runs.length} execução(ões) registradas` : ""}</span>
       </div>
       {runs.length === 0 ? (
-        <ul><li className="empty">Nenhuma execução registrada ainda.</li></ul>
+        <ul id="runs-list"><li className="empty">Nenhuma execução registrada ainda.</li></ul>
       ) : (
-        <ul>{pageItems.map((run) => <RunItem key={run.id} run={run} />)}</ul>
+        <ul id="runs-list">{pageItems.map((run) => <RunItem key={run.id} run={run} />)}</ul>
       )}
       {totalPages > 1 && (
         <div className="pagination" aria-label="Paginação das execuções">
