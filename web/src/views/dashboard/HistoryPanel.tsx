@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useWorkspace } from "../../hooks/useWorkspace";
+import { usePipeline } from "../../hooks/usePipeline";
 import { useToast } from "../../components/ui/Toast";
 import { apiGet } from "../../lib/api";
 import { usePagination } from "../../hooks/usePagination";
@@ -10,6 +11,7 @@ const PAGE_SIZE = 6;
 
 export function HistoryPanel() {
   const { workspace } = useWorkspace();
+  const { refreshToken } = usePipeline();
   const { showToast } = useToast();
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const { page, totalPages, pageItems, next, previous } = usePagination(entries, PAGE_SIZE);
@@ -17,11 +19,11 @@ export function HistoryPanel() {
   useEffect(() => {
     if (!workspace) return;
     const controller = new AbortController();
-    apiGet<HistoryEntry[]>("/api/history", workspace, controller.signal)
+    apiGet<HistoryEntry[]>("/api/history", workspace, controller.signal, "Não foi possível carregar os posts publicados.")
       .then(setEntries)
       .catch((err) => { if ((err as Error).name !== "AbortError") showToast((err as Error).message, "error"); });
     return () => controller.abort();
-  }, [workspace]);
+  }, [workspace, refreshToken]);
 
   return (
     <aside className="history-panel">

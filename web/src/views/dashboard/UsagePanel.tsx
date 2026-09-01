@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useWorkspace } from "../../hooks/useWorkspace";
+import { usePipeline } from "../../hooks/usePipeline";
 import { apiGet } from "../../lib/api";
 import { nf, usd } from "../../lib/formatters";
 import type { UsageReport } from "../../types/api";
@@ -16,6 +17,7 @@ function Kpi({ label, value, sub }: { label: string; value: string; sub?: string
 
 export function UsagePanel() {
   const { workspace } = useWorkspace();
+  const { refreshToken } = usePipeline();
   const [report, setReport] = useState<UsageReport | null>(null);
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export function UsagePanel() {
       .then(setReport)
       .catch((err) => { if ((err as Error).name !== "AbortError") setReport(null); });
     return () => controller.abort();
-  }, [workspace]);
+  }, [workspace, refreshToken]);
 
   return (
     <section className="usage-panel">

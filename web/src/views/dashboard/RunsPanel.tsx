@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useWorkspace } from "../../hooks/useWorkspace";
+import { usePipeline } from "../../hooks/usePipeline";
 import { useToast } from "../../components/ui/Toast";
 import { apiGet } from "../../lib/api";
 import { usePagination } from "../../hooks/usePagination";
@@ -75,6 +76,7 @@ function RunItem({ run }: { run: RunRecord }) {
 
 export function RunsPanel() {
   const { workspace } = useWorkspace();
+  const { refreshToken } = usePipeline();
   const { showToast } = useToast();
   const [runs, setRuns] = useState<RunRecord[]>([]);
   const { page, totalPages, pageItems, next, previous } = usePagination(runs, PAGE_SIZE);
@@ -82,11 +84,11 @@ export function RunsPanel() {
   useEffect(() => {
     if (!workspace) return;
     const controller = new AbortController();
-    apiGet<RunRecord[]>("/api/runs", workspace, controller.signal)
+    apiGet<RunRecord[]>("/api/runs", workspace, controller.signal, "Não foi possível carregar as execuções.")
       .then(setRuns)
       .catch((err) => { if ((err as Error).name !== "AbortError") showToast((err as Error).message, "error"); });
     return () => controller.abort();
-  }, [workspace]);
+  }, [workspace, refreshToken]);
 
   return (
     <section className="runs-panel">
