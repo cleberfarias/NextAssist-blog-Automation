@@ -1,7 +1,9 @@
 import { useWorkspace } from "../../hooks/useWorkspace";
+import { usePipeline } from "../../hooks/usePipeline";
 
 export function Topbar() {
   const { workspace, workspaces, setWorkspace, loading } = useWorkspace();
+  const { runMode, running, topicLine, runBlog, runInstagram } = usePipeline();
 
   return (
     <header className="topbar">
@@ -9,7 +11,7 @@ export function Topbar() {
         <span className="brand-logo">🏢</span>
         <div>
           <h1>Escritório NextAssist</h1>
-          <p id="topic-line">Aguardando o próximo tema...</p>
+          <p id="topic-line">{topicLine}</p>
         </div>
       </div>
       <select
@@ -22,6 +24,14 @@ export function Topbar() {
           <option key={w.id} value={w.id}>{w.name}</option>
         ))}
       </select>
+      <div className="pipeline-actions" aria-label="Frentes de conteúdo">
+        {runMode !== "disabled" && (
+          <button onClick={() => void runBlog()} disabled={running}>
+            {running ? "⏳ Blog rodando..." : "▶ Rodar blog"}
+          </button>
+        )}
+        <button className="secondary" onClick={() => void runInstagram()}>📸 Rodar Instagram</button>
+      </div>
     </header>
   );
 }
