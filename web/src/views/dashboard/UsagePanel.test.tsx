@@ -1,12 +1,22 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { WorkspaceProvider } from "../../hooks/useWorkspace";
+import { PipelineProvider } from "../../hooks/usePipeline";
+import { ToastProvider } from "../../components/ui/Toast";
 import { UsagePanel } from "./UsagePanel";
+
+class FakeEventSource {
+  onmessage: ((event: MessageEvent) => void) | null = null;
+  onerror: (() => void) | null = null;
+  constructor(_url: string) {}
+  close() {}
+}
 
 describe("UsagePanel", () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it("renders formatted KPIs from the usage report", async () => {
+    vi.stubGlobal("EventSource", FakeEventSource as unknown as typeof EventSource);
     vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL) => {
       const url = String(input);
       if (url.includes("/api/workspaces")) {
@@ -23,10 +33,22 @@ describe("UsagePanel", () => {
           }),
         });
       }
+      if (url.includes("/api/status")) {
+        return Promise.resolve({ ok: true, json: async () => ({ running: false, lastEvents: [], runMode: "local" }) });
+      }
+      if (url.includes("/api/runs")) {
+        return Promise.resolve({ ok: true, json: async () => [] });
+      }
       return Promise.resolve({ ok: true, json: async () => ({}) });
     }));
 
-    render(<WorkspaceProvider><UsagePanel /></WorkspaceProvider>);
+    render(
+      <WorkspaceProvider>
+        <ToastProvider>
+          <PipelineProvider><UsagePanel /></PipelineProvider>
+        </ToastProvider>
+      </WorkspaceProvider>,
+    );
 
     await waitFor(() => expect(screen.getByText(/US\$\s*12,50/)).toBeInTheDocument());
     expect(screen.getByText("10.000")).toBeInTheDocument();
