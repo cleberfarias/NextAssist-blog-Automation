@@ -52,36 +52,97 @@ a servir esse diretório:
 Nenhuma outra linha de `server.ts` muda — todas as rotas `/api/*`
 continuam exatamente como estão.
 
+## Estrutura de pastas
+
+Organização por camada, já preparada para o `react-router` que os
+sub-projetos 2/3 provavelmente vão justificar (menu crescendo além de
+Painel/Configurações) — sem adicionar a dependência agora:
+
+```
+web/src/
+├── app/App.tsx
+├── components/
+│   ├── layout/ (Sidebar.tsx, Topbar.tsx)
+│   └── ui/ (Toast.tsx)
+├── views/
+│   ├── dashboard/ (PainelView.tsx, LiveStatus.tsx, HistoryPanel.tsx, ...)
+│   └── settings/ (ConfigView.tsx)
+├── hooks/ (useWorkspace.ts, usePagination.ts)
+├── lib/ (api.ts, formatters.ts)
+├── types/ (api.ts)
+├── main.tsx
+└── styles.css
+```
+
 ## Componentes
 
-- `App.tsx` — estado de topo: workspace selecionado (`useState`, carregado
-  de `/api/workspaces` como hoje) e view ativa (`"painel" | "config"`,
-  `useState`, sem router).
+- `App.tsx` — view ativa (`"painel" | "config"`, `useState`, sem router).
+  Workspace selecionado vive no `WorkspaceProvider` (ver abaixo), não em
+  `App.tsx`.
 - `Topbar` — logo + título + `<select>` de workspace (porta o
-  `#workspace-select` atual) + os dois botões "Rodar blog"/"Rodar
-  Instagram".
+  `#workspace-select` atual, lendo/gravando via `useWorkspace()`) + os
+  dois botões "Rodar blog"/"Rodar Instagram".
 - `Sidebar` — dois itens de menu: "Painel" (ativo por padrão) e
   "Configurações". Clique troca a view ativa em `App.tsx`.
-- `PainelView` — agrega os componentes portados 1:1 do `app.js` atual,
-  cada seção como seu próprio componente para manter os arquivos
-  pequenos e testáveis isoladamente:
+- `PainelView` — agrega os componentes portados 1:1 (comportamento, não
+  implementação — ver seção "Princípio de migração" abaixo) do `app.js`
+  atual, cada seção como seu próprio componente em `views/dashboard/`:
   - `LiveStatus` (SSE via `/api/events`, cards de agentes)
   - `PlayerDock` (avatar + relatórios rápidos)
-  - `HistoryPanel` (`/api/history`, paginação)
-  - `RunsPanel` (`/api/runs`, paginação)
+  - `HistoryPanel` (`/api/history`, `usePagination`)
+  - `RunsPanel` (`/api/runs`, `usePagination`)
   - `UsagePanel` (`/api/usage`, KPIs)
   - `ConversionPanel` (`/api/conversions`, KPIs + atribuição)
   - `AttributionPanel` (`/api/attribution`)
   - `PerformancePanel` (`/api/performance`, `/api/performance/refresh`,
-    gráfico + tabela + paginação)
+    gráfico + tabela + `usePagination`)
   - `InstagramPerformancePanel` (`/api/instagram-performance`,
     `/api/instagram-performance/refresh`)
   - `Toast` (notificações, porta `#toast`)
 - `ConfigView` — placeholder: título "Configurações" + texto "em breve".
 
-Cada componente busca seus próprios dados via `useEffect`/`fetch` contra
-os mesmos endpoints já existentes — sem client HTTP novo, sem
-cache/state-management library.
+### `WorkspaceProvider` (Context)
+
+Todos os componentes acima dependem de "qual workspace está selecionado".
+Em vez de passar `workspace` como prop por toda a árvore, um
+`WorkspaceProvider` pequeno em `hooks/useWorkspace.ts` expõe:
+
+```ts
+type WorkspaceContextValue = {
+  workspace: string | null;
+  setWorkspace: (id: string) => void;
+  workspaces: { id: string; name: string }[]; // de /api/workspaces
+};
+```
+
+Consumido via `const { workspace } = useWorkspace()`. Não é Redux/Zustand
+— só `createContext`/`useContext`, mesmo padrão de baixo custo do resto
+do design.
+
+### `lib/api.ts` (camada HTTP mínima)
+
+Em vez de cada componente montar sua própria URL/tratar erro HTTP, um
+wrapper fino sem dependência nova:
+
+```ts
+export async function apiGet<T>(path: string, workspace?: string, signal?: AbortSignal): Promise<T> {
+  const url = new URL(path, window.location.origin);
+  if (workspace) url.searchParams.set("workspace", workspace);
+  const response = await fetch(url, { signal });
+  if (!response.ok) throw new Error(`API ${response.status}: ${path}`);
+  return response.json();
+}
+```
+
+Cada componente chama `apiGet<HistoryResponse>("/api/history", workspace, signal)` —
+mantém `fetch` puro, mas centraliza querystring/erro HTTP num só lugar.
+
+### `usePagination` (hook)
+
+`HistoryPanel`, `RunsPanel`, `PerformancePanel` e
+`InstagramPerformancePanel` repetem a mesma paginação client-side sobre
+dados já carregados. Isolada em `hooks/usePagination.ts`:
+`const { page, next, previous, pageItems, totalPages } = usePagination(items, pageSize)`.
 
 ## Dados e comportamento
 
@@ -95,6 +156,37 @@ hoje:
   toast de erro/sucesso.
 - Paginação de histórico/execuções/performance mantém o mesmo
   comportamento (client-side, sobre os dados já carregados).
+
+### Requisito: cancelamento em toda requisição dependente de workspace
+
+O painel troca de workspace via `<select>` — se a empresa B responder
+antes da empresa A (ordem de rede não garantida), um componente que não
+cancela a requisição anterior pode acabar mostrando dados da empresa
+errada depois de trocar de volta. Todo `useEffect` que busca dados
+dependentes de `workspace` **deve**:
+
+```ts
+useEffect(() => {
+  const controller = new AbortController();
+  apiGet<T>(path, workspace, controller.signal)
+    .then(setData)
+    .catch((err) => { if (err.name !== "AbortError") setError(err); });
+  return () => controller.abort();
+}, [workspace]);
+```
+
+E o `EventSource` de `LiveStatus` fecha a conexão anterior no cleanup:
+
+```ts
+useEffect(() => {
+  const events = new EventSource(`/api/events?workspace=${workspace}`);
+  // ...
+  return () => events.close();
+}, [workspace]);
+```
+
+Isso vale para todo componente listado acima que depende de `workspace`
+— não é detalhe de implementação, é requisito de correção.
 
 CSS: `style.css` atual é portado quase integralmente (import global em
 `main.tsx`), ajustando apenas seletores para acomodar a nova estrutura de
@@ -131,14 +223,32 @@ execuções, atualizar métricas de performance/Instagram, conferir toasts
 de erro. Build de produção (`npm run build` + `node dist/server.js`)
 verificado servindo `web/dist` corretamente.
 
+## Princípio de migração: comportamento 1:1, não implementação 1:1
+
+"Portar 1:1" significa preservar o que o usuário vê e como o painel se
+comporta — não copiar a manipulação de DOM do `app.js` para dentro de
+`useEffect`. Código como `document.querySelector(...)`,
+`element.innerHTML = ...` ou `classList.add(...)` dentro de um componente
+React é um cheiro de que a migração não aconteceu de verdade — deve virar
+JSX declarativo (`<UsagePanel totalTokens={usage.tokens} cost={usage.cost} />`),
+não DOM imperativo escondido atrás de um componente. Exceção: `PerformancePanel`
+pode legitimamente precisar de manipulação direta de canvas/SVG para o
+gráfico de barras — nesse caso específico, documentar no próprio arquivo
+por que é necessário.
+
 ## Riscos
 
 - Port 1:1 de 636 linhas de lógica DOM-manual para componentes React é
   trabalho mecânico mas com superfície de erro (comportamento sutil de
   paginação, formatação de números/datas, debounce de refresh). Mitigado
   por verificação manual seção por seção contra o comportamento atual
-  antes de considerar a migração completa.
+  antes de considerar a migração completa, e pelo princípio acima (evita
+  que a migração vire só "React por fora, `app.js` por dentro").
 - Two build systems (raiz `tsc` + `web` `vite`) passam a coexistir no
   Dockerfile — precisa garantir que o cache de camadas do Docker não
   quebre (copiar `web/package*.json` antes do `COPY web/src` para cache
   de `npm ci`, mesmo padrão já usado para o backend).
+- Sem cancelamento de requisição (ver requisito acima), troca rápida de
+  workspace pode deixar a UI mostrando dados da empresa errada — risco
+  mais sério aqui do que num painel single-tenant, dado o objetivo de
+  produto multiempresa.
