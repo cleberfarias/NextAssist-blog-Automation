@@ -8,7 +8,10 @@
     "update:seo": "tsx src/scripts/update-post-seo.ts",
     "office": "tsx src/server.ts",
     "test": "node --import tsx --test src/tests.ts",
-    "build": "tsc",
+    "build": "tsc && npm run build:web",
+    "build:web": "npm --prefix web run build",
+    "web:dev": "npm --prefix web run dev",
+    "test:web": "npm --prefix web run test",
     "start": "node dist/server.js"
   },
   "dependencies": {

@@ -16,6 +16,8 @@ dist/
 build/
 *.tsbuildinfo
 graphify-out/
+web/dist/
+web/node_modules/
 
 # --- Estado gerado em runtime (métricas geradas sob demanda no painel) ---
 **/post-performance.json
