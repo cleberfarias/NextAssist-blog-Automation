@@ -451,3 +451,9 @@ body { display: block; background: #f5f7fb; color: #172033; }
 .kpi { background: #fff; }
 @media (max-width: 860px) { .topbar { padding: 14px 18px; } .office { padding: 18px; } .floor { grid-template-columns: repeat(2, minmax(0, 1fr)); } .history-panel, .runs-panel, .usage-panel, .performance-panel { margin-left: 18px; margin-right: 18px; } }
 @media (max-width: 560px) { .channel-overview { padding: 0 14px; margin-top: 14px; } .office { padding: 14px; } .floor { grid-template-columns: 1fr; } .history-panel, .runs-panel, .usage-panel, .performance-panel { margin-left: 14px; margin-right: 14px; padding: 18px; } .pipeline-actions { width: 100%; } .pipeline-actions button { flex: 1; } }
+
+.app-shell { display: flex; min-height: 100vh; }
+.sidebar { display: flex; flex-direction: column; gap: 4px; width: 200px; padding: 16px 8px; background: #12141c; }
+.sidebar-item { text-align: left; padding: 10px 12px; border: none; border-radius: 8px; background: transparent; color: #cfd3e6; cursor: pointer; font-size: 14px; }
+.sidebar-item.active { background: #2a2f45; color: #fff; }
+.app-main { flex: 1; min-width: 0; }
