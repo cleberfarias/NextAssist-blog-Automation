@@ -149,7 +149,6 @@ describe("WorkspaceProvider", () => {
 
     // Wait for initial load - get whatever workspace is selected first
     let currentWorkspace: string;
-    const otherWorkspace = "other";
 
     await waitFor(() => {
       const currentElement = screen.getByTestId("current");
