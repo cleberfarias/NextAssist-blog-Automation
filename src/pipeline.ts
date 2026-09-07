@@ -6,6 +6,7 @@ import { planTopic } from "./agents/topicPlanner.js";
 import { writeArticle } from "./agents/writer.js";
 import { editAndFinalize } from "./agents/editorSeo.js";
 import { publishPost } from "./agents/publisher.js";
+import { publishToInstagram } from "./agents/instagramPublisher.js";
 import { indexPublishedPost, postUrl } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
 import { registerContent } from "./contentRegistry.js";
@@ -85,6 +86,18 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
       agent: "publicador", status: "done",
       message: published.publicado ? `Publicado em /blog/${publishedSlug}` : `Rascunho criado em /blog/${publishedSlug} — aguardando aprovação`,
     });
+
+    if (published.publicado && ctx.workspace.channels.instagram) {
+      emit(onEvent, { agent: "instagram", status: "working", message: "Criando Reel de venda e publicando no Instagram..." });
+      const instagram = await publishToInstagram(ctx, finalPost, published.imagemCapaBuffer, postUrl(ctx, publishedSlug));
+      emit(onEvent, {
+        agent: "instagram",
+        status: instagram.ok ? "done" : "error",
+        message: instagram.detalhes,
+      });
+    } else if (ctx.workspace.channels.instagram) {
+      emit(onEvent, { agent: "instagram", status: "done", message: "Instagram aguardará a aprovação do rascunho." });
+    }
 
     emit(onEvent, { agent: "indexador", status: "working", message: "Notificando o Google e reenviando o sitemap..." });
     if (published.publicado) {
