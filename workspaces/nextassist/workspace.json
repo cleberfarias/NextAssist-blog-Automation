@@ -6,12 +6,21 @@
     "name": "NextAssist",
     "description": "Sistema de gestão para assistências técnicas de celular no Brasil.",
     "toneOfVoice": "Direto e prático, focado em dono de assistência técnica solo ou com equipe pequena — sem jargão corporativo.",
-    "targetAudience": ["donos de assistência técnica de celular", "gestores de pequenas equipes de conserto"],
-    "competitors": ["AnaDita", "MarkupEmpresa", "GestãoClick"],
-    "requiredLinks": ["/#funcionalidades"]
+    "targetAudience": [
+      "donos de assistência técnica de celular",
+      "gestores de pequenas equipes de conserto"
+    ],
+    "competitors": [
+      "AnaDita",
+      "MarkupEmpresa",
+      "GestãoClick"
+    ],
+    "requiredLinks": [
+      "/#funcionalidades"
+    ]
   },
   "goals": {
-    "primary": "leads"
+    "primary": "sales"
   },
   "channels": {
     "blog": true,
@@ -42,8 +51,18 @@
   },
   "instagramStrategy": {
     "frequencyPerWeek": 5,
-    "pillars": ["dor operacional", "demonstração do produto", "bastidores", "educação prática", "prova social"],
-    "preferredFormats": ["reel", "carrossel", "story"]
+    "pillars": [
+      "dor operacional",
+      "demonstração do produto",
+      "prova social",
+      "objeções de compra",
+      "educação prática"
+    ],
+    "preferredFormats": [
+      "reel",
+      "carrossel",
+      "story"
+    ]
   },
   "secrets": {
     "required": [
@@ -59,7 +78,10 @@
       "IG_USER_ID",
       "IG_ACCESS_TOKEN",
       "GEMINI_API_KEY",
-      "GEMINI_API_KEY_FALLBACK"
+      "GEMINI_API_KEY_FALLBACK",
+      "HEYGEN_API_KEY",
+      "HEYGEN_AVATAR_ID",
+      "HEYGEN_VOICE_ID"
     ]
   }
 }
