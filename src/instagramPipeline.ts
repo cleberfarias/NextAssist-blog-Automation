@@ -5,8 +5,14 @@ import type { WorkspaceContext } from "./context.js";
 import type { FinalPost } from "./agents/editorSeo.js";
 import { registerContent } from "./contentRegistry.js";
 import { emit, type OnEvent } from "./pipelineEvents.js";
+import { ensureInstagramBacklog } from "./instagramDirector.js";
 
 export async function runInstagramPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Promise<InstagramResult> {
+  try {
+    await ensureInstagramBacklog(ctx, onEvent);
+  } catch (err) {
+    emit(onEvent, { agent: "marketing-director", status: "error", message: `Falha ao renovar pautas do Instagram: ${err instanceof Error ? err.message : String(err)}` });
+  }
   const topic = await getNextInstagramTopic(ctx);
   if (!topic) {
     const result = { ok: false, permalink: null, detalhes: "Nenhuma pauta pendente na fila do Instagram." };
