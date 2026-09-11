@@ -12,7 +12,8 @@
     "build:web": "npm --prefix web run build",
     "web:dev": "npm --prefix web run dev",
     "test:web": "npm --prefix web run test",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "instagram": "tsx src/instagram.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
