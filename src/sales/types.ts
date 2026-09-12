@@ -50,8 +50,18 @@ export interface SalesOutreachDraft {
   requiresHumanApproval: true;
 }
 
+export type SalesReviewStatus = "pending" | "approved" | "rejected";
+
+export interface SalesHumanReview {
+  status: SalesReviewStatus;
+  subject?: string;
+  message: string;
+  updatedAt: string;
+}
+
 export interface SalesPipelineEntry {
   lead: SalesLeadContext;
   assessment: SalesAssessment;
   outreach?: SalesOutreachDraft;
+  review?: SalesHumanReview;
 }
