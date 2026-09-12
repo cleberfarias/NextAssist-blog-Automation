@@ -2,7 +2,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { config } from "../config.js";
 import type { WorkspaceContext } from "../context.js";
 import { readStoredStateJson, writeStateJson } from "../lib/storage.js";
-import type { SalesHumanReview, SalesPipelineEntry, SalesReviewStatus } from "./types.js";
+import type { SalesExecutionRecord, SalesHumanReview, SalesPipelineEntry, SalesReviewStatus } from "./types.js";
 
 const SALES_STATE_FILE = "sales-state.json";
 
@@ -28,15 +28,15 @@ export async function saveSalesState(
   entries: SalesPipelineEntry[],
 ): Promise<SalesStateReport> {
   const previous = await getSalesState(ctx);
-  const reviewByLead = new Map(
-    (previous?.entries ?? [])
-      .filter((entry) => entry.review)
-      .map((entry) => [entry.lead.leadId, entry.review!] as const),
-  );
+  const previousByLead = new Map((previous?.entries ?? []).map((entry) => [entry.lead.leadId, entry] as const));
 
   const merged = entries.map((entry) => {
-    const review = reviewByLead.get(entry.lead.leadId);
-    return review ? { ...entry, review } : entry;
+    const old = previousByLead.get(entry.lead.leadId);
+    return {
+      ...entry,
+      ...(old?.review ? { review: old.review } : {}),
+      ...(old?.executions?.length ? { executions: old.executions } : {}),
+    };
   });
 
   const report: SalesStateReport = {
@@ -93,6 +93,27 @@ export async function reviewSalesDraft(
   };
 
   const updatedEntry: SalesPipelineEntry = { ...entry, review };
+  const entries = [...report.entries];
+  entries[index] = updatedEntry;
+  await persist(ctx, { updatedAt: new Date().toISOString(), entries });
+  return updatedEntry;
+}
+
+export async function recordSalesExecution(
+  ctx: WorkspaceContext,
+  leadId: string,
+  execution: SalesExecutionRecord,
+): Promise<SalesPipelineEntry> {
+  const report = await getSalesState(ctx);
+  if (!report) throw new Error("Estado comercial ainda não foi gerado para este workspace.");
+  const index = report.entries.findIndex((entry) => entry.lead.leadId === leadId);
+  if (index < 0) throw new Error("Lead não encontrado no estado comercial.");
+
+  const entry = report.entries[index]!;
+  const updatedEntry: SalesPipelineEntry = {
+    ...entry,
+    executions: [...(entry.executions ?? []), execution].slice(-20),
+  };
   const entries = [...report.entries];
   entries[index] = updatedEntry;
   await persist(ctx, { updatedAt: new Date().toISOString(), entries });
