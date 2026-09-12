@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useWorkspace } from "../../hooks/useWorkspace";
-import { apiGet } from "../../lib/api";
+import { apiGet, apiPost } from "../../lib/api";
 import { formatDateTime, nf } from "../../lib/formatters";
-import type { SalesDashboardResponse, SalesEntry } from "../../types/api";
+import type { SalesDashboardResponse, SalesEntry, SalesReviewStatus } from "../../types/api";
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
@@ -20,6 +20,12 @@ function intentLabel(intent: SalesEntry["assessment"]["intent"]): string {
   return "Baixo";
 }
 
+function reviewLabel(status?: SalesReviewStatus): string {
+  if (status === "approved") return "Aprovado";
+  if (status === "rejected") return "Descartado";
+  return "Pendente de aprovação";
+}
+
 function signalLabel(name: string): string {
   const labels: Record<string, string> = {
     site_visit: "visitou o site",
@@ -34,20 +40,113 @@ function signalLabel(name: string): string {
   return labels[name] ?? name;
 }
 
+interface ReviewControlsProps {
+  workspace: string;
+  entry: SalesEntry;
+  onSaved: () => Promise<void>;
+}
+
+function ReviewControls({ workspace, entry, onSaved }: ReviewControlsProps) {
+  const baseSubject = entry.review?.subject ?? entry.outreach?.subject ?? "";
+  const baseMessage = entry.review?.message ?? entry.outreach?.message ?? "";
+  const [editing, setEditing] = useState(false);
+  const [subject, setSubject] = useState(baseSubject);
+  const [message, setMessage] = useState(baseMessage);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (!entry.outreach) return <>—</>;
+
+  async function submit(status: SalesReviewStatus, persistText = false) {
+    setBusy(true);
+    setError(null);
+    try {
+      await apiPost("/api/sales/review", {
+        workspaceId: workspace,
+        leadId: entry.lead.leadId,
+        status,
+        ...(persistText ? { subject, message } : {}),
+      });
+      setEditing(false);
+      await onSaved();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const status = entry.review?.status;
+  const displaySubject = entry.review?.subject ?? entry.outreach.subject;
+  const displayMessage = entry.review?.message ?? entry.outreach.message;
+
+  return (
+    <details open={editing}>
+      <summary>{reviewLabel(status)}</summary>
+      {editing ? (
+        <div className="sales-review-editor">
+          {entry.outreach.channel === "email" ? (
+            <input
+              value={subject}
+              onChange={(event) => setSubject(event.target.value)}
+              placeholder="Assunto"
+              disabled={busy}
+            />
+          ) : null}
+          <textarea
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
+            rows={5}
+            disabled={busy}
+          />
+          <div className="sales-review-actions">
+            <button type="button" onClick={() => void submit("pending", true)} disabled={busy || !message.trim()}>
+              Salvar edição
+            </button>
+            <button type="button" onClick={() => setEditing(false)} disabled={busy}>Cancelar</button>
+          </div>
+        </div>
+      ) : (
+        <div className="sales-review-preview">
+          {displaySubject ? <strong>{displaySubject}</strong> : null}
+          <p>{displayMessage}</p>
+          <div className="sales-review-actions">
+            <button type="button" onClick={() => setEditing(true)} disabled={busy}>Editar</button>
+            <button type="button" onClick={() => void submit("approved", true)} disabled={busy || status === "approved"}>
+              Aprovar
+            </button>
+            <button type="button" onClick={() => void submit("rejected", true)} disabled={busy || status === "rejected"}>
+              Descartar
+            </button>
+          </div>
+        </div>
+      )}
+      {error ? <p className="error-text">{error}</p> : null}
+    </details>
+  );
+}
+
 export function SalesPanel() {
   const { workspace } = useWorkspace();
   const [data, setData] = useState<SalesDashboardResponse | null>(null);
 
+  async function load(signal?: AbortSignal) {
+    if (!workspace) return;
+    try {
+      setData(await apiGet<SalesDashboardResponse>("/api/sales", workspace, signal));
+    } catch (err) {
+      if ((err as Error).name !== "AbortError") setData(null);
+    }
+  }
+
   useEffect(() => {
     if (!workspace) return;
     const controller = new AbortController();
-    apiGet<SalesDashboardResponse>("/api/sales", workspace, controller.signal)
-      .then(setData)
-      .catch((err) => { if ((err as Error).name !== "AbortError") setData(null); });
+    void load(controller.signal);
     return () => controller.abort();
   }, [workspace]);
 
-  if (!data) {
+  if (!data || !workspace) {
     return (
       <section className="usage-panel sales-panel">
         <div className="usage-header">
@@ -66,7 +165,7 @@ export function SalesPanel() {
   return (
     <section className="usage-panel sales-panel">
       <div className="usage-header">
-        <div><h2>Sales Agent</h2><p>Leads reais classificados por intenção. Rascunhos ainda exigem aprovação humana.</p></div>
+        <div><h2>Sales Agent</h2><p>Leads reais classificados por intenção. Aprovar autoriza a próxima etapa, mas ainda não envia mensagem.</p></div>
         <span>{data.updatedAt ? `Atualizado ${formatDateTime(data.updatedAt)}` : "Sem execução salva"}</span>
       </div>
 
@@ -98,13 +197,7 @@ export function SalesPanel() {
                   <td>{entry.lead.signals.slice(-4).map((signal) => signalLabel(signal.name)).join(" · ") || "—"}</td>
                   <td>{entry.assessment.nextAction.replaceAll("_", " ")}</td>
                   <td>
-                    {entry.outreach ? (
-                      <details>
-                        <summary>{entry.outreach.requiresHumanApproval ? "Pendente de aprovação" : "Ver rascunho"}</summary>
-                        {entry.outreach.subject ? <strong>{entry.outreach.subject}</strong> : null}
-                        <p>{entry.outreach.message}</p>
-                      </details>
-                    ) : "—"}
+                    <ReviewControls workspace={workspace} entry={entry} onSaved={() => load()} />
                   </td>
                 </tr>
               ))}
