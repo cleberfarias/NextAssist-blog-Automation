@@ -5,6 +5,7 @@ import { RunsPanel } from "./RunsPanel";
 import { UsagePanel } from "./UsagePanel";
 import { ConversionPanel } from "./ConversionPanel";
 import { SalesPanel } from "./SalesPanel";
+import { RevenuePanel } from "./RevenuePanel";
 import { AttributionPanel } from "./AttributionPanel";
 import { PerformancePanel } from "./PerformancePanel";
 import { InstagramPerformancePanel } from "./InstagramPerformancePanel";
@@ -20,6 +21,7 @@ export function PainelView() {
 
       <PlayerDock />
       <LiveStatus />
+      <RevenuePanel />
       <SalesPanel />
       <HistoryPanel />
       <RunsPanel />
