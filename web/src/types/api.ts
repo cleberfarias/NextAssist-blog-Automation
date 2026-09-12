@@ -80,6 +80,50 @@ export interface ConversionSummary {
   updatedAt: string;
 }
 
+export type SalesIntent = "low" | "medium" | "high" | "customer";
+
+export interface SalesSignal {
+  name: string;
+  createdAt: string;
+  contentId?: string;
+  channel?: string;
+}
+
+export interface SalesEntry {
+  lead: {
+    leadId: string;
+    anonymousId?: string;
+    userId?: string;
+    source?: string;
+    signals: SalesSignal[];
+  };
+  assessment: {
+    leadId: string;
+    score: number;
+    intent: SalesIntent;
+    nextAction: string;
+    reasons: string[];
+  };
+  outreach?: {
+    channel: "email" | "whatsapp" | "manual";
+    message: string;
+    subject?: string;
+    requiresHumanApproval: boolean;
+  };
+}
+
+export interface SalesDashboardResponse {
+  updatedAt: string | null;
+  summary: {
+    total: number;
+    hot: number;
+    medium: number;
+    customers: number;
+    draftsPendingApproval: number;
+  };
+  entries: SalesEntry[];
+}
+
 export interface AttributionRow {
   contentId: string;
   campaignId: string | null;
