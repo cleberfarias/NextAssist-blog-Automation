@@ -1,5 +1,6 @@
 import type { WorkspaceContext } from "../context.js";
 import { runApprovedSalesExecution, type SalesExecutionRequest } from "../harness/salesExecutionRuntime.js";
+import { saveHarnessTrace } from "../harness/traceStore.js";
 import { getSalesState, recordSalesExecution } from "./state.js";
 import type { SalesExecutionRecord } from "./types.js";
 import type { SalesTransports } from "./transports.js";
@@ -21,6 +22,7 @@ export async function executeSalesAction(input: {
     entry,
     request: input.request,
     transports: input.transports,
+    onTrace: (trace) => saveHarnessTrace(input.ctx, trace),
   });
 
   await recordSalesExecution(input.ctx, input.leadId, execution);
