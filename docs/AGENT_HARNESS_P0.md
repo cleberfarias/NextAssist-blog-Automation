@@ -2,175 +2,86 @@
 
 ## Objetivo
 
-Criar uma camada de execução comum para agentes de IA, separando decisão, permissões, ferramentas, memória, observabilidade e limites operacionais do código específico de cada agente.
+Evoluir o NextAssist Blog Automation de um pipeline multiagente linear para uma plataforma de agentes controlados por um harness compartilhado, sem quebrar o fluxo atual de publicação.
 
-A primeira migração será o Marketing Director atual. Depois, o mesmo runtime servirá de base para Sales Agent e Revenue Director.
+O Harness é responsável por autorização, budget, aprovação humana, tracing e execução de skills. Os agentes continuam focados em decisões de domínio.
 
-## Princípios
+## Componentes implementados nesta branch
 
-1. Nenhum agente executa ferramentas diretamente sem passar pelo runtime.
-2. Cada agente recebe apenas as skills permitidas.
-3. Toda execução possui workspace, runId, budget, trace e policy.
-4. A saída do LLM deve ser validada antes de qualquer side effect.
-5. Ações de maior risco podem exigir aprovação humana.
-6. O runtime deve registrar custo, tokens, steps, erros, retries e ferramentas usadas.
-7. O harness não substitui o pipeline atual de uma vez; a migração será incremental.
+- `src/harness/types.ts`: contratos do runtime, traces, budgets e skills.
+- `src/harness/registry.ts`: registro explícito de skills.
+- `src/harness/runtime.ts`: execução com allowlist, limite de steps/custo, approval e trace.
+- `src/harness/skills/marketingDirectorSkills.ts`: adapter da skill existente de geração de backlog.
+- `src/harness/marketingDirectorRuntime.ts`: Marketing Director executado através do Harness.
+- `src/harness/skills/salesSkills.ts`: primeira skill comercial determinística.
+- `src/harness/salesAgentRuntime.ts`: Sales Agent em modo copilot/read-only.
+- `src/sales/types.ts`: contratos de lead, sinais e recomendação comercial.
 
-## Estrutura alvo P0
-
-```text
-src/
-  harness/
-    types.ts
-    runtime.ts
-    registry.ts
-    policies.ts
-    tracing.ts
-    approvals.ts
-    budget.ts
-  agents/
-    marketingDirector/
-      agent.ts
-      skills.ts
-```
-
-## Contratos principais
-
-```ts
-export type AgentId = "marketing-director" | "sales-agent" | "revenue-director";
-
-export interface AgentBudget {
-  maxSteps: number;
-  maxCostUsd: number;
-}
-
-export interface AgentRunRequest<TContext = unknown> {
-  workspaceId: string;
-  agent: AgentId;
-  goal: string;
-  context: TContext;
-  allowedSkills: string[];
-  budget: AgentBudget;
-}
-
-export interface AgentRunResult<TOutput = unknown> {
-  runId: string;
-  output: TOutput;
-  steps: number;
-  costUsd: number;
-  status: "completed" | "blocked" | "failed";
-}
-```
-
-## Skills P0
-
-Marketing Director:
-
-- analyzePerformance
-- analyzeAttribution
-- analyzeSearchConsole
-- generateContentBacklog
-
-As chamadas existentes continuam sendo reaproveitadas; o objetivo é registrá-las e controlá-las pelo harness.
-
-## Policies P0
-
-- isolamento obrigatório por workspace;
-- bloqueio de skill não autorizada;
-- limite de steps por execução;
-- limite estimado de custo por execução;
-- falha fechada para ações não reconhecidas;
-- nenhuma execução arbitrária de código retornado por LLM;
-- side effects futuros de vendas/publicação devem suportar `requiresApproval`.
-
-## Tracing P0
-
-Cada execução deve produzir eventos com pelo menos:
-
-```json
-{
-  "runId": "uuid",
-  "workspaceId": "nextassist",
-  "agent": "marketing-director",
-  "goal": "replenish_content_backlog",
-  "startedAt": "...",
-  "finishedAt": "...",
-  "steps": [],
-  "usage": {},
-  "costUsd": 0,
-  "status": "completed"
-}
-```
-
-## Migração do Marketing Director
-
-Estado atual:
+## Fluxo atual
 
 ```text
-ensureContentBacklog
-  -> generateContentBacklog
-  -> runAgent
+Pipeline
+  ↓
+ensureContentBacklog()
+  ↓
+Marketing Director Harness
+  ↓
+Policy / Allowlist
+  ↓
+Budget
+  ↓
+marketing.generate_content_backlog
+  ↓
+Marketing Director existente
+  ↓
+Search Console + Attribution + Performance
 ```
 
-Estado alvo:
+A regra de negócio do Marketing Director não foi reescrita. O Harness envolve a execução existente e passa a controlar como ela é executada.
+
+## Sales Agent P0
+
+O Sales Agent começa em modo copilot para evitar automações comerciais prematuras.
 
 ```text
-ensureContentBacklog
-  -> harness.run(marketing-director)
-      -> skill: analyzePerformance
-      -> skill: analyzeAttribution
-      -> skill: analyzeSearchConsole
-      -> skill: generateContentBacklog
+Lead signals
+  ↓
+Sales Agent Harness
+  ↓
+sales.assess_lead
+  ↓
+score + intent + next action
 ```
 
-O resultado final continua compatível com `ContentOpportunity[]`, evitando quebrar o pipeline atual.
+Sinais iniciais:
 
-## Sales Agent — próxima fase
+- site_visit
+- pricing_view
+- trial_started
+- signup_completed
+- first_order_created
+- subscription_started
+- whatsapp_click
+- contact_submit
 
-O Sales Agent deve começar em modo copilot.
+Saídas:
 
-Entradas esperadas:
+- `low` → nurture
+- `medium` → invite_trial / offer_help
+- `high` → request_human_contact
+- `customer` → customer_success
 
-- origem do lead;
-- contentId/campaignId;
-- eventos de funil;
-- dados do trial;
-- estágio de ativação;
-- histórico comercial;
-- dados públicos/autorizados do workspace.
+A pontuação é determinística e auditável nesta fase. O LLM poderá depois interpretar contexto e redigir abordagens, mas não deverá ser a única fonte da pontuação comercial.
 
-Saídas iniciais:
+## Próximas etapas
 
-- lead score;
-- intenção estimada;
-- problema provável;
-- próxima melhor ação;
-- mensagem sugerida;
-- necessidade de follow-up;
-- necessidade de handoff humano.
+1. Conectar o Sales Agent aos eventos reais de conversão do workspace.
+2. Criar `sales.compose_outreach` para gerar abordagem contextual.
+3. Criar `sales.send_*` com `requiresApproval: true`.
+4. Persistir traces do Harness por workspace.
+5. Adicionar Revenue Director acima de Marketing + Sales.
+6. Evoluir decisões do Marketing Director além de `create_article` para `update_article`, `change_cta`, `create_social` e `do_nothing`.
 
-Ações externas reais (e-mail, WhatsApp, CRM) ficam atrás de policy + approval até haver confiança operacional.
+## Regra arquitetural
 
-## Revenue Director — fase seguinte
-
-O Revenue Director será o agente coordenador acima de Marketing e Sales, com objetivo de negócio, por exemplo:
-
-```text
-increase_paid_customers
-increase_mrr
-improve_trial_activation
-reduce_trial_to_paid_dropoff
-```
-
-Ele poderá priorizar entre ações de marketing, conversão e vendas com base em resultado real.
-
-## Critério de pronto do P0
-
-- runtime executa o Marketing Director;
-- skills são registradas explicitamente;
-- policy bloqueia skill não permitida;
-- budget interrompe execução fora dos limites;
-- tracing registra a execução;
-- `ensureContentBacklog` mantém o comportamento atual;
-- testes existentes continuam passando;
-- novos testes cobrem runtime, policies e budget.
+LLM decide dentro de limites. O Harness controla permissões, ferramentas, budget, aprovação e auditoria.
