@@ -12,7 +12,7 @@ import { getPerformance, refreshPerformance } from "./performance.js";
 import { computeAttribution } from "./attribution.js";
 import { config } from "./config.js";
 import { getConversionSummary, recordConversion, type ConversionEventName } from "./conversions.js";
-import { getSalesState } from "./sales/state.js";
+import { getSalesState, reviewSalesDraft } from "./sales/state.js";
 import { triggerDailyPostWorkflow } from "./lib/githubDispatch.js";
 import { listWorkspaces, loadWorkspace, type MarketingWorkspace } from "./workspace.js";
 import { EnvSecretProvider } from "./lib/secrets.js";
@@ -166,10 +166,28 @@ app.get("/api/sales", asyncHandler(async (req, res) => {
       hot: entries.filter((entry) => entry.assessment.intent === "high").length,
       medium: entries.filter((entry) => entry.assessment.intent === "medium").length,
       customers: entries.filter((entry) => entry.assessment.intent === "customer").length,
-      draftsPendingApproval: entries.filter((entry) => entry.outreach?.requiresHumanApproval).length,
+      draftsPendingApproval: entries.filter((entry) => entry.outreach && (!entry.review || entry.review.status === "pending")).length,
     },
     entries,
   });
+}));
+
+app.post("/api/sales/review", express.json(), asyncHandler(async (req, res) => {
+  const workspaceId = String(req.body?.workspaceId ?? "");
+  const leadId = String(req.body?.leadId ?? "").slice(0, 160);
+  const status = req.body?.status;
+  if (!workspaceId || !leadId) {
+    res.status(400).json({ error: "workspaceId e leadId são obrigatórios." });
+    return;
+  }
+  if (!(["pending", "approved", "rejected"] as const).includes(status)) {
+    res.status(400).json({ error: "Status de revisão inválido." });
+    return;
+  }
+  const message = typeof req.body?.message === "string" ? req.body.message.slice(0, 4000) : undefined;
+  const subject = typeof req.body?.subject === "string" ? req.body.subject.slice(0, 240) : undefined;
+  const entry = await reviewSalesDraft(await contextFor(workspaceId), { leadId, status, message, subject });
+  res.json({ ok: true, entry });
 }));
 
 app.get("/api/events", (req, res) => {
