@@ -2,6 +2,7 @@ import type { WorkspaceContext } from "../context.js";
 import type { ContentOpportunity, GenerateContentBacklogOptions } from "../lib/marketingDirector.js";
 import { SkillRegistry } from "./registry.js";
 import { AgentHarnessRuntime } from "./runtime.js";
+import { saveHarnessTrace } from "./traceStore.js";
 import {
   GENERATE_CONTENT_BACKLOG_SKILL,
   generateContentBacklogSkill,
@@ -48,6 +49,8 @@ export async function runMarketingDirectorBacklog(
     },
     ({ invoke }) => invoke<GenerateContentBacklogOptions, ContentOpportunity[]>(GENERATE_CONTENT_BACKLOG_SKILL, options),
   );
+
+  await saveHarnessTrace(ctx, result.trace);
 
   if (result.status !== "completed" || !result.output) {
     throw new Error(`Marketing Director bloqueado pelo Harness: ${result.trace.error ?? result.status}`);
