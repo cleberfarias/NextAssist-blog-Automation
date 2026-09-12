@@ -8,6 +8,7 @@ import "./conversions.test.js";
 import "./harness/runtime.test.js";
 import "./harness/salesAgentRuntime.test.js";
 import "./harness/salesExecutionRuntime.test.js";
+import "./harness/traceStore.test.js";
 import "./lib/cms.test.js";
 import "./lib/dataSource.test.js";
 import "./lib/contentQuality.test.js";
