@@ -45,7 +45,7 @@ export async function runApprovedSalesExecution(input: {
       allowedSkills: [allowedSkill],
       budget: { maxSteps: 1, maxCostUsd: 0.01 },
     },
-    ({ invoke }) => invoke(allowedSkill, { to: input.request.to }),
+    ({ invoke }) => invoke<{ to: string }, SalesExecutionRecord>(allowedSkill, { to: input.request.to }),
   );
 
   if (result.status !== "completed" || !result.output) {
