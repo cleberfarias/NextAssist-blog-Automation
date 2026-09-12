@@ -59,9 +59,22 @@ export interface SalesHumanReview {
   updatedAt: string;
 }
 
+export type SalesExecutionAction = "send_email" | "send_whatsapp" | "mark_contacted";
+export type SalesExecutionStatus = "completed" | "failed";
+
+export interface SalesExecutionRecord {
+  action: SalesExecutionAction;
+  status: SalesExecutionStatus;
+  executedAt: string;
+  provider?: string;
+  externalId?: string;
+  error?: string;
+}
+
 export interface SalesPipelineEntry {
   lead: SalesLeadContext;
   assessment: SalesAssessment;
   outreach?: SalesOutreachDraft;
   review?: SalesHumanReview;
+  executions?: SalesExecutionRecord[];
 }
