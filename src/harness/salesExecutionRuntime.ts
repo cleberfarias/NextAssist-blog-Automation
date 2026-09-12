@@ -2,6 +2,7 @@ import type { SalesExecutionRecord, SalesPipelineEntry } from "../sales/types.js
 import type { SalesTransports } from "../sales/transports.js";
 import { AgentHarnessRuntime } from "./runtime.js";
 import { SkillRegistry } from "./registry.js";
+import type { AgentTrace } from "./types.js";
 import {
   SEND_EMAIL_SKILL,
   SEND_WHATSAPP_SKILL,
@@ -19,6 +20,7 @@ export async function runApprovedSalesExecution(input: {
   entry: SalesPipelineEntry;
   request: SalesExecutionRequest;
   transports: SalesTransports;
+  onTrace?: (trace: AgentTrace) => Promise<void>;
 }): Promise<SalesExecutionRecord> {
   const registry = new SkillRegistry()
     .register(sendEmailSkill)
@@ -47,6 +49,8 @@ export async function runApprovedSalesExecution(input: {
     },
     ({ invoke }) => invoke<{ to: string }, SalesExecutionRecord>(allowedSkill, { to: input.request.to }),
   );
+
+  if (input.onTrace) await input.onTrace(result.trace);
 
   if (result.status !== "completed" || !result.output) {
     throw new Error(`Execução comercial bloqueada pelo Harness: ${result.trace.error ?? result.status}`);
