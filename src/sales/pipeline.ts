@@ -1,6 +1,7 @@
 import type { WorkspaceContext } from "../context.js";
 import { runSalesCopilot, runSalesOutreachCopilot } from "../harness/salesAgentRuntime.js";
 import { getSalesLeads } from "./funnel.js";
+import { saveSalesState } from "./state.js";
 import type { SalesAssessment, SalesPipelineEntry } from "./types.js";
 
 export interface SalesPipelineOptions {
@@ -19,6 +20,7 @@ export function shouldComposeOutreach(assessment: SalesAssessment): boolean {
  * - reconstrói leads por identidade;
  * - aplica scoring determinístico via Harness;
  * - opcionalmente gera rascunho com IA somente para leads de alta intenção;
+ * - persiste o snapshot comercial por workspace para consumo do painel;
  * - nunca envia mensagem nem altera CRM/lead.
  */
 export async function runWorkspaceSalesCopilot(
@@ -42,5 +44,7 @@ export async function runWorkspaceSalesCopilot(
     results.push(entry);
   }
 
-  return results.sort((a, b) => b.assessment.score - a.assessment.score);
+  const sorted = results.sort((a, b) => b.assessment.score - a.assessment.score);
+  await saveSalesState(ctx, sorted);
+  return sorted;
 }
