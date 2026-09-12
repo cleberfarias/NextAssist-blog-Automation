@@ -5,6 +5,7 @@ import "./context.test.js";
 import "./contentCalendar.test.js";
 import "./contentRegistry.test.js";
 import "./conversions.test.js";
+import "./harness/runtime.test.js";
 import "./lib/cms.test.js";
 import "./lib/dataSource.test.js";
 import "./lib/contentQuality.test.js";
