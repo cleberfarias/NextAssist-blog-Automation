@@ -79,6 +79,9 @@ export class AgentHarnessRuntime {
       const stepStartedAt = new Date().toISOString();
       try {
         const output = await skill.execute(input, executionContext);
+        if (currentCost() > request.budget.maxCostUsd) {
+          throw new Error(`Budget de custo excedido após ${skillName} (US$ ${request.budget.maxCostUsd.toFixed(4)}).`);
+        }
         trace.steps.push({
           index,
           skill: skillName,
@@ -86,9 +89,6 @@ export class AgentHarnessRuntime {
           finishedAt: new Date().toISOString(),
           status: "completed",
         });
-        if (currentCost() > request.budget.maxCostUsd) {
-          throw new Error(`Budget de custo excedido após ${skillName} (US$ ${request.budget.maxCostUsd.toFixed(4)}).`);
-        }
         return output as TSkillOutput;
       } catch (error) {
         trace.steps.push({
