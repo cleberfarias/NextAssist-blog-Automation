@@ -38,3 +38,20 @@ export interface SalesAssessment {
   nextAction: SalesNextAction;
   reasons: string[];
 }
+
+export type SalesOutreachChannel = "email" | "whatsapp" | "human";
+
+export interface SalesOutreachDraft {
+  leadId: string;
+  channel: SalesOutreachChannel;
+  subject?: string;
+  message: string;
+  rationale: string;
+  requiresHumanApproval: true;
+}
+
+export interface SalesPipelineEntry {
+  lead: SalesLeadContext;
+  assessment: SalesAssessment;
+  outreach?: SalesOutreachDraft;
+}
