@@ -55,6 +55,13 @@ function ReviewControls({ workspace, entry, onSaved }: ReviewControlsProps) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!editing) {
+      setSubject(baseSubject);
+      setMessage(baseMessage);
+    }
+  }, [baseSubject, baseMessage, editing]);
+
   if (!entry.outreach) return <>—</>;
 
   async function submit(status: SalesReviewStatus, persistText = false) {
@@ -195,7 +202,7 @@ export function SalesPanel() {
                   <td><strong>{entry.assessment.score}/100</strong></td>
                   <td>{intentLabel(entry.assessment.intent)}</td>
                   <td>{entry.lead.signals.slice(-4).map((signal) => signalLabel(signal.name)).join(" · ") || "—"}</td>
-                  <td>{entry.assessment.nextAction.replaceAll("_", " ")}</td>
+                  <td>{entry.assessment.nextAction.split("_").join(" ")}</td>
                   <td>
                     <ReviewControls workspace={workspace} entry={entry} onSaved={() => load()} />
                   </td>
