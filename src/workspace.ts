@@ -19,6 +19,7 @@ export interface MarketingWorkspace {
     primary: "leads" | "traffic" | "brand" | "sales";
     monthlyLeadTarget?: number;
     monthlyTrafficTarget?: number;
+    monthlyCustomerTarget?: number;
   };
   channels: {
     blog: boolean;
@@ -107,6 +108,9 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
 
   const goalsRaw = requireObject(w.goals, "goals");
   requireEnum(goalsRaw.primary, "goals.primary", GOALS_PRIMARY);
+  if (goalsRaw.monthlyLeadTarget !== undefined) requirePositiveInteger(goalsRaw.monthlyLeadTarget, "goals.monthlyLeadTarget");
+  if (goalsRaw.monthlyTrafficTarget !== undefined) requirePositiveInteger(goalsRaw.monthlyTrafficTarget, "goals.monthlyTrafficTarget");
+  if (goalsRaw.monthlyCustomerTarget !== undefined) requirePositiveInteger(goalsRaw.monthlyCustomerTarget, "goals.monthlyCustomerTarget");
 
   const channelsRaw = requireObject(w.channels, "channels");
   for (const key of ["blog", "instagram", "linkedin"]) requireBoolean(channelsRaw[key], `channels.${key}`);
