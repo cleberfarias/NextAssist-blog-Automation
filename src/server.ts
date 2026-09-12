@@ -14,6 +14,7 @@ import { config } from "./config.js";
 import { getConversionSummary, recordConversion, type ConversionEventName } from "./conversions.js";
 import { getSalesState, reviewSalesDraft } from "./sales/state.js";
 import { runRevenueDirector } from "./harness/revenueDirectorRuntime.js";
+import { getHarnessTraces } from "./harness/traceStore.js";
 import { triggerDailyPostWorkflow } from "./lib/githubDispatch.js";
 import { listWorkspaces, loadWorkspace, type MarketingWorkspace } from "./workspace.js";
 import { EnvSecretProvider } from "./lib/secrets.js";
@@ -182,6 +183,12 @@ app.get("/api/revenue", asyncHandler(async (req, res) => {
     ...result,
     monthlyCustomerTarget: ctx.workspace.goals.monthlyCustomerTarget ?? null,
   });
+}));
+
+app.get("/api/harness/traces", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  res.json(await getHarnessTraces(await contextFor(workspaceId)));
 }));
 
 app.post("/api/sales/review", express.json(), asyncHandler(async (req, res) => {
