@@ -11,7 +11,8 @@
     "requiredLinks": ["/#funcionalidades"]
   },
   "goals": {
-    "primary": "leads"
+    "primary": "sales",
+    "monthlyCustomerTarget": 10
   },
   "channels": {
     "blog": true,
