@@ -13,6 +13,7 @@ import { computeAttribution } from "./attribution.js";
 import { config } from "./config.js";
 import { getConversionSummary, recordConversion, type ConversionEventName } from "./conversions.js";
 import { getSalesState, reviewSalesDraft } from "./sales/state.js";
+import { runRevenueDirector } from "./harness/revenueDirectorRuntime.js";
 import { triggerDailyPostWorkflow } from "./lib/githubDispatch.js";
 import { listWorkspaces, loadWorkspace, type MarketingWorkspace } from "./workspace.js";
 import { EnvSecretProvider } from "./lib/secrets.js";
@@ -169,6 +170,17 @@ app.get("/api/sales", asyncHandler(async (req, res) => {
       draftsPendingApproval: entries.filter((entry) => entry.outreach && (!entry.review || entry.review.status === "pending")).length,
     },
     entries,
+  });
+}));
+
+app.get("/api/revenue", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  const ctx = await contextFor(workspaceId);
+  const result = await runRevenueDirector(ctx);
+  res.json({
+    ...result,
+    monthlyCustomerTarget: ctx.workspace.goals.monthlyCustomerTarget ?? null,
   });
 }));
 
