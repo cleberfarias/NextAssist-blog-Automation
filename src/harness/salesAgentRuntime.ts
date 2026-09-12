@@ -2,6 +2,7 @@ import type { WorkspaceContext } from "../context.js";
 import type { SalesAssessment, SalesLeadContext, SalesOutreachDraft } from "../sales/types.js";
 import { SkillRegistry } from "./registry.js";
 import { AgentHarnessRuntime } from "./runtime.js";
+import { saveHarnessTrace } from "./traceStore.js";
 import { ASSESS_LEAD_SKILL, assessLeadSkill } from "./skills/salesSkills.js";
 import {
   COMPOSE_OUTREACH_SKILL,
@@ -74,6 +75,8 @@ export async function runSalesOutreachCopilot(
     },
     ({ invoke }) => invoke(COMPOSE_OUTREACH_SKILL, { lead, assessment }),
   );
+
+  await saveHarnessTrace(ctx, result.trace);
 
   if (result.status !== "completed" || !result.output) {
     throw new Error(`Sales Agent não conseguiu compor abordagem: ${result.trace.error ?? result.status}`);
