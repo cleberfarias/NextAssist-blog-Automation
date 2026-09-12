@@ -16,4 +16,6 @@ import "./lib/editorSeo.test.js";
 import "./lib/secrets.test.js";
 import "./lib/text.test.js";
 import "./pipeline.test.js";
+import "./sales/funnel.test.js";
+import "./sales/pipeline.test.js";
 import "./workspace.test.js";
