@@ -5,6 +5,7 @@ import { buildRevenueSnapshot } from "../revenue/director.js";
 import type { RevenueDecision, RevenueSnapshot } from "../revenue/types.js";
 import { SkillRegistry } from "./registry.js";
 import { AgentHarnessRuntime } from "./runtime.js";
+import { saveHarnessTrace } from "./traceStore.js";
 import {
   DECIDE_REVENUE_ACTION_SKILL,
   decideRevenueActionSkill,
@@ -36,6 +37,8 @@ export async function runRevenueDirector(ctx: WorkspaceContext): Promise<Revenue
     },
     ({ invoke }) => invoke<RevenueSnapshot, RevenueDecision>(DECIDE_REVENUE_ACTION_SKILL, snapshot),
   );
+
+  await saveHarnessTrace(ctx, result.trace);
 
   if (result.status !== "completed" || !result.output) {
     throw new Error(`Revenue Director bloqueado pelo Harness: ${result.trace.error ?? result.status}`);
