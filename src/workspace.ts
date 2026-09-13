@@ -41,6 +41,16 @@ export interface MarketingWorkspace {
     replenishAmount: number;
   };
   instagramStrategy?: { frequencyPerWeek: number; pillars: string[]; preferredFormats: string[] };
+  videoStrategy?: {
+    provider: "heygen";
+    avatarId: string;
+    voiceId: string;
+    brandKitId?: string;
+    format: "9:16" | "16:9" | "1:1";
+    music?: boolean;
+    musicVolume?: number;
+    requiresApproval?: boolean;
+  };
   secrets: {
     required: string[];
     optional?: string[];
@@ -135,6 +145,19 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     requirePositiveInteger(instagramRaw.frequencyPerWeek, "instagramStrategy.frequencyPerWeek");
     requireStringArray(instagramRaw.pillars, "instagramStrategy.pillars");
     requireStringArray(instagramRaw.preferredFormats, "instagramStrategy.preferredFormats");
+  }
+  if (w.videoStrategy !== undefined) {
+    const videoRaw = requireObject(w.videoStrategy, "videoStrategy");
+    if (videoRaw.provider !== "heygen") fail('"videoStrategy.provider" precisa ser "heygen"');
+    requireString(videoRaw.avatarId, "videoStrategy.avatarId");
+    requireString(videoRaw.voiceId, "videoStrategy.voiceId");
+    if (videoRaw.brandKitId !== undefined) requireString(videoRaw.brandKitId, "videoStrategy.brandKitId");
+    requireEnum(videoRaw.format, "videoStrategy.format", new Set(["9:16", "16:9", "1:1"]));
+    if (videoRaw.music !== undefined) requireBoolean(videoRaw.music, "videoStrategy.music");
+    if (videoRaw.musicVolume !== undefined && (typeof videoRaw.musicVolume !== "number" || videoRaw.musicVolume < 0 || videoRaw.musicVolume > 1)) {
+      fail('"videoStrategy.musicVolume" precisa ser um número entre 0 e 1');
+    }
+    if (videoRaw.requiresApproval !== undefined) requireBoolean(videoRaw.requiresApproval, "videoStrategy.requiresApproval");
   }
 
   const secretsRaw = requireObject(w.secrets, "secrets");

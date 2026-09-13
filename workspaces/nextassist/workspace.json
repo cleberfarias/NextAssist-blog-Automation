@@ -70,8 +70,7 @@
       "IG_USER_ID",
       "IG_ACCESS_TOKEN",
       "GEMINI_API_KEY",
-      "GEMINI_API_KEY_FALLBACK",
-      "HEYGEN_API_KEY"
+      "GEMINI_API_KEY_FALLBACK"
     ]
   }
 }

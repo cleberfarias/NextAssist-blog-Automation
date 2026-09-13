@@ -1,9 +1,9 @@
 import type { WorkspaceContext } from "../context.js";
 
-export const HEYGEN_API_BASE = "https://api.heygen.com/v3";
-
-export async function getHeygenApiKey(ctx: WorkspaceContext): Promise<string> {
-  const apiKey = await ctx.secrets.get(ctx.workspace.id, "HEYGEN_API_KEY");
-  if (!apiKey) throw new Error("HEYGEN_API_KEY não configurada para o workspace.");
-  return apiKey;
+export function getHeygenVideoStrategy(ctx: WorkspaceContext) {
+  const strategy = ctx.workspace.videoStrategy;
+  if (!strategy || strategy.provider !== "heygen") {
+    throw new Error(`Workspace "${ctx.workspace.id}": videoStrategy HeyGen não configurada.`);
+  }
+  return { ...strategy };
 }

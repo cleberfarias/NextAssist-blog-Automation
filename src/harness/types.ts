@@ -1,4 +1,4 @@
-export type HarnessAgentId = "marketing-director" | "sales-agent" | "revenue-director";
+export type HarnessAgentId = "marketing-director" | "sales-agent" | "revenue-director" | "video-producer";
 
 export interface AgentBudget {
   maxSteps: number;
