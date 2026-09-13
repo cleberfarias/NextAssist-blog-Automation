@@ -4,6 +4,7 @@ import { uploadReelVideo } from "../lib/storage.js";
 import { generateNarration } from "../lib/tts.js";
 import { generateVeoReel } from "../lib/veo.js";
 import { generateReelFromImage } from "../lib/video.js";
+import { generateHeyGenMcpReel } from "../lib/heygen.js";
 import { extractJson, runAgent } from "../lib/anthropic.js";
 import type { WorkspaceContext } from "../context.js";
 import type { FinalPost } from "./editorSeo.js";
@@ -19,6 +20,22 @@ export interface ReelBrief {
   textoTela: string[];
   cta: string;
   pergunta: string;
+}
+
+type VideoStrategy = {
+  provider?: "heygen-mcp" | string;
+  avatarId?: string;
+  voiceId?: string;
+  brandKitId?: string;
+  format?: "9:16" | "16:9";
+  music?: boolean;
+  musicVolume?: number;
+  requiresApproval?: boolean;
+  fallback?: "none" | string;
+};
+
+function getVideoStrategy(ctx: WorkspaceContext): VideoStrategy | undefined {
+  return (ctx.workspace as typeof ctx.workspace & { videoStrategy?: VideoStrategy }).videoStrategy;
 }
 
 const REEL_SYSTEM = (ctx: WorkspaceContext) => `Você é o diretor de Reels do ${ctx.workspace.brand.name}.
@@ -52,6 +69,21 @@ function buildNarration(post: FinalPost, brief?: ReelBrief): string {
   return brief ? `${brief.gancho}. ${brief.roteiro} ${brief.cta}` : `${post.titulo}. Confira o artigo completo, link na bio!`;
 }
 
+function buildHeyGenPrompt(ctx: WorkspaceContext, post: FinalPost, brief?: ReelBrief): string {
+  const onScreen = brief?.textoTela.join(" | ") ?? post.titulo;
+  return [
+    "Crie um Reel vertical 9:16 de 25 a 35 segundos em português do Brasil.",
+    `Use exclusivamente o avatar e a voz enviados na requisição para representar ${ctx.workspace.brand.name}.`,
+    "O apresentador aparece apenas na abertura, em uma passagem curta no meio e no fechamento; evite monólogo estático.",
+    "Intercale cenas dinâmicas de assistência técnica, bancada, ordem de serviço, peças, estoque e uso do sistema, com cortes a cada 2 a 4 segundos.",
+    `Narração: ${buildNarration(post, brief)}`,
+    `Textos de tela: ${onScreen}`,
+    "Use legendas dinâmicas, ritmo de Reel e trilha instrumental discreta sem cobrir a voz.",
+    "Não invente funcionalidades, métricas, preços ou depoimentos.",
+    "Feche convidando o público a conhecer o NextAssist e testar por sete dias, sem publicar o vídeo automaticamente.",
+  ].join(" ");
+}
+
 function buildVeoPrompt(ctx: WorkspaceContext, post: FinalPost, brief?: ReelBrief): string {
   const onScreen = brief?.textoTela.join(" | ") ?? post.titulo;
   return `Reel vertical 9:16, documental e autêntico, dentro de uma assistência técnica de celular no Brasil. Mostre bancada, ordem de serviço e celular sendo atendido; cortes rápidos e naturais, sem aparência de anúncio genérico. Texto na tela: ${onScreen}. Um narrador fala em português do Brasil: "${buildNarration(post, brief)}"`;
@@ -77,7 +109,14 @@ async function generateFallbackReel(ctx: WorkspaceContext, post: FinalPost, imag
   return generateReelFromImage(imagemCapaBuffer, narrationBuffer);
 }
 
-export interface InstagramResult { ok: boolean; mediaId?: string; permalink: string | null; detalhes: string; }
+export interface InstagramResult {
+  ok: boolean;
+  mediaId?: string;
+  permalink: string | null;
+  detalhes: string;
+  pendingApproval?: boolean;
+  videoUrl?: string;
+}
 
 export async function publishToInstagram(ctx: WorkspaceContext, post: FinalPost, imagemCapaBuffer: Buffer, blogUrl: string): Promise<InstagramResult> {
   try {
@@ -89,8 +128,50 @@ export async function publishToInstagram(ctx: WorkspaceContext, post: FinalPost,
       brief = undefined;
     }
     const caption = buildCaption(ctx, post, blogUrl, brief);
-    const geminiKey = await ctx.secrets.get(ctx.workspace.id, "GEMINI_API_KEY");
+    const videoStrategy = getVideoStrategy(ctx);
 
+    if (videoStrategy?.provider === "heygen-mcp") {
+      if (!videoStrategy.avatarId || !videoStrategy.voiceId) {
+        throw new Error("videoStrategy heygen-mcp exige avatarId e voiceId.");
+      }
+      if (videoStrategy.fallback !== "none") {
+        throw new Error("NextAssist com HeyGen MCP precisa usar fallback=none para proteger avatar e voz configurados.");
+      }
+
+      const videoBuffer = await generateHeyGenMcpReel({
+        title: `NextAssist - ${post.titulo}`,
+        prompt: buildHeyGenPrompt(ctx, post, brief),
+        avatarId: videoStrategy.avatarId,
+        voiceId: videoStrategy.voiceId,
+        brandKitId: videoStrategy.brandKitId,
+        aspectRatio: videoStrategy.format ?? "9:16",
+        music: videoStrategy.music ?? true,
+        musicVolume: videoStrategy.musicVolume,
+      });
+      const videoUrl = await uploadReelVideo(ctx, videoBuffer, post.slug);
+
+      if (videoStrategy.requiresApproval !== false) {
+        return {
+          ok: true,
+          permalink: null,
+          pendingApproval: true,
+          videoUrl,
+          detalhes: "Reel gerado pelo HeyGen MCP e salvo como rascunho. Aguardando aprovação humana antes de publicar no Instagram.",
+        };
+      }
+
+      const { mediaId, permalink } = await publishReelToInstagram(ctx, videoUrl, caption);
+      return {
+        ok: true,
+        mediaId,
+        permalink,
+        videoUrl,
+        detalhes: permalink ? `Reel publicado no Instagram: ${permalink}` : `Reel publicado no Instagram (media ${mediaId})`,
+      };
+    }
+
+    // Fluxo legado permanece disponível apenas para workspaces que NÃO optaram por HeyGen MCP.
+    const geminiKey = await ctx.secrets.get(ctx.workspace.id, "GEMINI_API_KEY");
     let videoBuffer: Buffer;
     if (geminiKey) {
       try {
@@ -104,7 +185,7 @@ export async function publishToInstagram(ctx: WorkspaceContext, post: FinalPost,
 
     const videoUrl = await uploadReelVideo(ctx, videoBuffer, post.slug);
     const { mediaId, permalink } = await publishReelToInstagram(ctx, videoUrl, caption);
-    return { ok: true, mediaId, permalink, detalhes: permalink ? `Reel publicado no Instagram: ${permalink}` : `Reel publicado no Instagram (media ${mediaId})` };
+    return { ok: true, mediaId, permalink, videoUrl, detalhes: permalink ? `Reel publicado no Instagram: ${permalink}` : `Reel publicado no Instagram (media ${mediaId})` };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return { ok: false, permalink: null, detalhes: `Falha ao publicar no Instagram: ${message}` };
