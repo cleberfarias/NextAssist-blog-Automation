@@ -166,6 +166,18 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     requireStringArray(instagramRaw.pillars, "instagramStrategy.pillars");
     requireStringArray(instagramRaw.preferredFormats, "instagramStrategy.preferredFormats");
   }
+  if (w.videoStrategy !== undefined) {
+    const videoRaw = requireObject(w.videoStrategy, "videoStrategy");
+    requireEnum(videoRaw.provider, "videoStrategy.provider", VIDEO_PROVIDERS);
+    requireString(videoRaw.avatarId, "videoStrategy.avatarId");
+    requireString(videoRaw.voiceId, "videoStrategy.voiceId");
+    if (videoRaw.brandKitId !== undefined) requireString(videoRaw.brandKitId, "videoStrategy.brandKitId");
+    requireEnum(videoRaw.format, "videoStrategy.format", VIDEO_FORMATS);
+    requireBoolean(videoRaw.music, "videoStrategy.music");
+    if (videoRaw.musicVolume !== undefined) requireRange(videoRaw.musicVolume, "videoStrategy.musicVolume", 0, 1);
+    requireBoolean(videoRaw.requiresApproval, "videoStrategy.requiresApproval");
+    if (videoRaw.fallback !== "none") fail('"videoStrategy.fallback" precisa ser "none"');
+  }
 
   const secretsRaw = requireObject(w.secrets, "secrets");
   requireStringArray(secretsRaw.required, "secrets.required");
