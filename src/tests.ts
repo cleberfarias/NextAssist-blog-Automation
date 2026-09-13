@@ -12,6 +12,7 @@ import "./harness/traceStore.test.js";
 import "./lib/cms.test.js";
 import "./lib/dataSource.test.js";
 import "./lib/contentQuality.test.js";
+import "./lib/heygen.test.js";
 import "./lib/marketingDirector.test.js";
 import "./lib/providerFallback.test.js";
 import "./lib/editorSeo.test.js";
