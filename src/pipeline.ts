@@ -6,6 +6,7 @@ import { planTopic } from "./agents/topicPlanner.js";
 import { writeArticle } from "./agents/writer.js";
 import { editAndFinalize } from "./agents/editorSeo.js";
 import { publishPost } from "./agents/publisher.js";
+import { publishToInstagram } from "./agents/instagramPublisher.js";
 import { indexPublishedPost, postUrl } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
 import { registerContent } from "./contentRegistry.js";
@@ -81,10 +82,33 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
     emit(onEvent, { agent: "publicador", status: "working", message: "Gerando capa e publicando no blog..." });
     const published = await publishPost(ctx, finalPost);
     const publishedSlug = published.slug;
+    const blogUrl = postUrl(ctx, publishedSlug);
     emit(onEvent, {
       agent: "publicador", status: "done",
       message: published.publicado ? `Publicado em /blog/${publishedSlug}` : `Rascunho criado em /blog/${publishedSlug} — aguardando aprovação`,
     });
+
+    if (ctx.workspace.channels.instagram) {
+      if (published.publicado) {
+        emit(onEvent, { agent: "instagram", status: "working", message: "Gerando Reel a partir do conteúdo publicado..." });
+        const instagramResult = await publishToInstagram(ctx, finalPost, published.imagemCapaBuffer, blogUrl);
+        if (instagramResult.ok) {
+          emit(onEvent, {
+            agent: "instagram",
+            status: "done",
+            message: instagramResult.pendingApproval
+              ? "Reel gerado e salvo como rascunho — aguardando aprovação humana antes do Instagram."
+              : instagramResult.detalhes,
+          });
+        } else {
+          // Falha de vídeo/social não desfaz um post já publicado. No NextAssist,
+          // HeyGen MCP indisponível bloqueia somente o Reel e jamais cai para Veo/FFmpeg.
+          emit(onEvent, { agent: "instagram", status: "error", message: instagramResult.detalhes });
+        }
+      } else {
+        emit(onEvent, { agent: "instagram", status: "done", message: "Instagram aguardará a aprovação do rascunho do blog." });
+      }
+    }
 
     emit(onEvent, { agent: "indexador", status: "working", message: "Notificando o Google e reenviando o sitemap..." });
     if (published.publicado) {
@@ -105,7 +129,7 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
       funnelStage: plan.funnelStage,
       publicadoEm: new Date().toISOString(),
       status: published.publicado ? "published" : "draft-pending-approval",
-      url: postUrl(ctx, publishedSlug),
+      url: blogUrl,
     });
 
     return { tema: topic.tema, slugPublicado: publishedSlug, usage: ctx.usage.get(), backlog };
