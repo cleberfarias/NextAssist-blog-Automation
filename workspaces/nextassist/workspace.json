@@ -46,6 +46,16 @@
     "pillars": ["dor operacional", "demonstração do produto", "bastidores", "educação prática", "prova social"],
     "preferredFormats": ["reel", "carrossel", "story"]
   },
+  "videoStrategy": {
+    "provider": "heygen",
+    "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+    "voiceId": "e75248a57197482d80ca91826b2b7f72",
+    "brandKitId": "e5db8170efb1486a8e94fe8781ba5625",
+    "format": "9:16",
+    "music": true,
+    "musicVolume": 0.12,
+    "requiresApproval": true
+  },
   "secrets": {
     "required": [
       "OPENAI_API_KEY",
@@ -60,7 +70,8 @@
       "IG_USER_ID",
       "IG_ACCESS_TOKEN",
       "GEMINI_API_KEY",
-      "GEMINI_API_KEY_FALLBACK"
+      "GEMINI_API_KEY_FALLBACK",
+      "HEYGEN_API_KEY"
     ]
   }
 }
