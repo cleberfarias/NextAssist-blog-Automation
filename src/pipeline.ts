@@ -6,10 +6,12 @@ import { planTopic } from "./agents/topicPlanner.js";
 import { writeArticle } from "./agents/writer.js";
 import { editAndFinalize } from "./agents/editorSeo.js";
 import { publishPost } from "./agents/publisher.js";
+import { buildCaption, createReelBrief, publishToInstagram } from "./agents/instagramPublisher.js";
 import { indexPublishedPost, postUrl } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
 import { registerContent } from "./contentRegistry.js";
 import { validateFinalPost } from "./lib/contentQuality.js";
+import { generateInstagramReelDraft } from "./reels/generator.js";
 import { emit, type OnEvent } from "./pipelineEvents.js";
 import type { BacklogResult } from "./backlog.js";
 import type { WorkspaceContext, AnthropicUsage } from "./context.js";
@@ -30,16 +32,21 @@ export interface PipelineResult {
   backlog: BacklogResult;
 }
 
-/**
- * Roda o pipeline completo uma vez para um workspace: reabastecimento de
- * backlog (Marketing Director, se necessário) → pesquisa de mercado →
- * pesquisa de pauta → redação → edição/SEO → publicação → Instagram →
- * indexação. Chama `onEvent` a cada mudança de estado de um agente.
- *
- * Recebe o `WorkspaceContext` já construído pelo chamador (entrypoint ou
- * painel) — não resolve workspace/segredos por conta própria, para não
- * reconstruir o contexto (e reautenticar) mais de uma vez por execução.
- */
+function heyGenPrompt(ctx: WorkspaceContext, titulo: string, resumo: string): string {
+  return [
+    "Crie um Reel vertical 9:16 de 25 a 35 segundos em português do Brasil.",
+    `Use exclusivamente o avatar e a voz configurados para ${ctx.workspace.brand.name}.`,
+    "Use apresentador na abertura, passagem curta no meio e fechamento; evite monólogo estático.",
+    "Intercale cenas de assistência técnica e uso real do sistema com cortes de 2 a 4 segundos.",
+    `Tema: ${titulo}. Resumo: ${resumo}`,
+    "Use legendas dinâmicas e trilha instrumental discreta.",
+    "Não invente funcionalidades, métricas, preços ou depoimentos.",
+    "Feche convidando a conhecer o NextAssist e testar por sete dias.",
+    "Não publique o vídeo automaticamente.",
+  ].join(" ");
+}
+
+/** Roda o pipeline completo uma vez para um workspace. */
 export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Promise<PipelineResult> {
   const backlog = await ensureContentBacklog(ctx, onEvent);
   const topic = await getNextTopic(ctx);
@@ -68,45 +75,50 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
 
     emit(onEvent, { agent: "editor-seo", status: "working", message: "Revisando e adicionando links internos..." });
     const publishedSlugs = await getPublishedSlugs(ctx);
-    const finalPost = await editAndFinalize(ctx, plan, draftHtml, {
-      palavraChaveAlvo: topic.palavraChaveAlvo,
-      slugsPublicados: publishedSlugs,
-    });
-    validateFinalPost(finalPost, publishedSlugs, {
-      palavraChaveAlvo: topic.palavraChaveAlvo,
-      requiredLinks: ctx.workspace.brand.requiredLinks,
-    });
+    const finalPost = await editAndFinalize(ctx, plan, draftHtml, { palavraChaveAlvo: topic.palavraChaveAlvo, slugsPublicados: publishedSlugs });
+    validateFinalPost(finalPost, publishedSlugs, { palavraChaveAlvo: topic.palavraChaveAlvo, requiredLinks: ctx.workspace.brand.requiredLinks });
     emit(onEvent, { agent: "editor-seo", status: "done", message: `Slug: ${finalPost.slug} · Tags: ${finalPost.tags.join(", ")}` });
 
     emit(onEvent, { agent: "publicador", status: "working", message: "Gerando capa e publicando no blog..." });
     const published = await publishPost(ctx, finalPost);
     const publishedSlug = published.slug;
-    emit(onEvent, {
-      agent: "publicador", status: "done",
-      message: published.publicado ? `Publicado em /blog/${publishedSlug}` : `Rascunho criado em /blog/${publishedSlug} — aguardando aprovação`,
-    });
+    const blogUrl = postUrl(ctx, publishedSlug);
+    emit(onEvent, { agent: "publicador", status: "done", message: published.publicado ? `Publicado em /blog/${publishedSlug}` : `Rascunho criado em /blog/${publishedSlug} — aguardando aprovação` });
+
+    if (ctx.workspace.channels.instagram) {
+      if (published.publicado) {
+        emit(onEvent, { agent: "instagram", status: "working", message: "Gerando Reel a partir do conteúdo publicado..." });
+        if (ctx.workspace.videoStrategy?.provider === "heygen-mcp") {
+          try {
+            let brief: Awaited<ReturnType<typeof createReelBrief>> | undefined;
+            try { brief = await createReelBrief(ctx, finalPost); } catch { brief = undefined; }
+            const record = await generateInstagramReelDraft(ctx, finalPost, blogUrl, {
+              caption: buildCaption(ctx, finalPost, blogUrl, brief),
+              prompt: heyGenPrompt(ctx, finalPost.titulo, finalPost.resumo),
+            });
+            emit(onEvent, { agent: "instagram", status: "done", message: `Reel ${record.id} gerado e persistido em pending_approval.` });
+          } catch (err) {
+            const message = err instanceof Error ? err.message : String(err);
+            emit(onEvent, { agent: "instagram", status: "error", message: `Reel bloqueado: ${message}` });
+          }
+        } else {
+          const instagramResult = await publishToInstagram(ctx, finalPost, published.imagemCapaBuffer, blogUrl);
+          emit(onEvent, { agent: "instagram", status: instagramResult.ok ? "done" : "error", message: instagramResult.detalhes });
+        }
+      } else {
+        emit(onEvent, { agent: "instagram", status: "done", message: "Instagram aguardará a aprovação do rascunho do blog." });
+      }
+    }
 
     emit(onEvent, { agent: "indexador", status: "working", message: "Notificando o Google e reenviando o sitemap..." });
     if (published.publicado) {
       const indexResult = await indexPublishedPost(ctx, publishedSlug);
       emit(onEvent, { agent: "indexador", status: "done", message: indexResult.detalhes });
-    } else {
-      emit(onEvent, { agent: "indexador", status: "done", message: "Indexação aguardará a aprovação do rascunho." });
-    }
+    } else emit(onEvent, { agent: "indexador", status: "done", message: "Indexação aguardará a aprovação do rascunho." });
 
     if (published.publicado) await markTopicPublished(ctx, topic.tema);
     await appendHistory(ctx, { tema: topic.tema, titulo: finalPost.titulo, slug: publishedSlug, publicadoEm: new Date().toISOString() });
-    await registerContent(ctx, {
-      contentId: publishedSlug,
-      campaignId: null,
-      tema: topic.tema,
-      formato: "blog",
-      channel: "blog",
-      funnelStage: plan.funnelStage,
-      publicadoEm: new Date().toISOString(),
-      status: published.publicado ? "published" : "draft-pending-approval",
-      url: postUrl(ctx, publishedSlug),
-    });
+    await registerContent(ctx, { contentId: publishedSlug, campaignId: null, tema: topic.tema, formato: "blog", channel: "blog", funnelStage: plan.funnelStage, publicadoEm: new Date().toISOString(), status: published.publicado ? "published" : "draft-pending-approval", url: blogUrl });
 
     return { tema: topic.tema, slugPublicado: publishedSlug, usage: ctx.usage.get(), backlog };
   } catch (err) {

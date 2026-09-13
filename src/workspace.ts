@@ -19,6 +19,7 @@ export interface MarketingWorkspace {
     primary: "leads" | "traffic" | "brand" | "sales";
     monthlyLeadTarget?: number;
     monthlyTrafficTarget?: number;
+    monthlyCustomerTarget?: number;
   };
   channels: {
     blog: boolean;
@@ -30,6 +31,11 @@ export interface MarketingWorkspace {
     cms: { provider: "nextassist"; apiUrl: string };
     searchConsole?: { siteUrl: string; sitemapUrl: string };
     instagram?: { apiVersion: string };
+    heygen?: {
+      transport: "mcp";
+      mcpUrl: string;
+      auth: "oauth";
+    };
   };
   autonomy: {
     mode: "copilot" | "semi-autonomous" | "autonomous";
@@ -40,6 +46,17 @@ export interface MarketingWorkspace {
     replenishAmount: number;
   };
   instagramStrategy?: { frequencyPerWeek: number; pillars: string[]; preferredFormats: string[] };
+  videoStrategy?: {
+    provider: "heygen-mcp";
+    avatarId: string;
+    voiceId: string;
+    brandKitId?: string;
+    format: "9:16" | "16:9";
+    music: boolean;
+    musicVolume?: number;
+    requiresApproval: boolean;
+    fallback: "none";
+  };
   secrets: {
     required: string[];
     optional?: string[];
@@ -50,6 +67,8 @@ const DEFAULT_ROOT = new URL("../workspaces/", import.meta.url);
 
 const GOALS_PRIMARY = new Set(["leads", "traffic", "brand", "sales"]);
 const AUTONOMY_MODES = new Set(["copilot", "semi-autonomous", "autonomous"]);
+const VIDEO_PROVIDERS = new Set(["heygen-mcp"]);
+const VIDEO_FORMATS = new Set(["9:16", "16:9"]);
 
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
@@ -71,7 +90,7 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     return v as Record<string, unknown>;
   };
   const requireString = (v: unknown, path: string): string => {
-    if (typeof v !== "string") fail(`"${path}" precisa ser string`);
+    if (typeof v !== "string" || !v.trim()) fail(`"${path}" precisa ser string não vazia`);
     return v as string;
   };
   const requireBoolean = (v: unknown, path: string): boolean => {
@@ -88,6 +107,12 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
   };
   const requirePositiveInteger = (v: unknown, path: string): number => {
     if (typeof v !== "number" || !Number.isInteger(v) || v <= 0) fail(`"${path}" precisa ser um inteiro positivo`);
+    return v as number;
+  };
+  const requireRange = (v: unknown, path: string, min: number, max: number): number => {
+    if (typeof v !== "number" || !Number.isFinite(v) || v < min || v > max) {
+      fail(`"${path}" precisa ser número entre ${min} e ${max}`);
+    }
     return v as number;
   };
 
@@ -107,6 +132,9 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
 
   const goalsRaw = requireObject(w.goals, "goals");
   requireEnum(goalsRaw.primary, "goals.primary", GOALS_PRIMARY);
+  if (goalsRaw.monthlyLeadTarget !== undefined) requirePositiveInteger(goalsRaw.monthlyLeadTarget, "goals.monthlyLeadTarget");
+  if (goalsRaw.monthlyTrafficTarget !== undefined) requirePositiveInteger(goalsRaw.monthlyTrafficTarget, "goals.monthlyTrafficTarget");
+  if (goalsRaw.monthlyCustomerTarget !== undefined) requirePositiveInteger(goalsRaw.monthlyCustomerTarget, "goals.monthlyCustomerTarget");
 
   const channelsRaw = requireObject(w.channels, "channels");
   for (const key of ["blog", "instagram", "linkedin"]) requireBoolean(channelsRaw[key], `channels.${key}`);
@@ -116,6 +144,12 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
   const cmsRaw = requireObject(integrationsRaw.cms, "integrations.cms");
   if (cmsRaw.provider !== "nextassist") fail('"integrations.cms.provider" precisa ser "nextassist"');
   requireString(cmsRaw.apiUrl, "integrations.cms.apiUrl");
+  if (integrationsRaw.heygen !== undefined) {
+    const heygenRaw = requireObject(integrationsRaw.heygen, "integrations.heygen");
+    if (heygenRaw.transport !== "mcp") fail('"integrations.heygen.transport" precisa ser "mcp"');
+    requireString(heygenRaw.mcpUrl, "integrations.heygen.mcpUrl");
+    if (heygenRaw.auth !== "oauth") fail('"integrations.heygen.auth" precisa ser "oauth"');
+  }
 
   const autonomyRaw = requireObject(w.autonomy, "autonomy");
   requireEnum(autonomyRaw.mode, "autonomy.mode", AUTONOMY_MODES);
@@ -132,10 +166,30 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     requireStringArray(instagramRaw.pillars, "instagramStrategy.pillars");
     requireStringArray(instagramRaw.preferredFormats, "instagramStrategy.preferredFormats");
   }
+  if (w.videoStrategy !== undefined) {
+    const videoRaw = requireObject(w.videoStrategy, "videoStrategy");
+    requireEnum(videoRaw.provider, "videoStrategy.provider", VIDEO_PROVIDERS);
+    requireString(videoRaw.avatarId, "videoStrategy.avatarId");
+    requireString(videoRaw.voiceId, "videoStrategy.voiceId");
+    if (videoRaw.brandKitId !== undefined) requireString(videoRaw.brandKitId, "videoStrategy.brandKitId");
+    requireEnum(videoRaw.format, "videoStrategy.format", VIDEO_FORMATS);
+    requireBoolean(videoRaw.music, "videoStrategy.music");
+    if (videoRaw.musicVolume !== undefined) requireRange(videoRaw.musicVolume, "videoStrategy.musicVolume", 0, 1);
+    requireBoolean(videoRaw.requiresApproval, "videoStrategy.requiresApproval");
+    if (videoRaw.fallback !== "none") fail('"videoStrategy.fallback" precisa ser "none"');
+  }
 
   const secretsRaw = requireObject(w.secrets, "secrets");
   requireStringArray(secretsRaw.required, "secrets.required");
   if (secretsRaw.optional !== undefined) requireStringArray(secretsRaw.optional, "secrets.optional");
+
+  const declaredSecrets = [
+    ...(secretsRaw.required as string[]),
+    ...((secretsRaw.optional as string[] | undefined) ?? []),
+  ];
+  if (declaredSecrets.includes("HEYGEN_API_KEY") || declaredSecrets.includes("HEYGEN_REST_FALLBACK")) {
+    fail("HEYGEN_API_KEY/HEYGEN_REST_FALLBACK não são permitidos; HeyGen usa MCP/OAuth");
+  }
 
   return value as MarketingWorkspace;
 }

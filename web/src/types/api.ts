@@ -135,3 +135,85 @@ export interface InstagramPerformance {
   shares: number;
   saved: number;
 }
+
+export type SalesIntent = "low" | "medium" | "high" | "customer";
+export type SalesReviewStatus = "pending" | "approved" | "rejected";
+
+export interface SalesSignal {
+  name: string;
+  createdAt: string;
+  contentId?: string;
+  channel?: string;
+}
+
+export interface SalesEntry {
+  lead: {
+    leadId: string;
+    anonymousId?: string;
+    userId?: string;
+    source?: string;
+    signals: SalesSignal[];
+  };
+  assessment: {
+    leadId: string;
+    score: number;
+    intent: SalesIntent;
+    nextAction: string;
+    reasons: string[];
+  };
+  outreach?: {
+    leadId: string;
+    channel: "email" | "whatsapp" | "human";
+    subject?: string;
+    message: string;
+    rationale: string;
+    requiresHumanApproval: true;
+  };
+  review?: {
+    status: SalesReviewStatus;
+    subject?: string;
+    message: string;
+    updatedAt: string;
+  };
+}
+
+export interface SalesDashboardResponse {
+  updatedAt: string | null;
+  summary: {
+    total: number;
+    hot: number;
+    medium: number;
+    customers: number;
+    draftsPendingApproval: number;
+  };
+  entries: SalesEntry[];
+}
+
+export interface RevenueSnapshot {
+  visits: number;
+  trials: number;
+  activated: number;
+  customers: number;
+  hotLeads: number;
+  pendingSalesApprovals: number;
+  visitToTrialRate: number;
+  trialToActivationRate: number;
+  activationToCustomerRate: number;
+}
+
+export interface RevenueDecision {
+  objective: "increase_paying_customers";
+  bottleneck: "traffic" | "trial_conversion" | "activation" | "sales_conversion" | "sales_followup" | "none";
+  action: "create_content" | "improve_cta" | "improve_activation" | "prioritize_hot_leads" | "improve_sales_conversion" | "do_nothing";
+  priority: "low" | "medium" | "high";
+  reason: string;
+  evidence: string[];
+  requiresHumanApproval: boolean;
+}
+
+export interface RevenueDashboardResponse {
+  runId: string;
+  monthlyCustomerTarget: number | null;
+  snapshot: RevenueSnapshot;
+  decision: RevenueDecision;
+}

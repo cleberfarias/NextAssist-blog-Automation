@@ -11,7 +11,8 @@
     "requiredLinks": ["/#funcionalidades"]
   },
   "goals": {
-    "primary": "leads"
+    "primary": "sales",
+    "monthlyCustomerTarget": 10
   },
   "channels": {
     "blog": true,
@@ -30,6 +31,11 @@
     },
     "instagram": {
       "apiVersion": "v21.0"
+    },
+    "heygen": {
+      "transport": "mcp",
+      "mcpUrl": "https://mcp.heygen.com/mcp/v1/",
+      "auth": "oauth"
     }
   },
   "autonomy": {
@@ -44,6 +50,17 @@
     "frequencyPerWeek": 5,
     "pillars": ["dor operacional", "demonstração do produto", "bastidores", "educação prática", "prova social"],
     "preferredFormats": ["reel", "carrossel", "story"]
+  },
+  "videoStrategy": {
+    "provider": "heygen-mcp",
+    "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+    "voiceId": "e75248a57197482d80ca91826b2b7f72",
+    "brandKitId": "e5db8170efb1486a8e94fe8781ba5625",
+    "format": "9:16",
+    "music": true,
+    "musicVolume": 0.12,
+    "requiresApproval": true,
+    "fallback": "none"
   },
   "secrets": {
     "required": [

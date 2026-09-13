@@ -129,6 +129,11 @@ vídeo em si vem de duas fontes possíveis:
   se ajusta à narração, 5-20s). Se a narração falhar, o Reel sai mudo em vez
   de derrubar a publicação.
 
+### HeyGen e o Harness
+
+O caminho recomendado é `Harness → HeyGen MCP → Cleber NextAssist → voz dinâmica → vídeo → aprovação → Instagram`.
+O MCP usa OAuth no Claude Code/Codex e não exige `HEYGEN_API_KEY`. O worker falha fechado quando não há uma sessão OAuth disponível; detalhes de implantação no Cloud Run estão em [docs/HEYGEN_MCP_RUNTIME.md](docs/HEYGEN_MCP_RUNTIME.md).
+
 Pré-requisitos que só se resolvem no lado da Meta (uma vez):
 
 1. A conta do Instagram precisa ser **Business** ou **Creator** e estar

@@ -12,6 +12,9 @@ import { getPerformance, refreshPerformance } from "./performance.js";
 import { computeAttribution } from "./attribution.js";
 import { config } from "./config.js";
 import { getConversionSummary, recordConversion, type ConversionEventName } from "./conversions.js";
+import { getSalesState, reviewSalesDraft } from "./sales/state.js";
+import { runRevenueDirector } from "./harness/revenueDirectorRuntime.js";
+import { getHarnessTraces } from "./harness/traceStore.js";
 import { triggerDailyPostWorkflow } from "./lib/githubDispatch.js";
 import { listWorkspaces, loadWorkspace, type MarketingWorkspace } from "./workspace.js";
 import { EnvSecretProvider } from "./lib/secrets.js";
@@ -52,11 +55,6 @@ function broadcast(workspaceId: string, event: PipelineEvent) {
   for (const res of state.clients) res.write(payload);
 }
 
-/**
- * Express 4 não captura rejeições de handlers async — sem isto, um erro (ex:
- * workspace inexistente) deixaria o cliente pendurado e viraria unhandled
- * rejection no processo.
- */
 function asyncHandler(fn: (req: express.Request, res: express.Response) => Promise<void>) {
   return (req: express.Request, res: express.Response) => {
     fn(req, res).catch((err) => {
@@ -69,8 +67,6 @@ function asyncHandler(fn: (req: express.Request, res: express.Response) => Promi
 
 async function contextFor(workspaceId: string): Promise<WorkspaceContext> {
   const workspace = await loadWorkspace(workspaceId);
-  // Nenhuma rota que usa contextFor chama runAgent (o pipeline monta o próprio
-  // contexto em pipeline.ts), então o painel não precisa de chave de IA.
   return buildWorkspaceContext(workspace, secrets, { requireAiProvider: false });
 }
 
@@ -87,9 +83,6 @@ const app = express();
 
 if (config.panelPassword) {
   app.use((req, res, next) => {
-    // These are the two intentionally public ingestion endpoints:
-    // pipeline events use their own X-Panel-Ingest-Token check below, while
-    // conversions are protected by the workspace CORS allowlist.
     if (req.path === "/api/events/ingest" || req.path === "/api/conversions") return next();
     const [scheme, encoded] = (req.headers.authorization ?? "").split(" ");
     if (scheme?.toLowerCase() === "basic" && encoded) {
@@ -98,9 +91,7 @@ if (config.panelPassword) {
       const receivedPassword = separator >= 0 ? credentials.slice(separator + 1) : "";
       const received = Buffer.from(receivedPassword);
       const expected = Buffer.from(config.panelPassword);
-      if (received.length === expected.length && timingSafeEqual(received, expected)) {
-        return next();
-      }
+      if (received.length === expected.length && timingSafeEqual(received, expected)) return next();
     }
     res.set("WWW-Authenticate", 'Basic realm="Escritorio"');
     res.status(401).send("Autenticação necessária.");
@@ -109,16 +100,6 @@ if (config.panelPassword) {
 
 app.use(express.static(path.join(__dirname, "../web/dist")));
 
-/**
- * CORS por allowlist: só ecoa `Access-Control-Allow-Origin` quando o
- * `Origin` da requisição bate com o `integrations.siteUrl` de algum
- * workspace ativo (é assim que o site público de cada cliente chama
- * `POST /api/conversions`). `*` abriria todas as rotas — incluindo
- * `/api/run`, `/api/performance/refresh` e o histórico/uso de IA — a
- * qualquer origem; combinado com Basic Auth (cujas credenciais o browser
- * reenvia automaticamente para o mesmo host), isso é uma superfície de
- * CSRF real, não só teórica.
- */
 app.use((req, res, next) => {
   const origin = req.header("origin");
   if (!origin) { next(); return; }
@@ -139,16 +120,11 @@ app.get("/api/workspaces", asyncHandler(async (_req, res) => {
 }));
 
 app.post("/api/conversions", express.json(), asyncHandler(async (req, res) => {
-  // Única rota que assume um default em vez de exigir workspaceId: o frontend do
-  // site público (outro repositório) já postava aqui antes do multi-workspace e
-  // não conhece o parâmetro — exigi-lo quebraria o rastreio de conversões ao vivo.
   const workspaceId = String(req.body?.workspaceId ?? "nextassist");
   const allowed: ConversionEventName[] = [
-    "page_view", "cta_click",
-    "demo_view", "demo_submit", "contact_submit", "whatsapp_click",
-    "trial_started", "signup_completed",
-    "first_customer_created", "first_device_linked", "first_order_created",
-    "returning_user", "subscription_started",
+    "page_view", "cta_click", "demo_view", "demo_submit", "contact_submit", "whatsapp_click",
+    "trial_started", "signup_completed", "first_customer_created", "first_device_linked",
+    "first_order_created", "returning_user", "subscription_started",
   ];
   if (!allowed.includes(req.body?.name)) { res.status(400).json({ error: "Evento inválido" }); return; }
   const campaign = String(req.body.campaign ?? "").slice(0, 80);
@@ -156,11 +132,8 @@ app.post("/api/conversions", express.json(), asyncHandler(async (req, res) => {
   const ctaId = String(req.body.ctaId ?? "").slice(0, 80);
   const utmValue = /^[a-z0-9-]*$/;
   if (!utmValue.test(campaign) || !utmValue.test(content) || !utmValue.test(ctaId)) {
-    res.status(400).json({ error: "Parâmetros UTM inválidos" });
-    return;
+    res.status(400).json({ error: "Parâmetros UTM inválidos" }); return;
   }
-  // anonymousId/userId são opacos (gerados pelo site/produto) — só limitamos o
-  // tamanho para não deixar o arquivo de eventos crescer sem controle.
   const anonymousId = String(req.body.anonymousId ?? "").slice(0, 100);
   const userId = String(req.body.userId ?? "").slice(0, 100);
   const ctx = await contextFor(workspaceId);
@@ -180,8 +153,60 @@ app.post("/api/conversions", express.json(), asyncHandler(async (req, res) => {
 app.get("/api/conversions", asyncHandler(async (req, res) => {
   const workspaceId = requireWorkspaceId(req, res);
   if (!workspaceId) return;
+  res.json(await getConversionSummary(await contextFor(workspaceId)));
+}));
+
+app.get("/api/sales", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  const report = await getSalesState(await contextFor(workspaceId));
+  const entries = report?.entries ?? [];
+  res.json({
+    updatedAt: report?.updatedAt ?? null,
+    summary: {
+      total: entries.length,
+      hot: entries.filter((entry) => entry.assessment.intent === "high").length,
+      medium: entries.filter((entry) => entry.assessment.intent === "medium").length,
+      customers: entries.filter((entry) => entry.assessment.intent === "customer").length,
+      draftsPendingApproval: entries.filter((entry) => entry.outreach && (!entry.review || entry.review.status === "pending")).length,
+    },
+    entries,
+  });
+}));
+
+app.get("/api/revenue", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
   const ctx = await contextFor(workspaceId);
-  res.json(await getConversionSummary(ctx));
+  const result = await runRevenueDirector(ctx);
+  res.json({
+    ...result,
+    monthlyCustomerTarget: ctx.workspace.goals.monthlyCustomerTarget ?? null,
+  });
+}));
+
+app.get("/api/harness/traces", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  res.json(await getHarnessTraces(await contextFor(workspaceId)));
+}));
+
+app.post("/api/sales/review", express.json(), asyncHandler(async (req, res) => {
+  const workspaceId = String(req.body?.workspaceId ?? "");
+  const leadId = String(req.body?.leadId ?? "").slice(0, 160);
+  const status = req.body?.status;
+  if (!workspaceId || !leadId) {
+    res.status(400).json({ error: "workspaceId e leadId são obrigatórios." });
+    return;
+  }
+  if (!(["pending", "approved", "rejected"] as const).includes(status)) {
+    res.status(400).json({ error: "Status de revisão inválido." });
+    return;
+  }
+  const message = typeof req.body?.message === "string" ? req.body.message.slice(0, 4000) : undefined;
+  const subject = typeof req.body?.subject === "string" ? req.body.subject.slice(0, 240) : undefined;
+  const entry = await reviewSalesDraft(await contextFor(workspaceId), { leadId, status, message, subject });
+  res.json({ ok: true, entry });
 }));
 
 app.get("/api/events", (req, res) => {
@@ -214,24 +239,19 @@ function validIngestToken(req: express.Request): boolean {
 
 app.post("/api/events/ingest", express.json(), (req, res) => {
   if (!validIngestToken(req)) { res.status(401).json({ error: "Token de ingestão inválido." }); return; }
-
   const body = req.body ?? {};
   const workspaceId = String(body.workspaceId ?? "");
   if (!workspaceId || !AGENT_IDS.includes(body.agent) || !AGENT_STATUSES.includes(body.status) || typeof body.timestamp !== "string") {
-    res.status(400).json({ error: "Evento inválido." });
-    return;
+    res.status(400).json({ error: "Evento inválido." }); return;
   }
-
   const event: PipelineEvent = {
     agent: body.agent, status: body.status, timestamp: body.timestamp,
     ...(typeof body.message === "string" ? { message: body.message } : {}),
     ...(typeof body.tema === "string" ? { tema: body.tema } : {}),
   };
-
   const state = getRuntimeState(workspaceId);
   if (event.agent === "pesquisa-mercado" && event.status === "working") state.running = true;
   if (event.status === "error" || (event.agent === "indexador" && event.status === "done")) state.running = false;
-
   broadcast(workspaceId, event);
   res.status(204).end();
 });
@@ -241,34 +261,19 @@ app.post("/api/run", express.json(), asyncHandler(async (req, res) => {
   const channel = req.body?.channel === "instagram" ? "instagram" : "blog";
   if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
   const state = getRuntimeState(workspaceId);
-
-  if (runMode === "disabled") {
-    res.status(403).json({ error: "Execução manual desabilitada neste ambiente — a publicação roda pela GitHub Action." });
-    return;
-  }
-
+  if (runMode === "disabled") { res.status(403).json({ error: "Execução manual desabilitada neste ambiente — a publicação roda pela GitHub Action." }); return; }
   if (runMode === "dispatch") {
     if (state.dispatching) { res.status(409).json({ error: "Já disparei uma execução há pouco — aguarde." }); return; }
     state.dispatching = true;
     setTimeout(() => { state.dispatching = false; }, 60_000);
-    try {
-      await triggerDailyPostWorkflow(workspaceId);
-      res.json({ ok: true, mode: "dispatch" });
-    } catch (err) {
-      state.dispatching = false;
-      res.status(502).json({ error: err instanceof Error ? err.message : String(err) });
-    }
+    try { await triggerDailyPostWorkflow(workspaceId); res.json({ ok: true, mode: "dispatch" }); }
+    catch (err) { state.dispatching = false; res.status(502).json({ error: err instanceof Error ? err.message : String(err) }); }
     return;
   }
-
   if (state.running) { res.status(409).json({ error: "O pipeline já está rodando." }); return; }
   state.running = true;
   res.json({ ok: true, mode: "local" });
-
   try {
-    // Ao contrário de contextFor() (rotas somente-leitura), rodar o pipeline
-    // de verdade precisa de um provider de IA — contexto próprio, com as
-    // exigências padrão (requireAiProvider: true).
     const workspace = await loadWorkspace(workspaceId);
     const runCtx = await buildWorkspaceContext(workspace, secrets);
     if (channel === "instagram") {
@@ -276,88 +281,62 @@ app.post("/api/run", express.json(), asyncHandler(async (req, res) => {
       const result = await runInstagramPipeline(runCtx);
       broadcast(workspaceId, { agent: "instagram", status: result.ok ? "done" : "error", timestamp: new Date().toISOString(), message: result.detalhes });
     } else await runPipeline(runCtx, (event) => broadcast(workspaceId, event));
-  } catch {
-    // erro já foi transmitido como evento "error" pelo broadcast
-  } finally {
-    state.running = false;
-  }
+  } catch {} finally { state.running = false; }
 }));
 
 app.get("/api/history", asyncHandler(async (req, res) => {
-  const workspaceId = requireWorkspaceId(req, res);
-  if (!workspaceId) return;
+  const workspaceId = requireWorkspaceId(req, res); if (!workspaceId) return;
   res.json(await getHistory(await contextFor(workspaceId)));
 }));
 
 app.get("/api/runs", asyncHandler(async (req, res) => {
-  const workspaceId = requireWorkspaceId(req, res);
-  if (!workspaceId) return;
+  const workspaceId = requireWorkspaceId(req, res); if (!workspaceId) return;
   res.json(await getRuns(await contextFor(workspaceId)));
 }));
 
 app.get("/api/usage", asyncHandler(async (req, res) => {
-  const workspaceId = requireWorkspaceId(req, res);
-  if (!workspaceId) return;
+  const workspaceId = requireWorkspaceId(req, res); if (!workspaceId) return;
   const runs = await getRuns(await contextFor(workspaceId));
   const tracked = runs.filter((run) => run.usage);
   const now = new Date();
   const monthStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
   const published = tracked.filter((run) => run.status === "publicado");
   const monthRuns = tracked.filter((run) => new Date(run.finalizadoEm || run.iniciadoEm).getTime() >= monthStart);
-  const sum = (items: typeof tracked, field: "estimatedUsd" | "inputTokens" | "outputTokens" | "webSearchRequests") =>
-    items.reduce((total, run) => total + (run.usage?.[field] ?? 0), 0);
-
-  res.json({
-    trackedRuns: tracked.length,
-    month: { estimatedUsd: sum(monthRuns, "estimatedUsd"), inputTokens: sum(monthRuns, "inputTokens"), outputTokens: sum(monthRuns, "outputTokens"), webSearchRequests: sum(monthRuns, "webSearchRequests") },
-    total: { estimatedUsd: sum(tracked, "estimatedUsd"), inputTokens: sum(tracked, "inputTokens"), outputTokens: sum(tracked, "outputTokens"), webSearchRequests: sum(tracked, "webSearchRequests") },
-    averagePublishedUsd: published.length ? sum(published, "estimatedUsd") / published.length : 0,
-  });
-}));
-
-app.get("/api/instagram-performance", asyncHandler(async (req, res) => {
-  const workspaceId = requireWorkspaceId(req, res); if (!workspaceId) return;
-  res.json(await getInstagramPerformance(await contextFor(workspaceId)));
-}));
-
-app.post("/api/instagram-performance/refresh", express.json(), asyncHandler(async (req, res) => {
-  const workspaceId = String(req.body?.workspaceId ?? "");
-  if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
-  res.json(await refreshInstagramPerformance(await contextFor(workspaceId)));
+  const sum = (items: typeof tracked, field: "estimatedUsd" | "inputTokens" | "outputTokens" | "webSearchRequests") => items.reduce((total, run) => total + (run.usage?.[field] ?? 0), 0);
+  res.json({ trackedRuns: tracked.length, month: { estimatedUsd: sum(monthRuns, "estimatedUsd"), inputTokens: sum(monthRuns, "inputTokens"), outputTokens: sum(monthRuns, "outputTokens"), webSearchRequests: sum(monthRuns, "webSearchRequests") }, total: { estimatedUsd: sum(tracked, "estimatedUsd"), inputTokens: sum(tracked, "inputTokens"), outputTokens: sum(tracked, "outputTokens"), webSearchRequests: sum(tracked, "webSearchRequests") }, averagePublishedUsd: published.length ? sum(published, "estimatedUsd") / published.length : 0 });
 }));
 
 app.get("/api/performance", asyncHandler(async (req, res) => {
-  const workspaceId = requireWorkspaceId(req, res);
-  if (!workspaceId) return;
+  const workspaceId = requireWorkspaceId(req, res); if (!workspaceId) return;
   res.json(await getPerformance(await contextFor(workspaceId)));
-}));
-
-app.get("/api/attribution", asyncHandler(async (req, res) => {
-  const workspaceId = requireWorkspaceId(req, res);
-  if (!workspaceId) return;
-  const ctx = await contextFor(workspaceId);
-  res.json(await computeAttribution(ctx));
 }));
 
 app.post("/api/performance/refresh", express.json(), asyncHandler(async (req, res) => {
   const workspaceId = String(req.body?.workspaceId ?? "");
   if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
   const state = getRuntimeState(workspaceId);
-  if (state.refreshingPerf) { res.status(409).json({ error: "Já estou atualizando as métricas." }); return; }
+  if (state.refreshingPerf) { res.status(409).json({ error: "Atualização de performance já está em andamento." }); return; }
   state.refreshingPerf = true;
-  try {
-    const ctx = await contextFor(workspaceId);
-    const report = await refreshPerformance(ctx, req.body?.inicio, req.body?.fim);
-    res.json(report);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    const invalidPeriod = message.includes("data inicial") || message.includes("data final") || message.includes("formato AAAA-MM-DD");
-    res.status(invalidPeriod ? 400 : 500).json({ error: message });
-  } finally {
-    state.refreshingPerf = false;
-  }
+  try { res.json(await refreshPerformance(await contextFor(workspaceId), req.body?.inicio, req.body?.fim)); }
+  finally { state.refreshingPerf = false; }
 }));
 
-app.listen(PORT, () => {
-  console.log(`Escritório rodando em http://localhost:${PORT}`);
-});
+app.get("/api/instagram/performance", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res); if (!workspaceId) return;
+  res.json(await getInstagramPerformance(await contextFor(workspaceId)));
+}));
+
+app.post("/api/instagram/performance/refresh", express.json(), asyncHandler(async (req, res) => {
+  const workspaceId = String(req.body?.workspaceId ?? "");
+  if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
+  res.json(await refreshInstagramPerformance(await contextFor(workspaceId)));
+}));
+
+app.get("/api/attribution", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res); if (!workspaceId) return;
+  res.json(await computeAttribution(await contextFor(workspaceId)));
+}));
+
+app.get("*", (_req, res) => res.sendFile(path.join(__dirname, "../web/dist/index.html")));
+
+app.listen(PORT, () => console.log(`Marketing AI Office em http://localhost:${PORT}`));
