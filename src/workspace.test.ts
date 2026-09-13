@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -28,6 +28,27 @@ const baseWorkspace = {
   integrations: { siteUrl: "https://acme.test", cms: { provider: "nextassist", apiUrl: "https://api.acme.test" } },
   autonomy: { mode: "copilot" },
   secrets: { required: ["OPENAI_API_KEY"] },
+};
+
+const heygenWorkspace = {
+  ...baseWorkspace,
+  channels: { ...baseWorkspace.channels, instagram: true },
+  integrations: {
+    ...baseWorkspace.integrations,
+    instagram: { apiVersion: "v21.0" },
+    heygen: { transport: "mcp", mcpUrl: "https://mcp.heygen.com/mcp/v1/", auth: "oauth" },
+  },
+  videoStrategy: {
+    provider: "heygen-mcp",
+    avatarId: "avatar-cleber",
+    voiceId: "voz-dinamica",
+    brandKitId: "brand-kit",
+    format: "9:16",
+    music: true,
+    musicVolume: 0.12,
+    requiresApproval: true,
+    fallback: "none",
+  },
 };
 
 test("loadWorkspace lê e valida o workspace.json pelo id da pasta", async () => {
@@ -108,4 +129,26 @@ test("contentStrategy válido é aceito e exposto no workspace carregado", async
   });
   const workspace = await loadWorkspace("acme", root);
   assert.deepEqual(workspace.contentStrategy, { minimumPendingTopics: 5, replenishAmount: 15 });
+});
+
+test("videoStrategy HeyGen MCP válido exige OAuth, avatar, voz e fallback none", async () => {
+  const root = await makeFixtureRoot({ acme: heygenWorkspace });
+  const workspace = await loadWorkspace("acme", root);
+  assert.equal(workspace.integrations.heygen?.auth, "oauth");
+  assert.equal(workspace.videoStrategy?.provider, "heygen-mcp");
+  assert.equal(workspace.videoStrategy?.fallback, "none");
+});
+
+test("videoStrategy HeyGen MCP rejeita fallback diferente de none", async () => {
+  const root = await makeFixtureRoot({
+    acme: { ...heygenWorkspace, videoStrategy: { ...heygenWorkspace.videoStrategy, fallback: "veo" } },
+  });
+  await assert.rejects(() => loadWorkspace("acme", root), /videoStrategy\.fallback.*none/);
+});
+
+test("workspace rejeita declarar HEYGEN_API_KEY mesmo como segredo opcional", async () => {
+  const root = await makeFixtureRoot({
+    acme: { ...heygenWorkspace, secrets: { required: ["OPENAI_API_KEY"], optional: ["HEYGEN_API_KEY"] } },
+  });
+  await assert.rejects(() => loadWorkspace("acme", root), /HEYGEN_API_KEY.*não são permitidos/);
 });
