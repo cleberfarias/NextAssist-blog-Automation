@@ -20,6 +20,7 @@ import "./lib/editorSeo.test.js";
 import "./lib/secrets.test.js";
 import "./lib/text.test.js";
 import "./pipeline.test.js";
+import "./reels/state.test.js";
 import "./revenue/director.test.js";
 import "./sales/funnel.test.js";
 import "./sales/pipeline.test.js";
