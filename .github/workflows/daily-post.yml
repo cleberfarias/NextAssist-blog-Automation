@@ -81,6 +81,8 @@ jobs:
 
       - name: Commitar estado atualizado (calendário, histórico e execuções)
         if: always()
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -91,9 +93,9 @@ jobs:
             git commit -m "chore: registro de execução do pipeline (${{ matrix.workspace }}) [skip ci]"
 
             for tentativa in 1 2 3; do
-              echo "Tentativa ${tentativa} de publicar o estado..."
-              if git pull --rebase origin main; then
-                if git push origin HEAD:main; then
+              echo "Tentativa ${tentativa} de publicar o estado em ${TARGET_BRANCH}..."
+              if git pull --rebase origin "$TARGET_BRANCH"; then
+                if git push origin "HEAD:$TARGET_BRANCH"; then
                   exit 0
                 fi
               else
