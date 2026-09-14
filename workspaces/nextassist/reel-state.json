@@ -1,0 +1,43 @@
+{
+  "updatedAt": "2026-09-14T13:41:04.740Z",
+  "entries": [
+    {
+      "id": "nextassist:ordem-servico-online-assistencia-tecnica",
+      "workspaceId": "nextassist",
+      "slug": "ordem-servico-online-assistencia-tecnica",
+      "title": "Ordem de serviço online assistência técnica: checklist",
+      "blogUrl": "https://www.nextassist-app.com.br/blog/ordem-servico-online-assistencia-tecnica",
+      "caption": "Cliente contestou o reparo? Sua OS precisa provar cinco pontos\n\nQual desses registros mais dá problema na sua assistência?\n\nCompare com sua OS atual.\n\n📖 Aprofunde no blog (link na bio): https://www.nextassist-app.com.br/blog/ordem-servico-online-assistencia-tecnica\n\n#ordemdeservico #assistenciatecnica #gestaodeassistenciatecnica #softwareparaassistenciatecnica #nextassist",
+      "provider": "heygen-api",
+      "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+      "voiceId": "e75248a57197482d80ca91826b2b7f72",
+      "status": "failed",
+      "createdAt": "2026-09-14T13:41:04.300Z",
+      "updatedAt": "2026-09-14T13:41:04.740Z",
+      "audit": [
+        {
+          "from": null,
+          "to": "queued",
+          "at": "2026-09-14T13:41:04.300Z",
+          "actor": "pipeline",
+          "note": "Reel enfileirado para renderização."
+        },
+        {
+          "from": "queued",
+          "to": "rendering",
+          "at": "2026-09-14T13:41:04.301Z",
+          "actor": "system",
+          "note": "Renderização iniciada no HeyGen API."
+        },
+        {
+          "from": "rendering",
+          "to": "failed",
+          "at": "2026-09-14T13:41:04.740Z",
+          "actor": "system",
+          "note": "Falha na renderização do Reel."
+        }
+      ],
+      "error": "HeyGen API: resposta HTTP 402."
+    }
+  ]
+}

@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-09-14T13:36:16.207Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-14T13:36:16.207Z",
+    "finalizadoEm": "2026-09-14T13:41:07.399Z",
+    "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+    "status": "publicado",
+    "slug": "ordem-servico-online-assistencia-tecnica",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-14T13:36:16.219Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "**Recorte da busca em 14/09/2026:**\n\n- **Checklist mínimo já está bastante coberto:** número sequencial, datas de entrada e previsão, dados do cliente, marca/modelo/IMEI, estado visual, acessórios, defeito relatado, diagnóstico, serviço, pe",
+        "timestamp": "2026-09-14T13:37:08.970Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-14T13:37:08.971Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Ordem de serviço online assistência técnica: checklist",
+        "timestamp": "2026-09-14T13:37:29.504Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-14T13:37:29.505Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Uma ordem de serviço online para assistência técnica não deve ser apenas uma ficha digital. Ela precisa registrar o estado do aparelho, comprovar aprovações e conectar todo o caminho do serviço: entra...",
+        "timestamp": "2026-09-14T13:38:45.712Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-14T13:38:45.713Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: ordem-servico-online-assistencia-tecnica · Tags: ordem de serviço, assistência técnica, gestão de assistência técnica, software para assistência técnica",
+        "timestamp": "2026-09-14T13:40:00.171Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-14T13:40:00.172Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/ordem-servico-online-assistencia-tecnica",
+        "timestamp": "2026-09-14T13:40:56.588Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-14T13:40:56.589Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "error",
+        "message": "Reel bloqueado: HeyGen API: resposta HTTP 402.",
+        "timestamp": "2026-09-14T13:41:04.740Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-14T13:41:04.741Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-14T13:41:07.395Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 55541,
+      "outputTokens": 12428,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 6,
+      "estimatedUsd": 0.413043,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 15,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 15,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-14T13:16:50.038Z",
     "origem": "action",
     "iniciadoEm": "2026-09-14T13:16:50.038Z",
