@@ -1,6 +1,6 @@
 # Runtime HeyGen MCP para Cloud Run
 
-O Harness usa o HeyGen por MCP, via OAuth, e nunca por `HEYGEN_API_KEY`.
+Este documento cobre o modo **interativo** do HeyGen no Harness: MCP, via OAuth, sem `HEYGEN_API_KEY`. Para o modo **headless** (pipeline automatizado, API REST com `HEYGEN_API_KEY` como secret de runtime), ver [HEYGEN_HYBRID_RUNTIME.md](HEYGEN_HYBRID_RUNTIME.md).
 
 O bootstrap é `configureHeyGenMcpClient(...)` em `src/harness/heygenMcp.ts`. Ele recebe três dependências: o id do workspace, um `HeyGenOAuthSessionStore` e um `HeyGenMcpConnector`. O runtime não conhece endpoints de autorização, cliente OAuth, formato de refresh token ou detalhes de troca de códigos. Essas responsabilidades ficam no host MCP suportado pelo HeyGen.
 

@@ -22,7 +22,7 @@ export interface ReelRecord {
   title: string;
   blogUrl: string;
   caption: string;
-  provider: "heygen-mcp";
+  provider: "heygen-mcp" | "heygen-api";
   avatarId: string;
   voiceId: string;
   status: ReelStatus;

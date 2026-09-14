@@ -47,7 +47,13 @@ export interface MarketingWorkspace {
   };
   instagramStrategy?: { frequencyPerWeek: number; pillars: string[]; preferredFormats: string[] };
   videoStrategy?: {
-    provider: "heygen-mcp";
+    provider: "heygen-mcp" | "heygen-api";
+    /**
+     * Override explícito por modo de runtime (interativo com MCP/OAuth vs.
+     * headless com HEYGEN_API_KEY). Sem isso, todo modo usa `provider` —
+     * nunca há troca automática entre MCP e API.
+     */
+    runtimeProviders?: { interactive?: "heygen-mcp" | "heygen-api"; headless?: "heygen-mcp" | "heygen-api" };
     avatarId: string;
     voiceId: string;
     brandKitId?: string;
@@ -67,7 +73,7 @@ const DEFAULT_ROOT = new URL("../workspaces/", import.meta.url);
 
 const GOALS_PRIMARY = new Set(["leads", "traffic", "brand", "sales"]);
 const AUTONOMY_MODES = new Set(["copilot", "semi-autonomous", "autonomous"]);
-const VIDEO_PROVIDERS = new Set(["heygen-mcp"]);
+const VIDEO_PROVIDERS = new Set(["heygen-mcp", "heygen-api"]);
 const VIDEO_FORMATS = new Set(["9:16", "16:9"]);
 
 function isStringArray(value: unknown): value is string[] {
@@ -166,6 +172,7 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     requireStringArray(instagramRaw.pillars, "instagramStrategy.pillars");
     requireStringArray(instagramRaw.preferredFormats, "instagramStrategy.preferredFormats");
   }
+  let heygenApiConfigured = false;
   if (w.videoStrategy !== undefined) {
     const videoRaw = requireObject(w.videoStrategy, "videoStrategy");
     requireEnum(videoRaw.provider, "videoStrategy.provider", VIDEO_PROVIDERS);
@@ -175,8 +182,17 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     requireEnum(videoRaw.format, "videoStrategy.format", VIDEO_FORMATS);
     requireBoolean(videoRaw.music, "videoStrategy.music");
     if (videoRaw.musicVolume !== undefined) requireRange(videoRaw.musicVolume, "videoStrategy.musicVolume", 0, 1);
-    requireBoolean(videoRaw.requiresApproval, "videoStrategy.requiresApproval");
+    if (videoRaw.requiresApproval !== true) fail('"videoStrategy.requiresApproval" precisa ser true — aprovação humana é obrigatória antes de publicar');
     if (videoRaw.fallback !== "none") fail('"videoStrategy.fallback" precisa ser "none"');
+
+    if (videoRaw.runtimeProviders !== undefined) {
+      const runtimeRaw = requireObject(videoRaw.runtimeProviders, "videoStrategy.runtimeProviders");
+      for (const mode of ["interactive", "headless"] as const) {
+        if (runtimeRaw[mode] !== undefined) requireEnum(runtimeRaw[mode], `videoStrategy.runtimeProviders.${mode}`, VIDEO_PROVIDERS);
+      }
+      heygenApiConfigured = runtimeRaw.interactive === "heygen-api" || runtimeRaw.headless === "heygen-api";
+    }
+    heygenApiConfigured = heygenApiConfigured || videoRaw.provider === "heygen-api";
   }
 
   const secretsRaw = requireObject(w.secrets, "secrets");
@@ -187,8 +203,11 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     ...(secretsRaw.required as string[]),
     ...((secretsRaw.optional as string[] | undefined) ?? []),
   ];
-  if (declaredSecrets.includes("HEYGEN_API_KEY") || declaredSecrets.includes("HEYGEN_REST_FALLBACK")) {
-    fail("HEYGEN_API_KEY/HEYGEN_REST_FALLBACK não são permitidos; HeyGen usa MCP/OAuth");
+  if (declaredSecrets.includes("HEYGEN_REST_FALLBACK")) {
+    fail("HEYGEN_REST_FALLBACK não é permitido; seleção de provider HeyGen precisa ser explícita via videoStrategy.runtimeProviders, nunca um fallback implícito");
+  }
+  if (declaredSecrets.includes("HEYGEN_API_KEY") && !heygenApiConfigured) {
+    fail("HEYGEN_API_KEY só é permitido quando videoStrategy usa heygen-api (provider ou runtimeProviders); caso contrário HeyGen usa MCP/OAuth");
   }
 
   return value as MarketingWorkspace;

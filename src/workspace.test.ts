@@ -146,9 +146,32 @@ test("videoStrategy HeyGen MCP rejeita fallback diferente de none", async () => 
   await assert.rejects(() => loadWorkspace("acme", root), /videoStrategy\.fallback.*none/);
 });
 
-test("workspace rejeita declarar HEYGEN_API_KEY mesmo como segredo opcional", async () => {
+test("workspace híbrido aceita nome do secret runtime e providers explícitos", async () => {
   const root = await makeFixtureRoot({
-    acme: { ...heygenWorkspace, secrets: { required: ["OPENAI_API_KEY"], optional: ["HEYGEN_API_KEY"] } },
+    acme: { ...heygenWorkspace,
+      videoStrategy: { ...heygenWorkspace.videoStrategy, provider: "heygen-api", runtimeProviders: { interactive: "heygen-mcp", headless: "heygen-api" } },
+      secrets: { required: ["OPENAI_API_KEY"], optional: ["HEYGEN_API_KEY"] } },
   });
-  await assert.rejects(() => loadWorkspace("acme", root), /HEYGEN_API_KEY.*não são permitidos/);
+  const workspace = await loadWorkspace("acme", root);
+  assert.equal(workspace.videoStrategy?.provider, "heygen-api");
+  assert.deepEqual(workspace.videoStrategy?.runtimeProviders, { interactive: "heygen-mcp", headless: "heygen-api" });
+  assert.deepEqual(workspace.secrets.optional, ["HEYGEN_API_KEY"]);
+});
+
+test("workspace rejeita provider headless desconhecido", async () => {
+  const root = await makeFixtureRoot({ acme: { ...heygenWorkspace,
+    videoStrategy: { ...heygenWorkspace.videoStrategy, runtimeProviders: { headless: "automatic" } } } });
+  await assert.rejects(() => loadWorkspace("acme", root), /runtimeProviders.headless/);
+});
+
+test("workspace não permite desativar aprovação de vídeo", async () => {
+  const root = await makeFixtureRoot({ acme: { ...heygenWorkspace,
+    videoStrategy: { ...heygenWorkspace.videoStrategy, requiresApproval: false } } });
+  await assert.rejects(() => loadWorkspace("acme", root), /requiresApproval.*true/);
+});
+
+test("workspace continua rejeitando fallback REST implícito por secret", async () => {
+  const root = await makeFixtureRoot({ acme: { ...heygenWorkspace,
+    secrets: { required: [], optional: ["HEYGEN_REST_FALLBACK"] } } });
+  await assert.rejects(() => loadWorkspace("acme", root), /HEYGEN_REST_FALLBACK/);
 });

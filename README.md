@@ -131,8 +131,12 @@ vídeo em si vem de duas fontes possíveis:
 
 ### HeyGen e o Harness
 
-O caminho recomendado é `Harness → HeyGen MCP → Cleber NextAssist → voz dinâmica → vídeo → aprovação → Instagram`.
-O MCP usa OAuth no Claude Code/Codex e não exige `HEYGEN_API_KEY`. O worker falha fechado quando não há uma sessão OAuth disponível; detalhes de implantação no Cloud Run estão em [docs/HEYGEN_MCP_RUNTIME.md](docs/HEYGEN_MCP_RUNTIME.md).
+Modelo híbrido: `provider` do `videoStrategy` é o padrão, e `runtimeProviders.{interactive,headless}` pode sobrescrever por modo de execução — sem troca automática entre os dois.
+
+- **Interativo** (Claude Code/Codex): `heygen-mcp`, autenticado por OAuth. Não exige `HEYGEN_API_KEY`. O worker falha fechado quando não há sessão OAuth disponível; detalhes de implantação no Cloud Run estão em [docs/HEYGEN_MCP_RUNTIME.md](docs/HEYGEN_MCP_RUNTIME.md).
+- **Headless** (pipeline diário via GitHub Actions): `heygen-api`, cliente REST oficial (`src/harness/heygenApi.ts`) autenticado por `X-Api-Key`, lida de `ctx.secrets.get(workspaceId, "HEYGEN_API_KEY")` — nunca de `.env.example`, `workspace.json` ou código. Detalhes em [docs/HEYGEN_HYBRID_RUNTIME.md](docs/HEYGEN_HYBRID_RUNTIME.md).
+
+Os dois caminhos convergem no mesmo fluxo persistente de Reel (`queued → rendering → pending_approval → approved/rejected → publishing → published/failed`, em `src/reels/`): geração só cria o rascunho, publicação no Instagram é uma ação humana separada e sempre exige `approved`.
 
 Pré-requisitos que só se resolvem no lado da Meta (uma vez):
 

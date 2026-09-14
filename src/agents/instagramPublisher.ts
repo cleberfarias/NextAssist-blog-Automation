@@ -65,7 +65,7 @@ export function buildCaption(ctx: WorkspaceContext, post: FinalPost, blogUrl: st
   return caption.slice(0, 2200);
 }
 
-function buildNarration(post: FinalPost, brief?: ReelBrief): string {
+export function buildNarration(post: FinalPost, brief?: ReelBrief): string {
   return brief ? `${brief.gancho}. ${brief.roteiro} ${brief.cta}` : `${post.titulo}. Confira o artigo completo, link na bio!`;
 }
 

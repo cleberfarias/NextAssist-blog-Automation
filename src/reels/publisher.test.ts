@@ -5,7 +5,7 @@ import { createTempWorkspace } from "../testing/tempWorkspace.js";
 import { createQueuedReel, transitionStoredReel } from "./state.js";
 import { publishApprovedInstagramReel, reviewInstagramReel } from "./publisher.js";
 
-async function fixture() {
+async function fixture(provider: "heygen-mcp" | "heygen-api" = "heygen-mcp") {
   const temp = await createTempWorkspace("nextassist");
   const ctx = { paths: { root: new URL("nextassist/", temp.root) } } as WorkspaceContext;
   const reel = await createQueuedReel(ctx, {
@@ -15,7 +15,7 @@ async function fixture() {
     title: "Teste",
     blogUrl: "https://example.com/blog/teste",
     caption: "Legenda",
-    provider: "heygen-mcp",
+    provider,
     avatarId: "avatar",
     voiceId: "voice",
     videoUrl: "https://example.com/reel.mp4",
@@ -27,6 +27,25 @@ async function fixture() {
 
 test("publisher never calls Instagram before human approval", async () => {
   const { temp, ctx, reelId } = await fixture();
+  let calls = 0;
+  try {
+    await assert.rejects(
+      () => publishApprovedInstagramReel(ctx, reelId, {
+        async publish() {
+          calls += 1;
+          return { mediaId: "media-1", permalink: null };
+        },
+      }),
+      /precisa estar approved/,
+    );
+    assert.equal(calls, 0);
+  } finally {
+    await temp.cleanup();
+  }
+});
+
+test("publisher never calls Instagram before human approval — also for heygen-api drafts", async () => {
+  const { temp, ctx, reelId } = await fixture("heygen-api");
   let calls = 0;
   try {
     await assert.rejects(

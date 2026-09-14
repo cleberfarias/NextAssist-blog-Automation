@@ -6,12 +6,13 @@ import { planTopic } from "./agents/topicPlanner.js";
 import { writeArticle } from "./agents/writer.js";
 import { editAndFinalize } from "./agents/editorSeo.js";
 import { publishPost } from "./agents/publisher.js";
-import { buildCaption, createReelBrief, publishToInstagram } from "./agents/instagramPublisher.js";
+import { buildCaption, buildNarration, createReelBrief, publishToInstagram } from "./agents/instagramPublisher.js";
 import { indexPublishedPost, postUrl } from "./agents/indexer.js";
 import { appendHistory } from "./history.js";
 import { registerContent } from "./contentRegistry.js";
 import { validateFinalPost } from "./lib/contentQuality.js";
 import { generateInstagramReelDraft } from "./reels/generator.js";
+import { selectHeyGenProvider } from "./lib/heygenProvider.js";
 import { emit, type OnEvent } from "./pipelineEvents.js";
 import type { BacklogResult } from "./backlog.js";
 import type { WorkspaceContext, AnthropicUsage } from "./context.js";
@@ -88,15 +89,17 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
     if (ctx.workspace.channels.instagram) {
       if (published.publicado) {
         emit(onEvent, { agent: "instagram", status: "working", message: "Gerando Reel a partir do conteúdo publicado..." });
-        if (ctx.workspace.videoStrategy?.provider === "heygen-mcp") {
+        const heygenProvider = selectHeyGenProvider(ctx.workspace.videoStrategy, "headless");
+        if (heygenProvider) {
           try {
             let brief: Awaited<ReturnType<typeof createReelBrief>> | undefined;
             try { brief = await createReelBrief(ctx, finalPost); } catch { brief = undefined; }
             const record = await generateInstagramReelDraft(ctx, finalPost, blogUrl, {
               caption: buildCaption(ctx, finalPost, blogUrl, brief),
               prompt: heyGenPrompt(ctx, finalPost.titulo, finalPost.resumo),
+              script: buildNarration(finalPost, brief),
             });
-            emit(onEvent, { agent: "instagram", status: "done", message: `Reel ${record.id} gerado e persistido em pending_approval.` });
+            emit(onEvent, { agent: "instagram", status: "done", message: `Reel ${record.id} gerado (${heygenProvider}) e persistido em pending_approval.` });
           } catch (err) {
             const message = err instanceof Error ? err.message : String(err);
             emit(onEvent, { agent: "instagram", status: "error", message: `Reel bloqueado: ${message}` });
