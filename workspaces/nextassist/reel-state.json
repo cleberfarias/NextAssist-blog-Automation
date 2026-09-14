@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-14T14:58:06.275Z",
+  "updatedAt": "2026-09-14T21:23:29.000Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -49,9 +49,9 @@
       "provider": "heygen-api",
       "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
       "voiceId": "e75248a57197482d80ca91826b2b7f72",
-      "status": "failed",
+      "status": "rendering",
       "createdAt": "2026-09-14T14:42:52.692Z",
-      "updatedAt": "2026-09-14T14:58:00.468Z",
+      "updatedAt": "2026-09-14T21:23:29.000Z",
       "audit": [
         {
           "from": null,
@@ -73,10 +73,16 @@
           "at": "2026-09-14T14:58:00.468Z",
           "actor": "system",
           "note": "Falha na renderização do Reel."
+        },
+        {
+          "from": "failed",
+          "to": "rendering",
+          "at": "2026-09-14T21:23:29.000Z",
+          "actor": "manual-retry",
+          "note": "Nova tentativa criada após falha terminal confirmada no HeyGen; job pendente duplicado removido."
         }
       ],
-      "videoId": "f6569f7571e828876e3cbd1151942040",
-      "error": "HeyGen API: renderização excedeu o tempo máximo de 15 minutos."
+      "videoId": "e11607ffa8aac473d3b2393c3d8df995"
     }
   ]
 }
