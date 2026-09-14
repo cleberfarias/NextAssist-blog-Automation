@@ -6,8 +6,37 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { run } from "./mergeWorkspaceState.js";
 
-function git(cwd: string, args: string[]): void {
-  execFileSync("git", args, { cwd, stdio: "pipe" });
+/**
+ * Sem isto, um `git` filho herda GIT_DIR/GIT_WORK_TREE do ambiente do
+ * PROCESSO PAI se estiverem setados (ex: quando `npm test` roda dentro do
+ * hook `pre-push`, que o git invoca com GIT_DIR apontando pro repositório
+ * real). Com GIT_DIR setado e GIT_WORK_TREE não, o git trata o `cwd` atual
+ * como raiz da work-tree — e um `git add -A` num diretório temporário
+ * "enxerga" todo arquivo real como deletado e commita isso no repo real.
+ * Isso já aconteceu uma vez nesta suíte. Cada chamada de `git` aqui usa um
+ * ambiente limpo de qualquer `GIT_*` herdado, para nunca poder escapar do
+ * diretório temporário.
+ */
+function isolatedGitEnv(): NodeJS.ProcessEnv {
+  const env = { ...process.env };
+  for (const key of Object.keys(env)) {
+    if (key.startsWith("GIT_")) delete env[key];
+  }
+  return env;
+}
+
+function git(cwd: string, args: string[]): string {
+  return execFileSync("git", args, { cwd, env: isolatedGitEnv(), stdio: "pipe", encoding: "utf-8" });
+}
+
+/** Trava de segurança: se o isolamento acima falhar por qualquer motivo, aborta em vez de commitar no lugar errado. */
+function assertGitRootIs(dir: string): void {
+  const toplevel = git(dir, ["rev-parse", "--show-toplevel"]).trim().toLowerCase();
+  const expected = dir.replace(/\\/g, "/").replace(/\/$/, "").toLowerCase();
+  assert.ok(
+    toplevel === expected || toplevel.endsWith(expected.split("/").pop()!),
+    `git toplevel "${toplevel}" não bate com o diretório temporário "${expected}" — abortando antes de tocar em qualquer coisa.`,
+  );
 }
 
 /**
@@ -20,6 +49,7 @@ test("run() reconcilia working tree local contra uma ref remota via git real, se
   const originalCwd = process.cwd();
   try {
     git(dir, ["init", "-q"]);
+    assertGitRootIs(dir);
     git(dir, ["config", "user.email", "test@example.com"]);
     git(dir, ["config", "user.name", "Test"]);
 
@@ -84,6 +114,7 @@ test("run() não falha quando o workspace não existe ainda na ref remota (works
   const originalCwd = process.cwd();
   try {
     git(dir, ["init", "-q"]);
+    assertGitRootIs(dir);
     git(dir, ["config", "user.email", "test@example.com"]);
     git(dir, ["config", "user.name", "Test"]);
     writeFileSync(join(dir, "README.md"), "placeholder");

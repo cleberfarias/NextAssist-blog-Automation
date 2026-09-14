@@ -13,6 +13,12 @@ test("reel state machine requires approval before publishing", () => {
   assert.equal(canTransitionReel("approved", "publishing"), true);
 });
 
+test("failed pode se recuperar para rendering (falha era nossa, não do HeyGen) ou tentar de novo via queued", () => {
+  assert.equal(canTransitionReel("failed", "rendering"), true);
+  assert.equal(canTransitionReel("failed", "queued"), true);
+  assert.equal(canTransitionReel("failed", "pending_approval"), false);
+});
+
 test("rejected reels cannot publish", () => {
   assert.equal(canTransitionReel("rejected", "publishing"), false);
 });
@@ -88,12 +94,22 @@ for (const status of ["pending_approval", "approved", "publishing", "published",
   });
 }
 
-test("planReelGeneration: rendering retoma o polling em vez de recriar", () => {
+test("planReelGeneration: rendering com videoId consulta o remoto em vez de gerar de novo", () => {
   const record = reelRecord("rendering", { videoId: "hg_123" });
-  assert.deepEqual(planReelGeneration(record), { action: "resume-rendering", record });
+  assert.deepEqual(planReelGeneration(record), { action: "check-remote", record });
 });
 
-test("planReelGeneration: queued e failed pedem retry explícito", () => {
+test("planReelGeneration: failed com videoId também consulta o remoto antes de decidir (pode ter sido timeout nosso, não falha do HeyGen)", () => {
+  const record = reelRecord("failed", { videoId: "hg_123", error: "HeyGen API: renderização excedeu o tempo máximo de 15 minutos." });
+  assert.deepEqual(planReelGeneration(record), { action: "check-remote", record });
+});
+
+test("planReelGeneration: rendering SEM videoId (ex: MCP) pede retry — nada pra consultar", () => {
+  const record = reelRecord("rendering");
+  assert.deepEqual(planReelGeneration(record), { action: "retry", record });
+});
+
+test("planReelGeneration: queued e failed sem videoId pedem retry explícito", () => {
   const queued = reelRecord("queued");
   const failed = reelRecord("failed", { error: "boom" });
   assert.deepEqual(planReelGeneration(queued), { action: "retry", record: queued });

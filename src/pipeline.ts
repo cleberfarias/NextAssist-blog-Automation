@@ -99,7 +99,17 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
               prompt: heyGenPrompt(ctx, finalPost.titulo, finalPost.resumo),
               script: buildNarration(finalPost, brief),
             });
-            emit(onEvent, { agent: "instagram", status: "done", message: `Reel ${record.id} gerado (${heygenProvider}) e persistido em pending_approval.` });
+            if (record.status === "rendering") {
+              // heygen-api é assíncrono: só enviamos o vídeo, quem confirma a conclusão é
+              // o reconciler periódico. Isso não é erro — o estágio termina aqui de propósito.
+              emit(onEvent, { agent: "instagram", status: "done", message: `submitted — Reel enviado ao HeyGen, aguardando renderização. videoId=${record.videoId ?? "?"}` });
+            } else if (record.status === "pending_approval") {
+              emit(onEvent, { agent: "instagram", status: "done", message: `Reel ${record.id} gerado (${heygenProvider}) e persistido em pending_approval.` });
+            } else if (record.status === "failed") {
+              emit(onEvent, { agent: "instagram", status: "error", message: `Reel bloqueado: ${record.error ?? "falha na renderização"}.` });
+            } else {
+              emit(onEvent, { agent: "instagram", status: "done", message: `Reel ${record.id} já estava em "${record.status}" — nada a fazer.` });
+            }
           } catch (err) {
             const message = err instanceof Error ? err.message : String(err);
             emit(onEvent, { agent: "instagram", status: "error", message: `Reel bloqueado: ${message}` });

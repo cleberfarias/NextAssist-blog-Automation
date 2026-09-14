@@ -22,6 +22,8 @@ import "./lib/editorSeo.test.js";
 import "./lib/secrets.test.js";
 import "./lib/text.test.js";
 import "./pipeline.test.js";
+import "./reels/generator.test.js";
+import "./reels/reconciler.test.js";
 import "./reels/state.test.js";
 import "./reels/publisher.test.js";
 import "./revenue/director.test.js";

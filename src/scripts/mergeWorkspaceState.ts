@@ -31,9 +31,24 @@ function readLocalJson(path: string): unknown {
   }
 }
 
+/**
+ * Nunca herda GIT_DIR/GIT_WORK_TREE do processo pai (ex: quando este script
+ * roda dentro de um hook de git, que os define no ambiente) — com GIT_DIR
+ * setado e GIT_WORK_TREE não, o git passa a tratar o `cwd` como raiz da
+ * work-tree, o que pode fazer `git show` resolver contra o repositório
+ * errado. Sempre resolve exclusivamente pelo `cwd` deste processo.
+ */
+function isolatedGitEnv(): NodeJS.ProcessEnv {
+  const env = { ...process.env };
+  for (const key of Object.keys(env)) {
+    if (key.startsWith("GIT_")) delete env[key];
+  }
+  return env;
+}
+
 function readRemoteJson(ref: string, path: string): unknown {
   try {
-    const raw = execFileSync("git", ["show", `${ref}:${path}`], { encoding: "utf-8" });
+    const raw = execFileSync("git", ["show", `${ref}:${path}`], { encoding: "utf-8", env: isolatedGitEnv() });
     return JSON.parse(raw);
   } catch {
     // Arquivo não existe nessa ref (workspace novo) ou a ref não tem esse

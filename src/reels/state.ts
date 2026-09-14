@@ -50,7 +50,10 @@ const transitions: Record<ReelStatus, readonly ReelStatus[]> = {
   rejected: [],
   publishing: ["published", "failed"],
   published: [],
-  failed: ["queued"],
+  // "rendering" além de "queued": recuperação quando um `failed` local (ex: timeout de
+  // polling) se mostra, ao consultar o HeyGen de novo, ainda em andamento — o job nunca
+  // falhou de verdade, só a nossa espera é que desistiu cedo demais (ver reconciler.ts).
+  failed: ["queued", "rendering"],
 };
 
 export function canTransitionReel(from: ReelStatus, to: ReelStatus): boolean {
@@ -127,19 +130,29 @@ export const PROTECTED_REEL_STATUSES: ReadonlySet<ReelStatus> = new Set([
 export type ReelResumePlan =
   | { action: "fresh" }
   | { action: "protected"; record: ReelRecord }
-  | { action: "resume-rendering"; record: ReelRecord }
+  | { action: "check-remote"; record: ReelRecord }
   | { action: "retry"; record: ReelRecord };
 
 /**
  * Decide o que fazer ao gerar um Reel para um id que pode já existir —
  * puro, sem I/O, pra ser testável sem mockar storage. `generator.ts` só
  * executa o plano.
+ *
+ * `check-remote` cobre tanto `rendering` (o job ainda está a caminho, nunca
+ * chama `generate` de novo) quanto `failed` com `videoId` presente (a falha
+ * pode ter sido nossa — timeout de polling, processo encerrado — não do
+ * HeyGen; antes de tentar de novo, `reconciler.ts` consulta o HeyGen pelo
+ * MESMO id). Só vira `retry` (livre pra chamar `generate`) quando não há
+ * nenhum `videoId` pra checar: `queued` que nunca chegou a renderizar, ou
+ * `failed` sem id nenhum.
  */
 export function planReelGeneration(existing: ReelRecord | undefined): ReelResumePlan {
   if (!existing) return { action: "fresh" };
   if (PROTECTED_REEL_STATUSES.has(existing.status)) return { action: "protected", record: existing };
-  if (existing.status === "rendering") return { action: "resume-rendering", record: existing };
-  return { action: "retry", record: existing }; // queued (nunca chegou a renderizar) ou failed (nova tentativa)
+  if (existing.videoId && (existing.status === "rendering" || existing.status === "failed")) {
+    return { action: "check-remote", record: existing };
+  }
+  return { action: "retry", record: existing }; // queued (nunca chegou a renderizar) ou failed sem videoId
 }
 
 export async function transitionStoredReel(ctx: WorkspaceContext, reelId: string, to: ReelStatus, actor: ReelAuditEvent["actor"], note?: string, patch?: Partial<Omit<ReelRecord, "id" | "workspaceId" | "slug" | "status" | "audit">>): Promise<ReelRecord> {
