@@ -9,6 +9,7 @@ import { RevenuePanel } from "./RevenuePanel";
 import { AttributionPanel } from "./AttributionPanel";
 import { PerformancePanel } from "./PerformancePanel";
 import { InstagramPerformancePanel } from "./InstagramPerformancePanel";
+import { ReelApprovalPanel } from "./ReelApprovalPanel";
 
 export function PainelView() {
   return (
@@ -22,6 +23,7 @@ export function PainelView() {
       <PlayerDock />
       <LiveStatus />
       <RevenuePanel />
+      <ReelApprovalPanel />
       <SalesPanel />
       <HistoryPanel />
       <RunsPanel />
