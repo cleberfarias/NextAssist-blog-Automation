@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createHeyGenApiClient, pollHeyGenApiVideo, type HeyGenApiClient } from "./heygenApi.js";
+import { createHeyGenApiClient, pollHeyGenApiVideo, resolveHeyGenApiVideoId, type HeyGenApiClient } from "./heygenApi.js";
+
+function fakeClock(startMs = 0) {
+  let time = startMs;
+  return { now: () => time, sleep: async (ms: number) => { time += ms; } };
+}
 
 const input = { title: "Reel", script: "Olá", avatarId: "avatar", voiceId: "voice", aspectRatio: "9:16" as const };
 const ctx = { secrets: { get: async () => "test-only-secret" } };
@@ -69,8 +74,8 @@ test("HeyGen API rejects malformed input and unexpected response state", async (
   await assert.rejects(client.getStatus("v_123"), /resposta/);
 });
 
-test("HeyGen API polling waits through rendering and resolves on completed", async () => {
-  const statuses = ["queued", "rendering", "completed"] as const;
+test("HeyGen API polling waits through a slow render and resolves on completed", async () => {
+  const statuses = ["queued", "rendering", "rendering", "completed"] as const;
   let call = 0;
   const client: HeyGenApiClient = {
     generate: async () => { throw new Error("must not call"); },
@@ -82,7 +87,50 @@ test("HeyGen API polling waits through rendering and resolves on completed", asy
   const sleeps: number[] = [];
   const result = await pollHeyGenApiVideo(client, "v_123", { sleep: async (ms) => { sleeps.push(ms); } });
   assert.deepEqual(result, { videoUrl: "https://files.heygen.ai/v.mp4" });
-  assert.deepEqual(sleeps, [4000, 4000]);
+  assert.deepEqual(sleeps, [10_000, 10_000, 10_000]);
+});
+
+test("HeyGen API polling always queries the same videoId, never starts a second render", async () => {
+  const queried: string[] = [];
+  let call = 0;
+  const client: HeyGenApiClient = {
+    generate: async () => { throw new Error("must not call"); },
+    getStatus: async (videoId) => {
+      queried.push(videoId);
+      call++;
+      return call < 3 ? { status: "rendering" } : { status: "completed", videoUrl: "https://files.heygen.ai/v.mp4" };
+    },
+  };
+  await pollHeyGenApiVideo(client, "v_123", { sleep: async () => {} });
+  assert.deepEqual(queried, ["v_123", "v_123", "v_123"]);
+});
+
+test("HeyGen API polling succeeds even when completion arrives right at the timeout boundary", async () => {
+  const clock = fakeClock();
+  let call = 0;
+  const client: HeyGenApiClient = {
+    generate: async () => { throw new Error("must not call"); },
+    getStatus: async () => {
+      call++;
+      return call < 3 ? { status: "rendering" } : { status: "completed", videoUrl: "https://files.heygen.ai/v.mp4" };
+    },
+  };
+  const result = await pollHeyGenApiVideo(client, "v_123", {
+    totalTimeoutMs: 20_000, pollIntervalMs: 10_000, now: clock.now, sleep: clock.sleep,
+  });
+  assert.deepEqual(result, { videoUrl: "https://files.heygen.ai/v.mp4" });
+});
+
+test("HeyGen API polling gives up after the total timeout, not after a fixed attempt count", async () => {
+  const clock = fakeClock();
+  const client: HeyGenApiClient = {
+    generate: async () => { throw new Error("must not call"); },
+    getStatus: async () => ({ status: "rendering" }),
+  };
+  await assert.rejects(
+    pollHeyGenApiVideo(client, "v_123", { totalTimeoutMs: 30_000, pollIntervalMs: 10_000, now: clock.now, sleep: clock.sleep }),
+    /excedeu o tempo máximo/,
+  );
 });
 
 test("HeyGen API polling stops immediately on failed status without retrying", async () => {
@@ -95,13 +143,47 @@ test("HeyGen API polling stops immediately on failed status without retrying", a
   assert.equal(calls, 1);
 });
 
-test("HeyGen API polling gives up after maxAttempts", async () => {
+test("HeyGen API polling stops immediately on cancelled status without retrying", async () => {
+  let calls = 0;
   const client: HeyGenApiClient = {
     generate: async () => { throw new Error("must not call"); },
-    getStatus: async () => ({ status: "rendering" }),
+    getStatus: async () => { calls++; return { status: "cancelled" }; },
+  };
+  await assert.rejects(pollHeyGenApiVideo(client, "v_123", { sleep: async () => { throw new Error("must not sleep"); } }), /cancelad/);
+  assert.equal(calls, 1);
+});
+
+test("HeyGen API polling propagates a sanitized HTTP error from getStatus without swallowing it", async () => {
+  const client: HeyGenApiClient = {
+    generate: async () => { throw new Error("must not call"); },
+    getStatus: async () => { throw new Error("HeyGen API: resposta HTTP 500."); },
   };
   await assert.rejects(
-    pollHeyGenApiVideo(client, "v_123", { maxAttempts: 3, sleep: async () => {} }),
-    /não concluiu/,
+    pollHeyGenApiVideo(client, "v_123", { sleep: async () => { throw new Error("must not sleep"); } }),
+    /HeyGen API: resposta HTTP 500\./,
   );
+});
+
+test("resolveHeyGenApiVideoId reuses an existing id and never generates a second video", async () => {
+  let generateCalls = 0;
+  const client: HeyGenApiClient = {
+    generate: async () => { generateCalls++; return { videoId: "should-not-be-used" }; },
+    getStatus: async () => { throw new Error("must not call"); },
+  };
+  const videoId = await resolveHeyGenApiVideoId(client, input, "existing-id");
+  assert.equal(videoId, "existing-id");
+  assert.equal(generateCalls, 0);
+});
+
+test("resolveHeyGenApiVideoId generates once and persists the new id when none exists", async () => {
+  let generateCalls = 0;
+  const persisted: string[] = [];
+  const client: HeyGenApiClient = {
+    generate: async () => { generateCalls++; return { videoId: "new-id" }; },
+    getStatus: async () => { throw new Error("must not call"); },
+  };
+  const videoId = await resolveHeyGenApiVideoId(client, input, undefined, async (id) => { persisted.push(id); });
+  assert.equal(videoId, "new-id");
+  assert.equal(generateCalls, 1);
+  assert.deepEqual(persisted, ["new-id"]);
 });

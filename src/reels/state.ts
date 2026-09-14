@@ -26,6 +26,8 @@ export interface ReelRecord {
   avatarId: string;
   voiceId: string;
   status: ReelStatus;
+  /** Id do job/render no provider (hoje só heygen-api) — permite retomar o mesmo polling em vez de gerar outro vídeo. */
+  videoId?: string;
   videoUrl?: string;
   mediaId?: string;
   permalink?: string | null;
@@ -84,16 +86,60 @@ export async function upsertReel(ctx: WorkspaceContext, record: ReelRecord): Pro
   return record;
 }
 
-export async function getReel(ctx: WorkspaceContext, reelId: string): Promise<ReelRecord> {
+export async function findReel(ctx: WorkspaceContext, reelId: string): Promise<ReelRecord | undefined> {
   const report = await getReelState(ctx);
-  const record = report?.entries.find((entry) => entry.id === reelId);
+  return report?.entries.find((entry) => entry.id === reelId);
+}
+
+export async function getReel(ctx: WorkspaceContext, reelId: string): Promise<ReelRecord> {
+  const record = await findReel(ctx, reelId);
   if (!record) throw new Error("Reel não encontrado.");
   return record;
+}
+
+/**
+ * Atualiza campos sem mudar `status` nem registrar evento de audit — não é
+ * uma transição de estado, é progresso dentro do MESMO estado (ex: persistir
+ * o `videoId` assim que o HeyGen aceita a renderização, para que uma
+ * reexecução depois de uma falha/crash retome o mesmo polling em vez de
+ * gerar um vídeo novo).
+ */
+export async function patchStoredReel(ctx: WorkspaceContext, reelId: string, patch: Partial<Omit<ReelRecord, "id" | "workspaceId" | "slug" | "status" | "audit">>): Promise<ReelRecord> {
+  const record = await getReel(ctx, reelId);
+  return upsertReel(ctx, { ...record, ...patch, updatedAt: new Date().toISOString() });
 }
 
 export async function createQueuedReel(ctx: WorkspaceContext, input: Omit<ReelRecord, "status" | "createdAt" | "updatedAt" | "audit">): Promise<ReelRecord> {
   const now = new Date().toISOString();
   return upsertReel(ctx, { ...input, status: "queued", createdAt: now, updatedAt: now, audit: [{ from: null, to: "queued", at: now, actor: "pipeline", note: "Reel enfileirado para renderização." }] });
+}
+
+/**
+ * Estados em que o pipeline NUNCA pode resetar/regenerar um Reel sozinho: um
+ * humano já decidiu (approved/rejected/published) ou uma publicação está em
+ * andamento (publishing). Reexecutar o pipeline para o mesmo workspace+slug
+ * (mesmo `${workspace.id}:${slug}`) devolve o registro existente, intocado.
+ */
+export const PROTECTED_REEL_STATUSES: ReadonlySet<ReelStatus> = new Set([
+  "pending_approval", "approved", "publishing", "published", "rejected",
+]);
+
+export type ReelResumePlan =
+  | { action: "fresh" }
+  | { action: "protected"; record: ReelRecord }
+  | { action: "resume-rendering"; record: ReelRecord }
+  | { action: "retry"; record: ReelRecord };
+
+/**
+ * Decide o que fazer ao gerar um Reel para um id que pode já existir —
+ * puro, sem I/O, pra ser testável sem mockar storage. `generator.ts` só
+ * executa o plano.
+ */
+export function planReelGeneration(existing: ReelRecord | undefined): ReelResumePlan {
+  if (!existing) return { action: "fresh" };
+  if (PROTECTED_REEL_STATUSES.has(existing.status)) return { action: "protected", record: existing };
+  if (existing.status === "rendering") return { action: "resume-rendering", record: existing };
+  return { action: "retry", record: existing }; // queued (nunca chegou a renderizar) ou failed (nova tentativa)
 }
 
 export async function transitionStoredReel(ctx: WorkspaceContext, reelId: string, to: ReelStatus, actor: ReelAuditEvent["actor"], note?: string, patch?: Partial<Omit<ReelRecord, "id" | "workspaceId" | "slug" | "status" | "audit">>): Promise<ReelRecord> {

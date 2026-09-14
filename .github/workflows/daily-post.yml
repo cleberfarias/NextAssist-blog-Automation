@@ -89,29 +89,31 @@ jobs:
           git add "workspaces/${{ matrix.workspace }}"/*.json
           if git diff --staged --quiet; then
             echo "Nada mudou no estado — nenhum commit necessário."
-          else
-            git commit -m "chore: registro de execução do pipeline (${{ matrix.workspace }}) [skip ci]"
-
-            for tentativa in 1 2 3; do
-              echo "Tentativa ${tentativa} de publicar o estado em ${TARGET_BRANCH}..."
-              if git pull --rebase origin "$TARGET_BRANCH"; then
-                if git push origin "HEAD:$TARGET_BRANCH"; then
-                  exit 0
-                fi
-              else
-                if git diff --name-only --diff-filter=U | grep -qx "workspaces/${{ matrix.workspace }}/runs-history.json"; then
-                  git show :2:"workspaces/${{ matrix.workspace }}/runs-history.json" > /tmp/runs-remote.json
-                  git show :3:"workspaces/${{ matrix.workspace }}/runs-history.json" > /tmp/runs-local.json
-                  jq -s 'add | unique_by(.id) | sort_by(.iniciadoEm) | reverse | .[:100]' /tmp/runs-remote.json /tmp/runs-local.json > "workspaces/${{ matrix.workspace }}/runs-history.json"
-                  git add "workspaces/${{ matrix.workspace }}/runs-history.json"
-                  GIT_EDITOR=true git -c core.editor=true rebase --continue
-                else
-                  git rebase --abort || true
-                fi
-              fi
-              sleep 5
-            done
-
-            echo "Não foi possível publicar o estado após 3 tentativas."
-            exit 1
+            exit 0
           fi
+
+          # Reconciliação determinística (src/scripts/mergeWorkspaceState.ts) em vez de
+          # rebase: a cada tentativa, busca a ref remota mais recente, funde os JSONs
+          # locais com ela preservando os dois lados (nunca --ours/--theirs) e reposiciona
+          # nosso commit em cima dessa ponta antes de tentar publicar. Se o remoto mudar
+          # de novo entre o fetch e o push, repete — sempre na branch que disparou o
+          # workflow (${TARGET_BRANCH}), nunca em main.
+          for tentativa in 1 2 3 4 5; do
+            echo "Tentativa ${tentativa} de publicar o estado em ${TARGET_BRANCH}..."
+            git fetch origin "$TARGET_BRANCH"
+            npx tsx src/scripts/mergeWorkspaceState.ts "${{ matrix.workspace }}" "origin/$TARGET_BRANCH"
+            git reset --soft "origin/$TARGET_BRANCH"
+            git add "workspaces/${{ matrix.workspace }}"/*.json
+            if git diff --cached --quiet; then
+              echo "Estado já reconciliado no remoto — nada a publicar."
+              exit 0
+            fi
+            git commit -q -m "chore: registro de execução do pipeline (${{ matrix.workspace }}) [skip ci]"
+            if git push origin "HEAD:$TARGET_BRANCH"; then
+              exit 0
+            fi
+            sleep 5
+          done
+
+          echo "Não foi possível publicar o estado após 5 tentativas."
+          exit 1

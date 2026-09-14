@@ -19,7 +19,7 @@ export interface HeyGenApiGenerateInput {
   aspectRatio: "9:16" | "16:9";
 }
 
-export type HeyGenApiStatus = "queued" | "rendering" | "completed" | "failed";
+export type HeyGenApiStatus = "queued" | "rendering" | "completed" | "failed" | "cancelled";
 
 export interface HeyGenApiClientOptions {
   fetch?: typeof fetch;
@@ -41,37 +41,74 @@ const REMOTE_STATUS_MAP: Record<string, HeyGenApiStatus> = {
   processing: "rendering",
   completed: "completed",
   failed: "failed",
+  cancelled: "cancelled",
 };
 
 export interface HeyGenApiPollOptions {
+  /** Intervalo entre consultas de status. Padrão: 10s — evita polling agressivo numa janela de até 15min. */
   pollIntervalMs?: number;
-  maxAttempts?: number;
+  /** Prazo total de parede para a renderização terminar. Padrão: 15 minutos. */
+  totalTimeoutMs?: number;
   sleep?: (ms: number) => Promise<void>;
+  /** Injetável nos testes; padrão `Date.now`. */
+  now?: () => number;
 }
 
-const DEFAULT_POLL_INTERVAL_MS = 4000;
-const DEFAULT_MAX_POLL_ATTEMPTS = 45; // ~3 minutos com o intervalo padrão
+const DEFAULT_POLL_INTERVAL_MS = 10_000;
+const DEFAULT_TOTAL_TIMEOUT_MS = 15 * 60 * 1000;
 
-/** Espera a renderização terminar sem expor status/erro remoto além do necessário. */
+/**
+ * Espera a renderização terminar, consultando SEMPRE o mesmo `videoId` — nunca
+ * inicia outro vídeo só porque uma consulta demorou. O prazo é por tempo de
+ * parede (`totalTimeoutMs`), não por número de tentativas: uma renderização
+ * lenta não é abandonada cedo demais só porque o intervalo de polling era
+ * curto. Nunca expõe status bruto, headers ou corpo de resposta do HeyGen.
+ */
 export async function pollHeyGenApiVideo(
   client: HeyGenApiClient,
   videoId: string,
   options: HeyGenApiPollOptions = {},
 ): Promise<{ videoUrl: string }> {
   const pollIntervalMs = options.pollIntervalMs ?? DEFAULT_POLL_INTERVAL_MS;
-  const maxAttempts = options.maxAttempts ?? DEFAULT_MAX_POLL_ATTEMPTS;
+  const totalTimeoutMs = options.totalTimeoutMs ?? DEFAULT_TOTAL_TIMEOUT_MS;
   const sleep = options.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
+  const now = options.now ?? Date.now;
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  const deadline = now() + totalTimeoutMs;
+  for (;;) {
     const result = await client.getStatus(videoId);
     if (result.status === "completed") {
       if (!result.videoUrl) throw new Error("HeyGen API: renderização concluída sem videoUrl.");
       return { videoUrl: result.videoUrl };
     }
     if (result.status === "failed") throw new Error("HeyGen API: renderização falhou.");
+    if (result.status === "cancelled") throw new Error("HeyGen API: renderização foi cancelada.");
+
+    if (now() >= deadline) {
+      const minutes = Math.round(totalTimeoutMs / 60_000);
+      throw new Error(`HeyGen API: renderização excedeu o tempo máximo de ${minutes} minutos.`);
+    }
     await sleep(pollIntervalMs);
   }
-  throw new Error(`HeyGen API: renderização não concluiu após ${maxAttempts} tentativas.`);
+}
+
+/**
+ * Devolve o id do vídeo a consultar — reusa `existingVideoId` quando presente
+ * (retomando a MESMA renderização) e só chama `client.generate` quando não
+ * há id ainda. `onVideoIdIssued` é o ponto de persistência: quem chamar deve
+ * gravar o id assim que ele existir, para uma reexecução futura (depois de
+ * um crash/timeout do processo) poder retomar em vez de gerar outro vídeo.
+ */
+export async function resolveHeyGenApiVideoId(
+  client: HeyGenApiClient,
+  input: HeyGenApiGenerateInput,
+  existingVideoId: string | undefined,
+  onVideoIdIssued?: (videoId: string) => Promise<void>,
+): Promise<string> {
+  if (existingVideoId) return existingVideoId;
+  const { videoId } = await client.generate(input);
+  if (onVideoIdIssued) await onVideoIdIssued(videoId);
+  return videoId;
 }
 
 export function createHeyGenApiClient(
