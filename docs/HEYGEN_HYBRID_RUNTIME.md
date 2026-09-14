@@ -47,7 +47,7 @@ reconcile-reels.yml (de hora em hora)
 
 ### Reel reconciler (`src/reels/reconciler.ts`, `src/scripts/reconcileReels.ts`, `.github/workflows/reconcile-reels.yml`)
 
-Roda de hora em hora (`workflow_dispatch` também disponível). Único responsável por: consultar o HeyGen, mover `rendering → pending_approval` quando `completed`, ou `rendering → failed` numa falha terminal confirmada (`failed`/`cancelled`/`not_found`). Nunca chama `generate` (não cria vídeo), nunca publica no Instagram, nunca roda o pipeline do blog.
+Roda de hora em hora (`workflow_dispatch` também disponível). Verifica todo Reel `heygen-api` com `videoId` que esteja `rendering` **ou `failed`** — um `failed` local não é confiável sozinho, só o HeyGen confirma se era terminal de verdade (ver recuperação abaixo). Único responsável por: consultar o HeyGen, mover pra `pending_approval` quando `completed`, ou pra `failed` numa falha terminal confirmada (`failed`/`cancelled`/`not_found`). Nunca chama `generate` (não cria vídeo), nunca publica no Instagram, nunca roda o pipeline do blog.
 
 Semântica explícita dos estados remotos — **pending/processing, timeout de polling, o runner ou o workflow terminarem nunca significam failed**:
 - `queued`/`rendering` (remoto `waiting`/`pending`/`processing`) → local continua/volta a `rendering`.

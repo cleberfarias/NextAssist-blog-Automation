@@ -174,10 +174,21 @@ test("reconcileReelWithRemote: rodar duas vezes seguidas com processing não adi
 });
 
 // K — batch nunca chama Instagram (por construção: reconciler.ts não importa nada de instagram/publisher).
-test("reconcileWorkspaceReels só processa rendering + heygen-api + videoId, nunca chama generate", async () => {
+test("reconcileWorkspaceReels processa rendering E failed (com videoId) do heygen-api, ignora o resto, nunca chama generate", async () => {
   const { temp, ctx } = await fixtureCtx();
   try {
-    await renderingReel(ctx);
+    await renderingReel(ctx); // nextassist:teste — rendering, heygen-api, videoId
+    await upsertReel(ctx, {
+      id: "nextassist:failed-com-id", workspaceId: "nextassist", slug: "failed-com-id", title: "Recuperável",
+      blogUrl: "https://example.com/failed-com-id", caption: "c", provider: "heygen-api", avatarId: "a", voiceId: "v",
+      status: "failed", videoId: "hg_555", error: "HeyGen API: renderização excedeu o tempo máximo de 15 minutos.",
+      createdAt: "x", updatedAt: "x", audit: [],
+    });
+    await upsertReel(ctx, {
+      id: "nextassist:failed-sem-id", workspaceId: "nextassist", slug: "failed-sem-id", title: "Sem job pra checar",
+      blogUrl: "https://example.com/failed-sem-id", caption: "c", provider: "heygen-api", avatarId: "a", voiceId: "v",
+      status: "failed", createdAt: "x", updatedAt: "x", audit: [],
+    });
     await upsertReel(ctx, {
       id: "nextassist:mcp-em-andamento", workspaceId: "nextassist", slug: "mcp-em-andamento", title: "MCP",
       blogUrl: "https://example.com/mcp", caption: "c", provider: "heygen-mcp", avatarId: "a", voiceId: "v",
@@ -192,12 +203,16 @@ test("reconcileWorkspaceReels só processa rendering + heygen-api + videoId, nun
     const generateCalls = { count: 0 };
     const client = fakeClient(async () => ({ status: "completed" as HeyGenApiStatus, videoUrl: "https://files.heygen.ai/v.mp4" }), generateCalls);
     const result = await reconcileWorkspaceReels(ctx, { client });
-    assert.equal(result.checked, 1); // só o heygen-api + rendering + videoId
-    assert.equal(result.completed, 1);
+    assert.equal(result.checked, 2); // rendering+videoId E failed+videoId — nada mais
+    assert.equal(result.completed, 2);
     assert.equal(generateCalls.count, 0);
 
-    const untouched = await findReel(ctx, "nextassist:aprovado");
-    assert.equal(untouched?.status, "approved");
+    const recovered = await findReel(ctx, "nextassist:failed-com-id");
+    assert.equal(recovered?.status, "pending_approval");
+    const untouchedApproved = await findReel(ctx, "nextassist:aprovado");
+    assert.equal(untouchedApproved?.status, "approved");
+    const untouchedFailedSemId = await findReel(ctx, "nextassist:failed-sem-id");
+    assert.equal(untouchedFailedSemId?.status, "failed"); // sem videoId, nada pra consultar — reconciler não mexe
   } finally {
     await temp.cleanup();
   }

@@ -80,7 +80,13 @@ export interface ReconcileWorkspaceReelsOptions {
   log?: (line: string) => void;
 }
 
-/** Reconcilia todos os Reels `rendering` do provider `heygen-api` com `videoId` presente. */
+/**
+ * Reconcilia todos os Reels do provider `heygen-api` com `videoId` presente
+ * que estejam `rendering` (o caso comum) ou `failed` (recuperação — um
+ * `failed` local não é confiável sozinho: pode ter sido timeout de polling
+ * do código antigo, ou o processo ter sido encerrado antes de confirmar com
+ * o HeyGen; só o HeyGen decide se era terminal de verdade).
+ */
 export async function reconcileWorkspaceReels(
   ctx: WorkspaceContext,
   options: ReconcileWorkspaceReelsOptions = {},
@@ -90,7 +96,8 @@ export async function reconcileWorkspaceReels(
 
   const report = await getReelState(ctx);
   const candidates = (report?.entries ?? []).filter(
-    (r): r is ReelRecord & { videoId: string } => r.status === "rendering" && r.provider === "heygen-api" && Boolean(r.videoId),
+    (r): r is ReelRecord & { videoId: string } =>
+      (r.status === "rendering" || r.status === "failed") && r.provider === "heygen-api" && Boolean(r.videoId),
   );
 
   const result: ReconcileWorkspaceReelsResult = { checked: 0, stillRendering: 0, completed: 0, failed: 0, inconclusive: 0 };
