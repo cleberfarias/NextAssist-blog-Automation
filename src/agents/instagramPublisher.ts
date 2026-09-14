@@ -20,6 +20,14 @@ export interface ReelBrief {
   textoTela: string[];
   cta: string;
   pergunta: string;
+  /**
+   * Exatamente 5 falas curtas (8-18 palavras, ~4-7s cada) para o Studio
+   * multi-cena da HeyGen (`src/reels/studioScenes.ts`): [0] é a transição do
+   * avatar no meio do vídeo, [1..4] são a narração de cada B-roll, na ordem.
+   * Não usado pelo heygen-mcp nem pelo caminho legado — `roteiro` continua
+   * sendo a fonte para esses.
+   */
+  blocos: string[];
 }
 
 type VideoStrategy = {
@@ -43,19 +51,34 @@ Crie conteúdo nativo para Instagram, em português do Brasil, para donos de ass
 Seja direto, humano e específico. Não prometa viralização, não use clichês de marketing e não invente dados.
 O Reel deve ensinar algo útil em 20 a 35 segundos e estimular comentários.
 Responda SOMENTE em JSON neste formato:
-{"gancho":"até 12 palavras","roteiro":"fala natural de 45 a 80 palavras","textoTela":["3 a 5 frases curtas para a tela"],"cta":"CTA curto de conversa","pergunta":"pergunta que convida o público a comentar"}`;
+{"gancho":"até 12 palavras","roteiro":"fala natural de 45 a 80 palavras","textoTela":["3 a 5 frases curtas para a tela"],"cta":"CTA curto de conversa","pergunta":"pergunta que convida o público a comentar","blocos":["exatamente 5 falas curtas de 8 a 18 palavras cada (cabem em 4 a 7 segundos de fala): a primeira é uma transição do apresentador no meio do vídeo, as outras 4 são narração em voice-over sobre telas do produto, continuando a ideia do roteiro em ordem"]}`;
+
+/**
+ * Valida e normaliza o JSON bruto do diretor de Reels — separado de
+ * `createReelBrief` pra ser testável sem precisar mockar a chamada de IA
+ * (mesmo padrão do resto do repo: funções puras são testadas, wrappers de
+ * I/O não).
+ */
+export function parseReelBrief(raw: unknown): ReelBrief {
+  const r = raw as Partial<ReelBrief> & Record<string, unknown>;
+  const textoTela = Array.isArray(r.textoTela) ? r.textoTela.slice(0, 5).map((item) => String(item).trim()).filter(Boolean) : [];
+  if (!r.gancho?.trim() || !r.roteiro?.trim() || textoTela.length < 3 || !r.cta?.trim() || !r.pergunta?.trim()) {
+    throw new Error("O diretor de Reels retornou um roteiro incompleto.");
+  }
+  const blocos = Array.isArray(r.blocos) ? r.blocos.map((item) => String(item).trim()).filter(Boolean) : [];
+  if (blocos.length !== 5) {
+    throw new Error("O diretor de Reels retornou um roteiro sem os 5 blocos exigidos pelo Studio multi-cena.");
+  }
+  return { gancho: r.gancho, roteiro: r.roteiro, textoTela, cta: r.cta, pergunta: r.pergunta, blocos };
+}
 
 export async function createReelBrief(ctx: WorkspaceContext, post: FinalPost): Promise<ReelBrief> {
-  const raw = extractJson<ReelBrief>(await runAgent(ctx, {
+  const raw = await runAgent(ctx, {
     system: REEL_SYSTEM(ctx),
     prompt: `Tema do artigo: ${post.titulo}\nResumo: ${post.resumo}\nTags: ${post.tags.join(", ")}\n\nTransforme o tema em uma situação real de balcão, bancada ou gestão. Priorize uma dica aplicável hoje.`,
     maxTokens: 1200,
-  }));
-  const textoTela = Array.isArray(raw.textoTela) ? raw.textoTela.slice(0, 5).map((item) => String(item).trim()).filter(Boolean) : [];
-  if (!raw.gancho?.trim() || !raw.roteiro?.trim() || textoTela.length < 3 || !raw.cta?.trim() || !raw.pergunta?.trim()) {
-    throw new Error("O diretor de Reels retornou um roteiro incompleto.");
-  }
-  return { ...raw, textoTela };
+  });
+  return parseReelBrief(extractJson<Record<string, unknown>>(raw));
 }
 
 export function buildCaption(ctx: WorkspaceContext, post: FinalPost, blogUrl: string, brief?: ReelBrief): string {

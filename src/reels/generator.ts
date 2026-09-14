@@ -1,18 +1,23 @@
 import type { WorkspaceContext } from "../context.js";
 import type { FinalPost } from "../agents/editorSeo.js";
+import type { ReelBrief } from "../agents/instagramPublisher.js";
 import type { MarketingWorkspace } from "../workspace.js";
 import { generateHeyGenMcpReel } from "../lib/heygen.js";
 import { createHeyGenApiClient } from "../harness/heygenApi.js";
 import { selectHeyGenProvider, type HeyGenProviderName } from "../lib/heygenProvider.js";
 import { uploadReelVideo } from "../lib/storage.js";
 import { reconcileReelWithRemote } from "./reconciler.js";
+import { selectBrollForPost } from "./broll.js";
+import { buildStudioScenes } from "./studioScenes.js";
 import { createQueuedReel, findReel, patchStoredReel, planReelGeneration, transitionStoredReel, type ReelRecord } from "./state.js";
 
 export interface ReelDraftInput {
   caption: string;
   prompt: string;
-  /** Roteiro falado — exigido pelo provider heygen-api (`/v3/videos` usa `script`, não um prompt livre como o MCP). */
+  /** Roteiro falado — usado só pelo caminho heygen-mcp/legado. */
   script?: string;
+  /** Roteiro estruturado (gancho/blocos/cta) — exigido pelo Studio multi-cena do provider heygen-api. */
+  brief?: ReelBrief;
 }
 
 type VideoStrategy = NonNullable<MarketingWorkspace["videoStrategy"]>;
@@ -117,15 +122,17 @@ export async function generateInstagramReelDraft(
     }
   }
 
-  // heygen-api: só envia e retorna. Nunca espera o vídeo terminar aqui.
-  if (!input.script?.trim()) throw new Error("HeyGen API exige um script (roteiro falado) para gerar o vídeo.");
+  // heygen-api: Studio multi-cena (avatar/B-roll/B-roll/avatar/B-roll/B-roll/avatar,
+  // padrão do golden reference b01f896ff2834a4f1d4b7e5a07e3d02d). Só envia e
+  // retorna — nunca espera o vídeo terminar aqui.
   try {
+    if (!input.brief) throw new Error("HeyGen API (Studio) exige o roteiro estruturado (brief) para montar as cenas.");
     const client = createHeyGenApiClient(ctx, ctx.workspace.id);
-    const { videoId } = await client.generate({
+    const broll = selectBrollForPost(post);
+    const scenes = buildStudioScenes({ brief: input.brief, broll, avatarId: strategy.avatarId, voiceId: strategy.voiceId });
+    const { videoId } = await client.generateStudio({
       title: `NextAssist - ${post.titulo}`,
-      script: input.script,
-      avatarId: strategy.avatarId,
-      voiceId: strategy.voiceId,
+      scenes,
       aspectRatio: strategy.format ?? "9:16",
     });
     return await patchStoredReel(ctx, reelId, { videoId });

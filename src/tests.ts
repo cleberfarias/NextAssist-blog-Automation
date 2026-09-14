@@ -1,3 +1,4 @@
+import "./agents/instagramPublisher.test.js";
 import "./agents/topicPlanner.test.js";
 import "./attribution.test.js";
 import "./backlog.test.js";
@@ -22,9 +23,11 @@ import "./lib/editorSeo.test.js";
 import "./lib/secrets.test.js";
 import "./lib/text.test.js";
 import "./pipeline.test.js";
+import "./reels/broll.test.js";
 import "./reels/generator.test.js";
 import "./reels/reconciler.test.js";
 import "./reels/state.test.js";
+import "./reels/studioScenes.test.js";
 import "./reels/publisher.test.js";
 import "./revenue/director.test.js";
 import "./sales/funnel.test.js";

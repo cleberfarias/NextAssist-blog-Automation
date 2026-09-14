@@ -15,6 +15,7 @@ async function fixtureCtx() {
 function fakeClient(getStatus: HeyGenApiClient["getStatus"], generateCalls: { count: number } = { count: 0 }): HeyGenApiClient {
   return {
     async generate() { generateCalls.count++; throw new Error("must not call generate from the reconciler"); },
+    async generateStudio() { generateCalls.count++; throw new Error("must not call generateStudio from the reconciler"); },
     getStatus,
   };
 }

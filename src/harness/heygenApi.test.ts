@@ -28,7 +28,45 @@ test("HeyGen API generates using workspace runtime secret and official v3 payloa
   } });
   assert.deepEqual(await client.generate(input), { videoId: "v_123" });
   assert.deepEqual(calls, [["nextassist", "HEYGEN_API_KEY"]]);
-  assert.deepEqual(Object.keys(client).sort(), ["generate", "getStatus"]);
+  assert.deepEqual(Object.keys(client).sort(), ["generate", "generateStudio", "getStatus"]);
+});
+
+const studioScenes = [
+  {
+    type: "avatar_video", input: {
+      type: "avatar", avatar_id: "avatar", script: "Gancho", voice_id: "voice",
+      voice_settings: { pitch: 0, speed: 1.05, volume: 1 }, engine: { type: "avatar_iv" },
+      expressiveness: "high", motion_prompt: "abertura", background: { type: "color", color: "#F6F6FC" },
+    },
+  },
+  { type: "video", source: { type: "asset_id", asset_id: "broll_1" }, script: "Narração 1", voice_id: "voice", playback: { mode: "fit_to_scene", volume: 0 } },
+];
+
+test("HeyGen API generateStudio envia type:studio com as cenas intactas e extrai video_id (endpoint v3/videos, mesmo do generate)", async () => {
+  const client = createHeyGenApiClient({ secrets: { get: async () => "test-only-secret" } }, "nextassist", {
+    fetch: async (url, init) => {
+      assert.equal(url, "https://api.heygen.com/v3/videos");
+      assert.equal(init?.method, "POST");
+      assert.deepEqual(JSON.parse(String(init?.body)), {
+        type: "studio", title: "Reel Studio", scenes: studioScenes, aspect_ratio: "9:16", resolution: "1080p",
+      });
+      return Response.json({ data: { video_id: "v_studio_1" } });
+    },
+  });
+  assert.deepEqual(
+    await client.generateStudio({ title: "Reel Studio", scenes: studioScenes, aspectRatio: "9:16" }),
+    { videoId: "v_studio_1" },
+  );
+});
+
+test("HeyGen API generateStudio rejeita cenas vazias e resposta sem video_id, sem vazar corpo bruto", async () => {
+  await assert.rejects(
+    createHeyGenApiClient(ctx, "nextassist", { fetch: async () => { throw new Error("must not call"); } })
+      .generateStudio({ title: "t", scenes: [], aspectRatio: "9:16" }),
+    /cena/,
+  );
+  const client = createHeyGenApiClient(ctx, "nextassist", { fetch: async () => Response.json({ data: { video_id: "test-only-secret".slice(0, 0) } }) });
+  await assert.rejects(client.generateStudio({ title: "t", scenes: studioScenes, aspectRatio: "9:16" }), /video_id/);
 });
 
 test("HeyGen API status maps queued/rendering/completed/failed/cancelled and omits remote error text", async () => {

@@ -23,6 +23,23 @@ export interface HeyGenApiGenerateInput {
   aspectRatio: "9:16" | "16:9";
 }
 
+/**
+ * Payload já montado por `src/reels/studioScenes.ts` (`StudioScene[]`) — este
+ * cliente não conhece a forma de cada cena, só repassa como está. O contrato
+ * de CADA campo dentro de `scenes` vem do schema oficial `CreateVideoFromStudioInput`
+ * (confirmado via ferramenta MCP tipada `create_video_from_studio`), não de
+ * suposição. O único ponto não confirmado por fonte direta é a convenção de
+ * nomes no NÍVEL SUPERIOR deste payload (`aspect_ratio`/`resolution` em
+ * snake_case) — inferida do `generate()` abaixo, que já usa essa mesma
+ * convenção com sucesso no mesmo endpoint (`POST /v3/videos`).
+ */
+export interface HeyGenApiStudioInput {
+  title: string;
+  scenes: unknown[];
+  aspectRatio: "9:16" | "16:9";
+  resolution?: "4k" | "1080p" | "720p";
+}
+
 export type HeyGenApiStatus = "queued" | "rendering" | "completed" | "failed" | "cancelled" | "not_found";
 
 export interface HeyGenApiClientOptions {
@@ -32,6 +49,7 @@ export interface HeyGenApiClientOptions {
 
 export interface HeyGenApiClient {
   generate(input: HeyGenApiGenerateInput): Promise<{ videoId: string }>;
+  generateStudio(input: HeyGenApiStudioInput): Promise<{ videoId: string }>;
   getStatus(videoId: string): Promise<{ status: HeyGenApiStatus; videoUrl?: string }>;
 }
 
@@ -110,6 +128,26 @@ export function createHeyGenApiClient(
           voice_id: input.voiceId,
           aspect_ratio: input.aspectRatio,
           output_format: "mp4",
+        }),
+      })) as { video_id?: unknown };
+      if (typeof data?.video_id !== "string" || !data.video_id) {
+        throw new Error("HeyGen API: resposta sem video_id.");
+      }
+      return { videoId: data.video_id };
+    },
+
+    async generateStudio(input) {
+      if (!Array.isArray(input.scenes) || input.scenes.length === 0) {
+        throw new Error("HeyGen API: Studio exige ao menos uma cena.");
+      }
+      const data = (await authorizedFetch("/v3/videos", {
+        method: "POST",
+        body: JSON.stringify({
+          type: "studio",
+          title: input.title,
+          scenes: input.scenes,
+          aspect_ratio: input.aspectRatio,
+          resolution: input.resolution ?? "1080p",
         }),
       })) as { video_id?: unknown };
       if (typeof data?.video_id !== "string" || !data.video_id) {

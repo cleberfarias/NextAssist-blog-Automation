@@ -17,6 +17,11 @@ const post: FinalPost = {
   tags: ["tag"], metaTitle: "meta", metaDescription: "meta desc",
 };
 
+const brief = {
+  gancho: "Gancho", roteiro: "Roteiro", textoTela: ["a", "b", "c"], pergunta: "Pergunta?", cta: "Cta",
+  blocos: ["Transição", "Narração 1", "Narração 2", "Narração 3", "Narração 4"],
+};
+
 async function fixtureCtx() {
   const temp = await createTempWorkspace("nextassist");
   const ctx = {
@@ -34,21 +39,40 @@ function withFetch<T>(impl: typeof fetch, run: () => Promise<T>): Promise<T> {
 }
 
 // A — pipeline heygen-api recebe videoId e retorna logo, sem polling.
-test("generateInstagramReelDraft (heygen-api): envia ao HeyGen, persiste rendering+videoId e retorna sem esperar conclusão", async () => {
+test("generateInstagramReelDraft (heygen-api): envia ao HeyGen via Studio multi-cena, persiste rendering+videoId e retorna sem esperar conclusão", async () => {
   const { temp, ctx } = await fixtureCtx();
   try {
     let calls = 0;
+    let body: { type?: string; scenes?: unknown[] } = {};
     const record = await withFetch(async (url, init) => {
       calls++;
       assert.equal(url, "https://api.heygen.com/v3/videos");
       assert.equal(init?.method, "POST");
+      body = JSON.parse(String(init?.body));
       return Response.json({ data: { video_id: "hg_new", status: "waiting" } });
-    }, () => generateInstagramReelDraft(ctx, post, "https://x.test/teste", { caption: "c", prompt: "p", script: "roteiro falado" }));
+    }, () => generateInstagramReelDraft(ctx, post, "https://x.test/teste", { caption: "c", prompt: "p", brief }));
 
     assert.equal(calls, 1); // só o POST de generate — nenhuma consulta de status
+    assert.equal(body.type, "studio");
+    assert.equal(body.scenes?.length, 7); // avatar/broll/broll/avatar/broll/broll/avatar
     assert.equal(record.status, "rendering");
     assert.equal(record.videoId, "hg_new");
     assert.equal(record.provider, "heygen-api");
+  } finally {
+    await temp.cleanup();
+  }
+});
+
+test("generateInstagramReelDraft (heygen-api): sem brief estruturado, falha alto e marca o Reel como failed — nunca chama o HeyGen", async () => {
+  const { temp, ctx } = await fixtureCtx();
+  try {
+    await assert.rejects(
+      withFetch(async () => { throw new Error("must not call HeyGen without a brief"); },
+        () => generateInstagramReelDraft(ctx, post, "https://x.test/teste", { caption: "c", prompt: "p" })),
+      /brief/,
+    );
+    const stored = await findReel(ctx, "nextassist:teste");
+    assert.equal(stored?.status, "failed");
   } finally {
     await temp.cleanup();
   }
@@ -68,7 +92,7 @@ test("generateInstagramReelDraft (heygen-api): Reel já rendering com videoId nu
       if (init?.method === "POST") throw new Error("must not call generate");
       assert.equal(url, "https://api.heygen.com/v3/videos/hg_existing");
       return Response.json({ data: { status: "processing" } });
-    }, () => generateInstagramReelDraft(ctx, post, "https://x.test/teste", { caption: "c", prompt: "p", script: "roteiro falado" }));
+    }, () => generateInstagramReelDraft(ctx, post, "https://x.test/teste", { caption: "c", prompt: "p", brief }));
 
     assert.equal(record.status, "rendering");
     assert.equal(record.videoId, "hg_existing");

@@ -98,6 +98,7 @@ export async function runPipeline(ctx: WorkspaceContext, onEvent?: OnEvent): Pro
               caption: buildCaption(ctx, finalPost, blogUrl, brief),
               prompt: heyGenPrompt(ctx, finalPost.titulo, finalPost.resumo),
               script: buildNarration(finalPost, brief),
+              brief,
             });
             if (record.status === "rendering") {
               // heygen-api é assíncrono: só enviamos o vídeo, quem confirma a conclusão é

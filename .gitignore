@@ -35,3 +35,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# --- Companion visual de brainstorming (superpowers) — mockups temporários ---
+.superpowers/
