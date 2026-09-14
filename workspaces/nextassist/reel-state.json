@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-14T13:41:04.740Z",
+  "updatedAt": "2026-09-14T14:58:06.275Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -38,6 +38,45 @@
         }
       ],
       "error": "HeyGen API: resposta HTTP 402."
+    },
+    {
+      "id": "nextassist:markupempresa-assistencia-tecnica",
+      "workspaceId": "nextassist",
+      "slug": "markupempresa-assistencia-tecnica",
+      "title": "MarkupEmpresa assistência técnica: serve para celular?",
+      "blogUrl": "https://www.nextassist-app.com.br/blog/markupempresa-assistencia-tecnica",
+      "caption": "Seu sistema acompanha o celular do balcão até a entrega?\n\nQual etapa da sua assistência ainda depende de planilha?\n\nConte como você testa um sistema.\n\n📖 Aprofunde no blog (link na bio): https://www.nextassist-app.com.br/blog/markupempresa-assistencia-tecnica\n\n#markupempresa #assistenciatecnicadecelular #ordemdeservico #gestaodeassistenciatecnica #nextassist",
+      "provider": "heygen-api",
+      "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+      "voiceId": "e75248a57197482d80ca91826b2b7f72",
+      "status": "failed",
+      "createdAt": "2026-09-14T14:42:52.692Z",
+      "updatedAt": "2026-09-14T14:58:00.468Z",
+      "audit": [
+        {
+          "from": null,
+          "to": "queued",
+          "at": "2026-09-14T14:42:52.692Z",
+          "actor": "pipeline",
+          "note": "Reel enfileirado para renderização."
+        },
+        {
+          "from": "queued",
+          "to": "rendering",
+          "at": "2026-09-14T14:42:52.693Z",
+          "actor": "system",
+          "note": "Renderização iniciada no HeyGen API."
+        },
+        {
+          "from": "rendering",
+          "to": "failed",
+          "at": "2026-09-14T14:58:00.468Z",
+          "actor": "system",
+          "note": "Falha na renderização do Reel."
+        }
+      ],
+      "videoId": "f6569f7571e828876e3cbd1151942040",
+      "error": "HeyGen API: renderização excedeu o tempo máximo de 15 minutos."
     }
   ]
 }

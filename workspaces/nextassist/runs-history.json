@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-09-14T14:36:59.709Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-14T14:36:59.709Z",
+    "finalizadoEm": "2026-09-14T14:58:05.462Z",
+    "tema": "MarkupEmpresa serve para assistência técnica de celular? Veja o que avaliar",
+    "status": "publicado",
+    "slug": "markupempresa-assistencia-tecnica",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "MarkupEmpresa serve para assistência técnica de celular? Veja o que avaliar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-14T14:36:59.773Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "**Busca realizada em 14/09/2026 — principais achados:**\n\n- **A própria MarkupEmpresa domina a cobertura da consulta**, com vários conteúdos de fundo de funil afirmando que o sistema foi desenvolvido para assistências de celular. O posiciona",
+        "timestamp": "2026-09-14T14:38:22.495Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-14T14:38:22.496Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: MarkupEmpresa assistência técnica: serve para celular?",
+        "timestamp": "2026-09-14T14:38:48.346Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-14T14:38:48.347Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Quem pesquisa por MarkupEmpresa assistência técnica encontra a proposta de um sistema com ordem de serviço digital, controle de peças, financeiro, histórico do cliente e acesso online. No papel, são r...",
+        "timestamp": "2026-09-14T14:40:36.327Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-14T14:40:36.328Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: markupempresa-assistencia-tecnica · Tags: MarkupEmpresa, assistência técnica de celular, ordem de serviço, gestão de assistência técnica",
+        "timestamp": "2026-09-14T14:41:51.263Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-14T14:41:51.264Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/markupempresa-assistencia-tecnica",
+        "timestamp": "2026-09-14T14:42:41.929Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-14T14:42:41.929Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "error",
+        "message": "Reel bloqueado: HeyGen API: renderização excedeu o tempo máximo de 15 minutos.",
+        "timestamp": "2026-09-14T14:58:00.469Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-14T14:58:00.469Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-14T14:58:05.459Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 58134,
+      "outputTokens": 10011,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 6,
+      "estimatedUsd": 0.38456700000000005,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 14,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 14,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-14T13:36:16.207Z",
     "origem": "action",
     "iniciadoEm": "2026-09-14T13:36:16.207Z",
