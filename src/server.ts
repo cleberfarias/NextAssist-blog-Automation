@@ -19,6 +19,7 @@ import { triggerDailyPostWorkflow } from "./lib/githubDispatch.js";
 import { listWorkspaces, loadWorkspace, type MarketingWorkspace } from "./workspace.js";
 import { EnvSecretProvider } from "./lib/secrets.js";
 import { buildWorkspaceContext, type WorkspaceContext } from "./context.js";
+import { createReelRoutes } from "./reels/routes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4173;
@@ -113,6 +114,8 @@ app.use((req, res, next) => {
     })
     .catch(next);
 });
+
+app.use("/api/reels", express.json(), createReelRoutes({ contextFor }));
 
 app.get("/api/workspaces", asyncHandler(async (_req, res) => {
   const workspaces = await listWorkspaces();
