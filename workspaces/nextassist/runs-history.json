@@ -1,5 +1,111 @@
 [
   {
+    "id": "2026-09-14T13:42:27.893Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-14T13:42:27.893Z",
+    "finalizadoEm": "2026-09-14T13:46:56.732Z",
+    "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+    "status": "publicado",
+    "slug": "ordem-servico-online-assistencia-checklist",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-14T13:42:27.909Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **GestãoClick tem a cobertura mais completa:** o guia atualizado em **8 de julho de 2026** lista identificação da OS, cliente, IMEI/série, estado visual, acessórios, defeito relatado, diagnóstico, peças, valores, garantia e assinaturas de",
+        "timestamp": "2026-09-14T13:43:13.973Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-14T13:43:13.974Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Ordem de serviço online assistência técnica: checklist",
+        "timestamp": "2026-09-14T13:43:25.149Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-14T13:43:25.150Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Uma ordem de serviço online para assistência técnica não deve servir apenas para anotar o nome do cliente e o modelo do celular. Ela precisa proteger a assistência contra conflitos, acelerar a aprovaç...",
+        "timestamp": "2026-09-14T13:44:51.772Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-14T13:44:51.773Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: ordem-servico-online-assistencia-checklist · Tags: ordem de serviço, assistência técnica, gestão de assistência, controle de estoque, orçamento de conserto",
+        "timestamp": "2026-09-14T13:46:01.857Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-14T13:46:01.858Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/ordem-servico-online-assistencia-checklist",
+        "timestamp": "2026-09-14T13:46:54.468Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-14T13:46:54.468Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-14T13:46:56.729Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 41760,
+      "outputTokens": 10976,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.32992,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 15,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 15,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-14T13:30:49.756Z",
     "origem": "action",
     "iniciadoEm": "2026-09-14T13:30:49.756Z",

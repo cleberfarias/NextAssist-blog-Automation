@@ -231,11 +231,12 @@
     {
       "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
       "palavraChaveAlvo": "ordem de serviço online assistência técnica",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-28T17:25:37.849Z",
       "reason": "Pauta de fundo de funil ligada diretamente ao uso de um sistema e à criação da primeira OS, principal ação de ativação do NextAssist.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-09-14T13:46:56.730Z"
     },
     {
       "tema": "MarkupEmpresa serve para assistência técnica de celular? Veja o que avaliar",
