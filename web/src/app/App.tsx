@@ -15,10 +15,6 @@ import { DashboardPage } from "../views/pages/DashboardPage";
 import { AgentesPage } from "../views/pages/AgentesPage";
 import { AgenteDetailPage } from "../views/pages/AgenteDetailPage";
 
-function Placeholder({ testId, title }: { testId: string; title: string }) {
-  return <div data-testid={testId} className="p-6 text-primary"><h1 className="text-xl font-semibold">{title}</h1></div>;
-}
-
 export default function App() {
   return (
     <WorkspaceProvider>
