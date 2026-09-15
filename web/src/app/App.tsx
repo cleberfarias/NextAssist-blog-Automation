@@ -12,6 +12,7 @@ import { ReelDetailPage } from "../views/reels/ReelDetailPage";
 import { ConteudoPage } from "../views/pages/ConteudoPage";
 import { RelatoriosPage } from "../views/pages/RelatoriosPage";
 import { DashboardPage } from "../views/pages/DashboardPage";
+import { AgentesPage } from "../views/pages/AgentesPage";
 
 function Placeholder({ testId, title }: { testId: string; title: string }) {
   return <div data-testid={testId} className="p-6 text-primary"><h1 className="text-xl font-semibold">{title}</h1></div>;
@@ -29,7 +30,7 @@ export default function App() {
                 <Topbar />
                 <Routes>
                   <Route path="/" element={<DashboardPage />} />
-                  <Route path="/agentes" element={<Placeholder testId="page-agentes" title="Agentes (IA)" />} />
+                  <Route path="/agentes" element={<AgentesPage />} />
                   <Route path="/agentes/:agentId" element={<Placeholder testId="page-agente-detalhe" title="Agente" />} />
                   <Route path="/conteudo" element={<ConteudoPage />} />
                   <Route path="/reels" element={<ReelApprovalPanel />} />
