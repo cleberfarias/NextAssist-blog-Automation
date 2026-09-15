@@ -14,6 +14,7 @@ export default {
         "status-ok": "#34b56b",
         "status-warn": "#ffb020",
         "status-error": "#e5484d",
+        reel: "#ec4899",
       },
     },
   },

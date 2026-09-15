@@ -2,21 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useWorkspace } from "../../hooks/useWorkspace";
 import { apiGet, apiPost } from "../../lib/api";
 import { formatDateTime, nf } from "../../lib/formatters";
-import type { ReelStatus, ReelDashboardResponse } from "../../types/api";
-
-function statusLabel(status: ReelStatus): string {
-  const labels: Record<ReelStatus, string> = {
-    queued: "Na fila",
-    rendering: "Renderizando",
-    pending_approval: "Aguardando aprovação",
-    approved: "Aprovado",
-    rejected: "Rejeitado",
-    publishing: "Publicando",
-    published: "Publicado",
-    failed: "Falhou",
-  };
-  return labels[status];
-}
+import { REEL_STATUS_LABEL } from "../../lib/reelStatus";
+import type { ReelDashboardResponse } from "../../types/api";
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return <div className="kpi"><div className="kpi-label">{label}</div><div className="kpi-value">{value}</div></div>;
@@ -115,7 +102,7 @@ export function ReelApprovalPanel() {
                     <div className="muted">{formatDateTime(entry.updatedAt)}</div>
                     {entry.error ? <div className="error-text">{entry.error}</div> : null}
                   </td>
-                  <td>{statusLabel(entry.status)}</td>
+                  <td>{REEL_STATUS_LABEL[entry.status]}</td>
                   <td>
                     {entry.videoUrl ? <a href={entry.videoUrl} target="_blank" rel="noreferrer">Abrir vídeo</a> : "—"}
                     {entry.permalink ? <div><a href={entry.permalink} target="_blank" rel="noreferrer">Ver no Instagram</a></div> : null}
