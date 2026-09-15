@@ -47,7 +47,7 @@ describe("App shell", () => {
     expect(await screen.findByText("Nenhum post publicado ainda.")).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("link", { name: "Leads" }));
-    expect(await screen.findByText("Sales Agent")).toBeInTheDocument();
+    expect(await screen.findByText("Oportunidades identificadas pelos agentes.")).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("link", { name: "Relatórios" }));
     expect(await screen.findByText("Consumo de IA")).toBeInTheDocument();
