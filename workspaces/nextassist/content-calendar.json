@@ -241,11 +241,12 @@
     {
       "tema": "MarkupEmpresa serve para assistência técnica de celular? Veja o que avaliar",
       "palavraChaveAlvo": "MarkupEmpresa assistência técnica",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-28T17:25:37.849Z",
       "reason": "Completa a cobertura dos concorrentes diretos e alcança donos de assistência que já estão comparando sistemas para contratar.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-09-15T13:35:26.323Z"
     },
     {
       "tema": "Como controlar o lucro de cada ordem de serviço",

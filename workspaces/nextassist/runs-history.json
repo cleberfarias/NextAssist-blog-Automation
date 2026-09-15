@@ -1,5 +1,111 @@
 [
   {
+    "id": "2026-09-15T13:30:03.450Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-15T13:30:03.450Z",
+    "finalizadoEm": "2026-09-15T13:35:26.325Z",
+    "tema": "MarkupEmpresa serve para assistência técnica de celular? Veja o que avaliar",
+    "status": "publicado",
+    "slug": "markupempresa-assistencia-tecnica-celulares",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "MarkupEmpresa serve para assistência técnica de celular? Veja o que avaliar",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-15T13:30:03.460Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "**Levantamento em 15/09/2026:**\n\n- **A resposta curta é “sim, ao menos no posicionamento comercial”.** A MarkupEmpresa mantém landing page e vários conteúdos voltados especificamente a assistências de celular. Afirma oferecer OS digital, co",
+        "timestamp": "2026-09-15T13:31:05.262Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-15T13:31:05.263Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: MarkupEmpresa assistência técnica: serve para celulares?",
+        "timestamp": "2026-09-15T13:31:34.941Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-15T13:31:34.941Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Ao pesquisar por “MarkupEmpresa assistência técnica”, a primeira impressão é que o sistema foi pensado para atender boa parte da rotina de uma loja de conserto de celulares. A proposta comercial desta...",
+        "timestamp": "2026-09-15T13:32:43.746Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-15T13:32:43.747Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: markupempresa-assistencia-tecnica-celulares · Tags: MarkupEmpresa, Assistência técnica, Ordem de serviço, Gestão de estoque, Software de gestão",
+        "timestamp": "2026-09-15T13:34:30.566Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-15T13:34:30.566Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/markupempresa-assistencia-tecnica-celulares",
+        "timestamp": "2026-09-15T13:35:23.728Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-15T13:35:23.729Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-15T13:35:26.322Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 55099,
+      "outputTokens": 10714,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 6,
+      "estimatedUsd": 0.386007,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 14,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 14,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-14T13:42:27.893Z",
     "origem": "action",
     "iniciadoEm": "2026-09-14T13:42:27.893Z",
