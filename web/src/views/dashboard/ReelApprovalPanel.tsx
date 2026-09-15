@@ -2,36 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useWorkspace } from "../../hooks/useWorkspace";
 import { apiGet, apiPost } from "../../lib/api";
 import { formatDateTime, nf } from "../../lib/formatters";
-
-type ReelStatus = "queued" | "rendering" | "pending_approval" | "approved" | "rejected" | "publishing" | "published" | "failed";
-
-interface ReelAuditEvent {
-  from: ReelStatus | null;
-  to: ReelStatus;
-  at: string;
-  actor: "pipeline" | "human" | "system";
-  note?: string;
-}
-
-interface ReelRecord {
-  id: string;
-  slug: string;
-  title: string;
-  blogUrl: string;
-  caption: string;
-  status: ReelStatus;
-  videoUrl?: string;
-  permalink?: string | null;
-  error?: string;
-  updatedAt: string;
-  audit: ReelAuditEvent[];
-}
-
-interface ReelDashboardResponse {
-  updatedAt: string | null;
-  summary: { total: number; pendingApproval: number; approved: number; published: number; failed: number };
-  entries: ReelRecord[];
-}
+import type { ReelStatus, ReelDashboardResponse } from "../../types/api";
 
 function statusLabel(status: ReelStatus): string {
   const labels: Record<ReelStatus, string> = {

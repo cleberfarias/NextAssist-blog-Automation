@@ -217,3 +217,65 @@ export interface RevenueDashboardResponse {
   snapshot: RevenueSnapshot;
   decision: RevenueDecision;
 }
+
+export type ReelStatus = "queued" | "rendering" | "pending_approval" | "approved" | "rejected" | "publishing" | "published" | "failed";
+
+export interface ReelAuditEvent {
+  from: ReelStatus | null;
+  to: ReelStatus;
+  at: string;
+  actor: "pipeline" | "human" | "system";
+  note?: string;
+}
+
+export type TimelineStepName =
+  | "roteiro_gerado" | "cenas_montadas" | "enviado_heygen"
+  | "processando" | "video_concluido" | "aguardando_aprovacao" | "publicado";
+
+export interface TimelineStep {
+  step: TimelineStepName;
+  at: string;
+}
+
+export interface SceneSummary {
+  type: "avatar_video" | "video";
+  label: string;
+  assetId?: string;
+  thumbnailUrl?: string;
+}
+
+export interface ReelListEntry {
+  id: string;
+  slug: string;
+  title: string;
+  blogUrl: string;
+  caption: string;
+  status: ReelStatus;
+  videoUrl?: string;
+  permalink?: string | null;
+  error?: string;
+  updatedAt: string;
+  audit: ReelAuditEvent[];
+}
+
+export interface ReelDetail extends ReelListEntry {
+  scenes?: SceneSummary[];
+  timelineSteps?: TimelineStep[];
+}
+
+export interface ReelDashboardResponse {
+  updatedAt: string | null;
+  summary: { total: number; pendingApproval: number; approved: number; published: number; failed: number };
+  entries: ReelListEntry[];
+}
+
+export interface CalendarTopic {
+  tema: string;
+  palavraChaveAlvo: string;
+  publicado: boolean;
+  publicadoEm?: string;
+  generatedBy?: "marketing-director";
+  createdAt?: string;
+  reason?: string;
+  priority?: "high" | "medium" | "low";
+}
