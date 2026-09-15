@@ -3,20 +3,30 @@ import { Link } from "react-router-dom";
 import { useWorkspace } from "../../../hooks/useWorkspace";
 import { usePipeline } from "../../../hooks/usePipeline";
 import { apiGet } from "../../../lib/api";
+import { PIPELINE_STAGES } from "../../../lib/pipelineStages";
 import { STATUS_LABEL } from "../../dashboard/LiveStatus";
 import { computePipelineStats } from "./contentPipelineStats";
+import { AgentBubble } from "./AgentBubble";
+import type { AgentOperationalStatus } from "../../../hooks/useAgentOperations";
 import type { AgentId, AgentStatus, RunRecord, CalendarTopic } from "../../../types/api";
 
-const STAGES: { id: AgentId; label: string; icon: string; photoLeft: string }[] = [
-  { id: "marketing-director", label: "Marketing Director", icon: "📊", photoLeft: "11%" },
-  { id: "pesquisa-mercado", label: "Pesquisa de mercado", icon: "🔍", photoLeft: "23%" },
-  { id: "pesquisa-pauta", label: "Pesquisa de pauta", icon: "🗂️", photoLeft: "35%" },
-  { id: "redator", label: "Redação", icon: "✍️", photoLeft: "47%" },
-  { id: "editor-seo", label: "Editor / SEO", icon: "🧐", photoLeft: "59%" },
-  { id: "publicador", label: "Publicação", icon: "🚀", photoLeft: "71%" },
-  { id: "instagram", label: "Instagram", icon: "📸", photoLeft: "83%" },
-  { id: "indexador", label: "Indexação / Google", icon: "📈", photoLeft: "95%" },
-];
+/**
+ * Posição de cada estágio sobre a foto — centro de cada pessoa na fileira,
+ * alternando duas alturas (top-1/top-16) pra balões vizinhos não se
+ * encostarem. Classes literais completas — o scanner do Tailwind precisa
+ * encontrar a string exata no código-fonte, não dá pra montar por
+ * interpolação de variável.
+ */
+const PHOTO_POSITION: Record<AgentId, string> = {
+  "marketing-director": "sm:left-[11%] sm:-translate-x-1/2 sm:top-1",
+  "pesquisa-mercado": "sm:left-[23%] sm:-translate-x-1/2 sm:top-16",
+  "pesquisa-pauta": "sm:left-[35%] sm:-translate-x-1/2 sm:top-1",
+  redator: "sm:left-[47%] sm:-translate-x-1/2 sm:top-16",
+  "editor-seo": "sm:left-[59%] sm:-translate-x-1/2 sm:top-1",
+  publicador: "sm:left-[71%] sm:-translate-x-1/2 sm:top-16",
+  instagram: "sm:left-[83%] sm:-translate-x-1/2 sm:top-1",
+  indexador: "sm:left-[95%] sm:-translate-x-1/2 sm:top-16",
+};
 
 /**
  * Imagem de cenário da equipe de conteúdo — decorativa, os 8 estágios já
@@ -35,6 +45,13 @@ const RUN_MODE_LABEL: Record<string, string> = {
   dispatch: "GitHub Actions",
   disabled: "Execução manual desabilitada",
 };
+
+function toOperationalStatus(status: AgentStatus): AgentOperationalStatus {
+  if (status === "done") return "completed";
+  if (status === "working") return "working";
+  if (status === "error") return "failed";
+  return "idle";
+}
 
 function useWorkspaceData<T>(path: string): T | null {
   const { workspace } = useWorkspace();
@@ -67,9 +84,9 @@ export function ContentPipelineBoard() {
   const stats = computePipelineStats(runs ?? [], topics ?? [], new Date());
   const [imageFailed, setImageFailed] = useState(false);
 
-  const completedStages = STAGES.filter((s) => desks[s.id]?.status === "done").length;
-  const currentStage = STAGES.find((s) => desks[s.id]?.status === "working");
-  const progressPct = Math.round((completedStages / STAGES.length) * 100);
+  const completedStages = PIPELINE_STAGES.filter((s) => desks[s.id]?.status === "done").length;
+  const currentStage = PIPELINE_STAGES.find((s) => desks[s.id]?.status === "working");
+  const progressPct = Math.round((completedStages / PIPELINE_STAGES.length) * 100);
 
   return (
     <div>
@@ -82,7 +99,7 @@ export function ContentPipelineBoard() {
 
       <div className="mt-6 flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-primary">Fluxo da sua equipe de {STAGES.length} agentes</h3>
+          <h3 className="font-semibold text-primary">Fluxo da sua equipe de {PIPELINE_STAGES.length} agentes</h3>
           <p className="text-sm text-secondary">Cada agente tem uma função específica no processo de criação e publicação de conteúdo.</p>
         </div>
         <div className="flex items-center gap-2">
@@ -101,34 +118,31 @@ export function ContentPipelineBoard() {
             onError={() => setImageFailed(true)}
           />
         )}
-        {STAGES.map((stage, index) => {
-          const status = desks[stage.id]?.status ?? "idle";
-          const staggered = index % 2 === 1; // linha de baixo pra vizinhos não se encostarem
+        {PIPELINE_STAGES.map((stage) => {
+          const event = desks[stage.id];
+          const status = event?.status ?? "idle";
           return (
-            <div
+            <AgentBubble
               key={stage.id}
-              className={`absolute hidden -translate-x-1/2 flex-col items-center sm:flex ${staggered ? "top-16" : "top-1"}`}
-              style={{ left: stage.photoLeft }}
-            >
-              <div className="w-28 rounded-xl border border-border bg-surface p-2 text-center shadow-lg">
-                <div className="flex items-center justify-center gap-1">
-                  <span className="text-xs" aria-hidden="true">{stage.icon}</span>
-                  <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[status]}`} aria-label={STATUS_LABEL[status]} />
-                </div>
-                <div className="mt-1 text-[10px] font-semibold leading-tight text-primary">{stage.label}</div>
-                <div className="text-[9px] text-secondary">{STATUS_LABEL[status]}</div>
-              </div>
-              <span aria-hidden="true" className="h-0 w-0 border-x-[6px] border-x-transparent border-t-[7px] border-t-surface" />
-            </div>
+              to={`/agentes/${stage.id}`}
+              icon={stage.icon}
+              title={stage.label}
+              status={toOperationalStatus(status)}
+              statusLabel={STATUS_LABEL[status]}
+              message={event?.message || "Dados ainda não disponíveis."}
+              position={PHOTO_POSITION[stage.id]}
+              tailDirection="down"
+              tailPosition="sm:-bottom-2 sm:left-1/2 sm:-translate-x-1/2"
+            />
           );
         })}
       </div>
 
       <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
-        {STAGES.map((stage) => {
+        {PIPELINE_STAGES.map((stage) => {
           const status = desks[stage.id]?.status ?? "idle";
           return (
-            <div key={stage.id} className="w-40 shrink-0 rounded-lg border border-border bg-surface p-3">
+            <Link key={stage.id} to={`/agentes/${stage.id}`} className="w-40 shrink-0 rounded-lg border border-border bg-surface p-3 hover:border-accent">
               <div className="flex items-center justify-between">
                 <span className="text-lg" aria-hidden="true">{stage.icon}</span>
                 <span className={`h-2 w-2 rounded-full ${STATUS_DOT[status]}`} aria-label={STATUS_LABEL[status]} />
@@ -136,7 +150,7 @@ export function ContentPipelineBoard() {
               <div className="mt-2 text-sm font-semibold text-primary">{stage.label}</div>
               <div className="mt-1 text-xs text-secondary">{STATUS_LABEL[status]}</div>
               <div className="mt-2 text-xs text-secondary">{stats.stageCounts[stage.id]} concluído(s) · 7 dias</div>
-            </div>
+            </Link>
           );
         })}
       </div>

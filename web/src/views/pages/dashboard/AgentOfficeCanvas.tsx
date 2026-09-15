@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useAgentOperations, type AgentOperationalState, type AgentOperationalStatus } from "../../../hooks/useAgentOperations";
+import { useAgentOperations, type AgentOperationalState } from "../../../hooks/useAgentOperations";
+import { AgentBubble, type TailDirection } from "./AgentBubble";
 
 /**
  * Imagem de cenário do escritório — puramente decorativa (nenhum status,
@@ -8,15 +8,6 @@ import { useAgentOperations, type AgentOperationalState, type AgentOperationalSt
  * `web/public/agent-office-bg.png`, o canvas cai para um gradiente escuro.
  */
 const BACKGROUND_SRC = "/agent-office-bg.png";
-
-const STATUS_DOT: Record<AgentOperationalStatus, string> = {
-  working: "bg-accent",
-  waiting: "bg-status-warn",
-  needs_attention: "bg-status-warn",
-  failed: "bg-status-error",
-  completed: "bg-status-ok",
-  idle: "bg-secondary",
-};
 
 /**
  * Posição de cada badge sobre o canvas, ancorada em cima da pessoa
@@ -34,14 +25,6 @@ const BADGE_POSITION: Record<AgentOperationalState["agentId"], string> = {
   revenue: "sm:left-[75%] sm:top-[2%]",
 };
 
-/**
- * Direção da "pontinha" do balão de fala, apontando pra pessoa
- * correspondente — down para quem o badge fica acima da pessoa, left/right
- * para quem fica ao lado. Escondida no mobile (empilhado, não aponta pra
- * ninguém em especial).
- */
-type TailDirection = "down" | "left" | "right";
-
 const BADGE_TAIL: Record<AgentOperationalState["agentId"], { direction: TailDirection; position: string }> = {
   social: { direction: "right", position: "sm:-right-2 sm:top-6" },
   analytics: { direction: "down", position: "sm:-bottom-2 sm:left-8" },
@@ -50,27 +33,20 @@ const BADGE_TAIL: Record<AgentOperationalState["agentId"], { direction: TailDire
   revenue: { direction: "down", position: "sm:-bottom-2 sm:left-8" },
 };
 
-const TAIL_SHAPE: Record<TailDirection, string> = {
-  down: "border-x-[9px] border-x-transparent border-t-[10px] border-t-surface",
-  left: "border-y-[9px] border-y-transparent border-r-[10px] border-r-surface",
-  right: "border-y-[9px] border-y-transparent border-l-[10px] border-l-surface",
-};
-
-function AgentBadge({ state }: { state: AgentOperationalState }) {
+function OfficeBadge({ state }: { state: AgentOperationalState }) {
   const tail = BADGE_TAIL[state.agentId];
   return (
-    <Link
+    <AgentBubble
       to={`/agentes/${state.agentId}`}
-      className={`relative z-10 block w-full rounded-2xl border border-border bg-surface p-2.5 shadow-lg hover:border-accent hover:z-20 sm:absolute sm:w-44 ${BADGE_POSITION[state.agentId]}`}
-    >
-      <div className="flex items-center gap-1.5">
-        <span aria-hidden="true">{state.icon}</span>
-        <strong className="text-xs text-primary">{state.title}</strong>
-        <span className={`ml-auto h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[state.status]}`} aria-label={state.statusLabel} />
-      </div>
-      <p className="mt-1 text-[11px] leading-snug text-secondary">{state.message}</p>
-      <span aria-hidden="true" className={`absolute hidden h-0 w-0 sm:block ${TAIL_SHAPE[tail.direction]} ${tail.position}`} />
-    </Link>
+      icon={state.icon}
+      title={state.title}
+      status={state.status}
+      statusLabel={state.statusLabel}
+      message={state.message}
+      position={BADGE_POSITION[state.agentId]}
+      tailDirection={tail.direction}
+      tailPosition={tail.position}
+    />
   );
 }
 
@@ -94,11 +70,11 @@ export function AgentOfficeCanvas() {
             onError={() => setImageFailed(true)}
           />
         )}
-        <AgentBadge state={agents.revenue} />
-        <AgentBadge state={agents.analytics} />
-        <AgentBadge state={agents.sales} />
-        <AgentBadge state={agents.social} />
-        <AgentBadge state={agents.finance} />
+        <OfficeBadge state={agents.revenue} />
+        <OfficeBadge state={agents.analytics} />
+        <OfficeBadge state={agents.sales} />
+        <OfficeBadge state={agents.social} />
+        <OfficeBadge state={agents.finance} />
       </div>
     </section>
   );

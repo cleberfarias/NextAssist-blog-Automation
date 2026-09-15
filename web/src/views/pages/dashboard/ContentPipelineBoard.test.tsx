@@ -54,6 +54,10 @@ describe("ContentPipelineBoard", () => {
     expect(screen.getAllByText("Pesquisa de mercado").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Indexação / Google").length).toBeGreaterThan(0);
 
+    // Os dois — balão e card — precisam levar pro drill-down do agente, não só decorar.
+    const marketingDirectorLinks = screen.getAllByText("Marketing Director").map((el) => el.closest("a"));
+    expect(marketingDirectorLinks.every((a) => a?.getAttribute("href") === "/agentes/marketing-director")).toBe(true);
+
     expect(screen.getByText(/Nenhum conteúdo em produção no momento/)).toBeInTheDocument();
   });
 });

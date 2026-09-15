@@ -1,15 +1,31 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { usePipeline } from "../../hooks/usePipeline";
 import { RunsPanel } from "../dashboard/RunsPanel";
 import { SalesPanel } from "../dashboard/SalesPanel";
 import { RevenuePanel } from "../dashboard/RevenuePanel";
 import { ReelApprovalPanel } from "../dashboard/ReelApprovalPanel";
+import { STATUS_LABEL } from "../dashboard/LiveStatus";
+import { PIPELINE_STAGE_BY_ID } from "../../lib/pipelineStages";
 import type { OfficeAgentId } from "../../hooks/useAgentOperations";
+import type { AgentId } from "../../types/api";
 
-const TITLES: Record<OfficeAgentId, string> = {
+type AnyAgentId = OfficeAgentId | AgentId;
+
+const OFFICE_TITLES: Record<OfficeAgentId, string> = {
   social: "Social Agent", analytics: "Analytics Agent", sales: "Sales Agent",
   finance: "Finance Agent", revenue: "Revenue Director",
 };
+
+function isPipelineStage(id: string): id is AgentId {
+  return id in PIPELINE_STAGE_BY_ID;
+}
+
+function titleFor(id: AnyAgentId): string {
+  if (id in OFFICE_TITLES) return OFFICE_TITLES[id as OfficeAgentId];
+  if (isPipelineStage(id)) return PIPELINE_STAGE_BY_ID[id].label;
+  return id;
+}
 
 type Tab = "visao-geral" | "detalhes" | "historico" | "acoes";
 const TABS: { id: Tab; label: string }[] = [
@@ -19,21 +35,37 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "acoes", label: "Ações" },
 ];
 
-function VisaoGeral({ agentId }: { agentId: OfficeAgentId }) {
+function PipelineStageOverview({ id }: { id: AgentId }) {
+  const { desks } = usePipeline();
+  const event = desks[id];
+  const status = event?.status ?? "idle";
+  return (
+    <section className="rounded-lg border border-border bg-surface p-4">
+      <div className="flex items-center gap-2">
+        <span className="text-lg" aria-hidden="true">{PIPELINE_STAGE_BY_ID[id].icon}</span>
+        <strong className="text-primary">{STATUS_LABEL[status]}</strong>
+      </div>
+      <p className="mt-2 text-sm text-secondary">{event?.message || "Dados ainda não disponíveis."}</p>
+    </section>
+  );
+}
+
+function VisaoGeral({ agentId }: { agentId: AnyAgentId }) {
   if (agentId === "sales") return <SalesPanel />;
   if (agentId === "revenue") return <RevenuePanel />;
   if (agentId === "social") return <ReelApprovalPanel />;
+  if (isPipelineStage(agentId)) return <PipelineStageOverview id={agentId} />;
   return <p className="text-secondary">Sem painel detalhado para este agente ainda — veja o card em <Link className="text-accent" to="/agentes">Agentes (IA)</Link>.</p>;
 }
 
 export function AgenteDetailPage() {
-  const { agentId } = useParams<{ agentId: OfficeAgentId }>();
+  const { agentId } = useParams<{ agentId: string }>();
   const [tab, setTab] = useState<Tab>("visao-geral");
-  const id = (agentId ?? "sales") as OfficeAgentId;
+  const id = (agentId ?? "sales") as AnyAgentId;
 
   return (
     <div className="p-6 text-primary">
-      <h1 className="mb-4 text-xl font-semibold">{TITLES[id] ?? id}</h1>
+      <h1 className="mb-4 text-xl font-semibold">{titleFor(id)}</h1>
 
       <div role="tablist" className="mb-4 flex gap-2 border-b border-border">
         {TABS.map((t) => (

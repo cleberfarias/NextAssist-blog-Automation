@@ -51,4 +51,35 @@ describe("AgenteDetailPage", () => {
     await userEvent.click(screen.getByRole("tab", { name: "Ações" }));
     expect(await screen.findByText(/Sem ações automatizadas/)).toBeInTheDocument();
   });
+
+  it("aceita um dos 8 IDs do pipeline (não só os 5 do Agent Office) e mostra status real", async () => {
+    vi.stubGlobal("EventSource", FakeEventSource as unknown as typeof EventSource);
+    vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.includes("/api/workspaces")) return Promise.resolve({ ok: true, json: async () => [{ id: "nextassist", name: "NextAssist" }] });
+      if (url.includes("/api/status")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ running: false, runMode: "local", lastEvents: [{ agent: "redator", status: "done", message: "Rascunho concluído.", timestamp: "2026-09-15T10:00:00.000Z" }] }),
+        });
+      }
+      if (url.includes("/api/runs")) return Promise.resolve({ ok: true, json: async () => [] });
+      return Promise.resolve({ ok: true, json: async () => ({}) });
+    }));
+
+    render(
+      <WorkspaceProvider>
+        <ToastProvider>
+          <PipelineProvider>
+            <MemoryRouter initialEntries={["/agentes/redator"]}>
+              <Routes><Route path="/agentes/:agentId" element={<AgenteDetailPage />} /></Routes>
+            </MemoryRouter>
+          </PipelineProvider>
+        </ToastProvider>
+      </WorkspaceProvider>,
+    );
+
+    expect(await screen.findByRole("heading", { name: "Redação" })).toBeInTheDocument();
+    expect(await screen.findByText("Rascunho concluído.")).toBeInTheDocument();
+  });
 });
