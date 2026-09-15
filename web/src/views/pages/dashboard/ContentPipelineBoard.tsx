@@ -101,19 +101,24 @@ export function ContentPipelineBoard() {
             onError={() => setImageFailed(true)}
           />
         )}
-        {STAGES.map((stage) => {
+        {STAGES.map((stage, index) => {
           const status = desks[stage.id]?.status ?? "idle";
+          const staggered = index % 2 === 1; // linha de baixo pra vizinhos não se encostarem
           return (
             <div
               key={stage.id}
-              className="absolute top-2 hidden -translate-x-1/2 flex-col items-center sm:flex"
+              className={`absolute hidden -translate-x-1/2 flex-col items-center sm:flex ${staggered ? "top-16" : "top-1"}`}
               style={{ left: stage.photoLeft }}
             >
-              <div className="flex items-center gap-1 rounded-full border border-border bg-surface px-2 py-1 shadow-lg" title={stage.label}>
-                <span className="text-xs" aria-hidden="true">{stage.icon}</span>
-                <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[status]}`} aria-label={STATUS_LABEL[status]} />
+              <div className="w-28 rounded-xl border border-border bg-surface p-2 text-center shadow-lg">
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-xs" aria-hidden="true">{stage.icon}</span>
+                  <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[status]}`} aria-label={STATUS_LABEL[status]} />
+                </div>
+                <div className="mt-1 text-[10px] font-semibold leading-tight text-primary">{stage.label}</div>
+                <div className="text-[9px] text-secondary">{STATUS_LABEL[status]}</div>
               </div>
-              <span className="h-6 w-px bg-border" aria-hidden="true" />
+              <span aria-hidden="true" className="h-0 w-0 border-x-[6px] border-x-transparent border-t-[7px] border-t-surface" />
             </div>
           );
         })}

@@ -49,9 +49,10 @@ describe("ContentPipelineBoard", () => {
     const completedCard = screen.getByText("Concluídos").closest("div")!.parentElement!;
     expect(within(completedCard).getByText("1")).toBeInTheDocument(); // completedLast7Days
 
-    expect(screen.getByText("Marketing Director")).toBeInTheDocument();
-    expect(screen.getByText("Pesquisa de mercado")).toBeInTheDocument();
-    expect(screen.getByText("Indexação / Google")).toBeInTheDocument();
+    // Cada estágio aparece 2x de propósito: o balão sobre a foto e o card de detalhe abaixo.
+    expect(screen.getAllByText("Marketing Director").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Pesquisa de mercado").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Indexação / Google").length).toBeGreaterThan(0);
 
     expect(screen.getByText(/Nenhum conteúdo em produção no momento/)).toBeInTheDocument();
   });
