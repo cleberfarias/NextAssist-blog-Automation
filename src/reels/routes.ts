@@ -1,7 +1,7 @@
 import { Router } from "express";
 import type { WorkspaceContext } from "../context.js";
 import { publishReelToInstagram } from "../lib/instagram.js";
-import { getReelState } from "./state.js";
+import { getReelState, findReel } from "./state.js";
 import { publishApprovedInstagramReel, reviewInstagramReel } from "./publisher.js";
 
 export interface ReelRoutesOptions {
@@ -41,6 +41,24 @@ export function createReelRoutes(options: ReelRoutesOptions): Router {
         },
         entries,
       });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.get("/:id", async (req, res, next) => {
+    try {
+      const workspaceId = String(req.query.workspace ?? "").trim();
+      if (!workspaceId) {
+        res.status(400).json({ error: "Parâmetro ?workspace= é obrigatório." });
+        return;
+      }
+      const record = await findReel(await options.contextFor(workspaceId), req.params.id);
+      if (!record) {
+        res.status(404).json({ error: "Reel não encontrado." });
+        return;
+      }
+      res.json(record);
     } catch (err) {
       next(err);
     }
