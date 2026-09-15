@@ -19,31 +19,33 @@ const STATUS_DOT: Record<AgentOperationalStatus, string> = {
 };
 
 /**
- * Posição de cada badge sobre o canvas, em porcentagem — só se aplica a
- * partir de `sm`. Em telas estreitas (< sm) os badges abandonam o
- * posicionamento absoluto e empilham como uma lista normal, porque uma
- * largura fixa flutuando sobre uma imagem não cabe em ~390px.
+ * Posição de cada badge sobre o canvas, ancorada em cima da pessoa
+ * correspondente em `agent-office-bg.png` (mesma referência visual
+ * combinada com o usuário) — só se aplica a partir de `sm`. Em telas
+ * estreitas (< sm) os badges abandonam o posicionamento absoluto e
+ * empilham como uma lista normal, porque uma largura fixa flutuando
+ * sobre uma imagem não cabe em ~390px.
  */
 const BADGE_POSITION: Record<AgentOperationalState["agentId"], string> = {
-  revenue: "sm:left-1/2 sm:top-4 sm:-translate-x-1/2",
-  analytics: "sm:left-6 sm:top-1/3",
-  sales: "sm:right-6 sm:top-1/3",
-  social: "sm:left-6 sm:bottom-6",
-  finance: "sm:right-6 sm:bottom-6",
+  social: "sm:left-[1%] sm:top-[42%]",
+  analytics: "sm:left-[24%] sm:top-[24%]",
+  sales: "sm:left-[48%] sm:top-[27%]",
+  finance: "sm:left-[75%] sm:top-[46%]",
+  revenue: "sm:left-[75%] sm:top-[2%]",
 };
 
 function AgentBadge({ state }: { state: AgentOperationalState }) {
   return (
     <Link
       to={`/agentes/${state.agentId}`}
-      className={`relative block w-full rounded-lg border border-border bg-surface/90 p-3 backdrop-blur-sm hover:border-accent sm:absolute sm:w-56 ${BADGE_POSITION[state.agentId]}`}
+      className={`relative z-10 block w-full rounded-lg border border-border bg-surface/90 p-2.5 backdrop-blur-sm hover:border-accent hover:z-20 sm:absolute sm:w-44 ${BADGE_POSITION[state.agentId]}`}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         <span aria-hidden="true">{state.icon}</span>
-        <strong className="text-sm text-primary">{state.title}</strong>
-        <span className={`ml-auto h-2 w-2 rounded-full ${STATUS_DOT[state.status]}`} aria-label={state.statusLabel} />
+        <strong className="text-xs text-primary">{state.title}</strong>
+        <span className={`ml-auto h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[state.status]}`} aria-label={state.statusLabel} />
       </div>
-      <p className="mt-1 text-xs text-secondary">{state.message}</p>
+      <p className="mt-1 text-[11px] leading-snug text-secondary">{state.message}</p>
     </Link>
   );
 }
@@ -58,7 +60,7 @@ export function AgentOfficeCanvas() {
         <h2 className="font-semibold text-primary">Agentes em ação</h2>
         <span className="text-xs text-status-ok">Todos os agentes operacionais</span>
       </div>
-      <div className="relative flex min-h-[420px] flex-col gap-3 overflow-hidden rounded-lg bg-gradient-to-br from-app to-surface p-3 sm:block sm:p-0">
+      <div className="relative flex min-h-[460px] flex-col gap-3 overflow-hidden rounded-lg bg-gradient-to-br from-app to-surface p-3 sm:block sm:p-0">
         {!imageFailed && (
           <img
             src={BACKGROUND_SRC}
