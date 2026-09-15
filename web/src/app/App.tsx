@@ -8,6 +8,7 @@ import { ConfigView } from "../views/settings/ConfigView";
 import { ReelApprovalPanel } from "../views/dashboard/ReelApprovalPanel";
 import { HistoryPanel } from "../views/dashboard/HistoryPanel";
 import { SalesPanel } from "../views/dashboard/SalesPanel";
+import { ReelDetailPage } from "../views/reels/ReelDetailPage";
 
 function Placeholder({ testId, title }: { testId: string; title: string }) {
   return <div data-testid={testId} className="p-6 text-primary"><h1 className="text-xl font-semibold">{title}</h1></div>;
@@ -29,7 +30,7 @@ export default function App() {
                   <Route path="/agentes/:agentId" element={<Placeholder testId="page-agente-detalhe" title="Agente" />} />
                   <Route path="/conteudo" element={<Placeholder testId="page-conteudo" title="Conteúdo" />} />
                   <Route path="/reels" element={<ReelApprovalPanel />} />
-                  <Route path="/reels/:id" element={<Placeholder testId="page-reel-detalhe" title="Reel" />} />
+                  <Route path="/reels/:id" element={<ReelDetailPage />} />
                   <Route path="/blog" element={<HistoryPanel />} />
                   <Route path="/leads" element={<SalesPanel />} />
                   <Route path="/clientes" element={<SalesPanel filterIntent="customer" />} />
