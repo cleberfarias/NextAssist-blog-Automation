@@ -3,21 +3,8 @@ import { useParams } from "react-router-dom";
 import { useWorkspace } from "../../hooks/useWorkspace";
 import { apiGet } from "../../lib/api";
 import { formatDateTime } from "../../lib/formatters";
-import type { ReelDetail, TimelineStepName } from "../../types/api";
-
-const STEP_LABELS: Record<TimelineStepName, string> = {
-  roteiro_gerado: "Roteiro gerado",
-  cenas_montadas: "Cenas montadas",
-  enviado_heygen: "Enviado para HeyGen",
-  processando: "Processando na HeyGen",
-  video_concluido: "Vídeo concluído",
-  aguardando_aprovacao: "Aguardando sua aprovação",
-  publicado: "Publicado no Instagram",
-};
-const STEP_ORDER: TimelineStepName[] = [
-  "roteiro_gerado", "cenas_montadas", "enviado_heygen", "processando",
-  "video_concluido", "aguardando_aprovacao", "publicado",
-];
+import { TIMELINE_STEP_LABEL, TIMELINE_STEP_ORDER } from "../../lib/reelStatus";
+import type { ReelDetail } from "../../types/api";
 
 export function ReelDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -48,10 +35,10 @@ export function ReelDetailPage() {
         <section className="rounded-lg border border-border bg-surface p-4">
           <h2 className="mb-3 font-semibold">Linha do tempo</h2>
           <ol className="space-y-2">
-            {STEP_ORDER.map((step) => (
+            {TIMELINE_STEP_ORDER.map((step) => (
               <li key={step} className={`flex items-center gap-2 text-sm ${completedSteps.has(step) ? "text-primary" : "text-secondary"}`}>
                 <span aria-hidden="true">{completedSteps.has(step) ? "✅" : "○"}</span>
-                {STEP_LABELS[step]}
+                {TIMELINE_STEP_LABEL[step]}
               </li>
             ))}
           </ol>

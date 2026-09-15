@@ -39,8 +39,8 @@ describe("ReelDetailPage", () => {
     );
 
     expect(await screen.findByText("NextAssist - Teste multi-cena Studio")).toBeInTheDocument();
-    expect(screen.getByText("Roteiro gerado")).toBeInTheDocument();
-    expect(screen.getByText("Cenas montadas")).toBeInTheDocument();
+    expect(screen.getByText("Roteiro gerado pela IA")).toBeInTheDocument();
+    expect(screen.getByText("Cenas montadas (Studio)")).toBeInTheDocument();
     expect(screen.getByText("Enviado para HeyGen")).toBeInTheDocument();
     expect(screen.getByText("Fechamento de OS")).toBeInTheDocument();
   });

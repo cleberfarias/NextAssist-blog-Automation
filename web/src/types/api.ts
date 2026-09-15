@@ -251,17 +251,20 @@ export interface ReelListEntry {
   blogUrl: string;
   caption: string;
   status: ReelStatus;
+  provider?: "heygen-mcp" | "heygen-api";
+  avatarId?: string;
+  voiceId?: string;
+  videoId?: string;
   videoUrl?: string;
   permalink?: string | null;
   error?: string;
   updatedAt: string;
   audit: ReelAuditEvent[];
-}
-
-export interface ReelDetail extends ReelListEntry {
   scenes?: SceneSummary[];
   timelineSteps?: TimelineStep[];
 }
+
+export type ReelDetail = ReelListEntry;
 
 export interface ReelDashboardResponse {
   updatedAt: string | null;

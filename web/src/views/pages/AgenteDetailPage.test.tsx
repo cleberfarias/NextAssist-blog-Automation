@@ -82,4 +82,40 @@ describe("AgenteDetailPage", () => {
     expect(await screen.findByRole("heading", { name: "Redação" })).toBeInTheDocument();
     expect(await screen.findByText("Rascunho concluído.")).toBeInTheDocument();
   });
+
+  it("agente social mostra o Reel em destaque com dados reais, não a tabela genérica de aprovação", async () => {
+    vi.stubGlobal("EventSource", FakeEventSource as unknown as typeof EventSource);
+    vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.includes("/api/workspaces")) return Promise.resolve({ ok: true, json: async () => [{ id: "nextassist", name: "NextAssist" }] });
+      if (url.includes("/api/status")) return Promise.resolve({ ok: true, json: async () => ({ running: false, lastEvents: [], runMode: "local" }) });
+      if (url.includes("/api/reels")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            updatedAt: null, summary: { total: 1, pendingApproval: 0, approved: 0, published: 0, failed: 0 },
+            entries: [{ id: "r1", slug: "r1", title: "Reel de teste", blogUrl: "", caption: "Legenda real", status: "rendering", updatedAt: new Date().toISOString(), audit: [] }],
+          }),
+        });
+      }
+      if (url.includes("/api/runs")) return Promise.resolve({ ok: true, json: async () => [] });
+      return Promise.resolve({ ok: true, json: async () => ({}) });
+    }));
+
+    render(
+      <WorkspaceProvider>
+        <ToastProvider>
+          <PipelineProvider>
+            <MemoryRouter initialEntries={["/agentes/social"]}>
+              <Routes><Route path="/agentes/:agentId" element={<AgenteDetailPage />} /></Routes>
+            </MemoryRouter>
+          </PipelineProvider>
+        </ToastProvider>
+      </WorkspaceProvider>,
+    );
+
+    expect(await screen.findByRole("heading", { name: "Social Agent" })).toBeInTheDocument();
+    expect(await screen.findByText("Reel de teste")).toBeInTheDocument();
+    expect(screen.getByText("Linha do tempo")).toBeInTheDocument();
+  });
 });

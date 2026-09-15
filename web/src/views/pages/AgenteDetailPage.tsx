@@ -4,7 +4,7 @@ import { usePipeline } from "../../hooks/usePipeline";
 import { RunsPanel } from "../dashboard/RunsPanel";
 import { SalesPanel } from "../dashboard/SalesPanel";
 import { RevenuePanel } from "../dashboard/RevenuePanel";
-import { ReelApprovalPanel } from "../dashboard/ReelApprovalPanel";
+import { SocialAgentOverview } from "./agente-detail/SocialAgentOverview";
 import { STATUS_LABEL } from "../dashboard/LiveStatus";
 import { PIPELINE_STAGE_BY_ID } from "../../lib/pipelineStages";
 import type { OfficeAgentId } from "../../hooks/useAgentOperations";
@@ -53,7 +53,7 @@ function PipelineStageOverview({ id }: { id: AgentId }) {
 function VisaoGeral({ agentId }: { agentId: AnyAgentId }) {
   if (agentId === "sales") return <SalesPanel />;
   if (agentId === "revenue") return <RevenuePanel />;
-  if (agentId === "social") return <ReelApprovalPanel />;
+  if (agentId === "social") return <SocialAgentOverview />;
   if (isPipelineStage(agentId)) return <PipelineStageOverview id={agentId} />;
   return <p className="text-secondary">Sem painel detalhado para este agente ainda — veja o card em <Link className="text-accent" to="/agentes">Agentes (IA)</Link>.</p>;
 }
