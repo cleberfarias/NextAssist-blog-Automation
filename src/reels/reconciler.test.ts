@@ -52,6 +52,31 @@ for (const remoteStatus of ["queued", "rendering"] as const) {
   });
 }
 
+test("reconcileReelWithRemote: still-rendering registra o step 'processando' uma única vez mesmo em polls repetidos", async () => {
+  const { temp, ctx } = await fixtureCtx();
+  try {
+    const record = await renderingReel(ctx);
+    const client = fakeClient(async () => ({ status: "rendering" }));
+    const first = await reconcileReelWithRemote(ctx, client, record);
+    const second = await reconcileReelWithRemote(ctx, client, first.record);
+    assert.deepEqual(second.record.timelineSteps?.map((s) => s.step), ["processando"]);
+  } finally {
+    await temp.cleanup();
+  }
+});
+
+test("reconcileReelWithRemote: completed registra o step 'video_concluido'", async () => {
+  const { temp, ctx } = await fixtureCtx();
+  try {
+    const record = await renderingReel(ctx);
+    const client = fakeClient(async () => ({ status: "completed", videoUrl: "https://files.heygen.ai/v.mp4" }));
+    const result = await reconcileReelWithRemote(ctx, client, record);
+    assert.deepEqual(result.record.timelineSteps?.map((s) => s.step), ["video_concluido"]);
+  } finally {
+    await temp.cleanup();
+  }
+});
+
 // E — completed remoto: pending_approval, videoUrl salvo.
 test("reconcileReelWithRemote: remoto completed vira pending_approval e salva videoUrl", async () => {
   const { temp, ctx } = await fixtureCtx();

@@ -1,6 +1,6 @@
 import type { WorkspaceContext } from "../context.js";
 import { createHeyGenApiClient, type HeyGenApiClient } from "../harness/heygenApi.js";
-import { getReelState, transitionStoredReel, type ReelRecord } from "./state.js";
+import { getReelState, transitionStoredReel, appendTimelineStep, type ReelRecord } from "./state.js";
 
 export type ReconcileOutcome = "still-rendering" | "completed" | "failed" | "inconclusive";
 
@@ -46,7 +46,8 @@ export async function reconcileReelWithRemote(
   }
 
   if (remote.status === "queued" || remote.status === "rendering") {
-    return { record: current, outcome: "still-rendering" };
+    const withStep = await appendTimelineStep(ctx, current.id, "processando");
+    return { record: withStep, outcome: "still-rendering" };
   }
 
   if (remote.status === "completed") {
@@ -55,7 +56,8 @@ export async function reconcileReelWithRemote(
       ctx, current.id, "pending_approval", "system", "HeyGen concluiu a renderização.",
       { videoUrl: remote.videoUrl, error: undefined },
     );
-    return { record: done, outcome: "completed" };
+    const withStep = await appendTimelineStep(ctx, done.id, "video_concluido");
+    return { record: withStep, outcome: "completed" };
   }
 
   // failed | cancelled | not_found — falha terminal confirmada pelo HeyGen.
