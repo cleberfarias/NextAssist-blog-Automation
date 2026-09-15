@@ -1,0 +1,109 @@
+name: Reconciliar Reels do HeyGen
+
+on:
+  workflow_dispatch:
+    inputs:
+      workspace_id:
+        description: "Rodar só este workspace (vazio = todos os ativos)"
+        required: false
+        type: string
+  schedule:
+    - cron: "15 * * * *" # de hora em hora, minuto 15 — evita o pico exato de :00
+
+permissions:
+  contents: write
+
+# Um grupo só por ref (não por workspace, ao contrário do daily-post): todas as
+# reconciliações da mesma branch/ref publicam no mesmo TARGET_BRANCH, então
+# rodá-las em série evita a corrida de push que a reconciliação de estado já
+# resolve, mas que é melhor nem provocar.
+concurrency:
+  group: reconcile-reels-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  list-workspaces:
+    runs-on: ubuntu-latest
+    outputs:
+      workspaces: ${{ steps.list.outputs.workspaces }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        # O input vai por env, nunca interpolado direto no script — evita injeção
+        # de shell num job com contents:write e acesso a segredos.
+        env:
+          WORKSPACE_ID_INPUT: ${{ github.event.inputs.workspace_id }}
+        run: |
+          if [ -n "$WORKSPACE_ID_INPUT" ]; then
+            echo "workspaces=$(jq -nc --arg id "$WORKSPACE_ID_INPUT" '[$id]')" >> "$GITHUB_OUTPUT"
+          else
+            ids=$(for f in workspaces/*/workspace.json; do
+              active=$(jq -r '.active' "$f")
+              if [ "$active" = "true" ]; then jq -r '.id' "$f"; fi
+            done | jq -R . | jq -sc .)
+            echo "workspaces=$ids" >> "$GITHUB_OUTPUT"
+          fi
+
+  reconcile:
+    needs: list-workspaces
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace: ${{ fromJson(needs.list-workspaces.outputs.workspaces) }}
+    environment: ${{ matrix.workspace }}
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Reconciliar Reels pendentes no HeyGen (só consulta status — nunca gera vídeo, nunca publica)
+        env:
+          WORKSPACE_ID: ${{ matrix.workspace }}
+          HEYGEN_API_KEY: ${{ secrets.HEYGEN_API_KEY }}
+        run: npx tsx src/scripts/reconcileReels.ts
+
+      - name: Commitar reel-state.json atualizado
+        if: always()
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "workspaces/${{ matrix.workspace }}/reel-state.json"
+          if git diff --staged --quiet; then
+            echo "Nada mudou no estado — nenhum commit necessário."
+            exit 0
+          fi
+
+          # Mesma reconciliação determinística do daily-post.yml — nunca rebase,
+          # nunca --ours/--theirs. Só o reel-state.json é commitado aqui (os
+          # outros 4 arquivos que o merge script também recalcula em memória
+          # não são staged, então não entram no commit).
+          for tentativa in 1 2 3 4 5; do
+            echo "Tentativa ${tentativa} de publicar o estado em ${TARGET_BRANCH}..."
+            git fetch origin "$TARGET_BRANCH"
+            npx tsx src/scripts/mergeWorkspaceState.ts "${{ matrix.workspace }}" "origin/$TARGET_BRANCH"
+            git reset --soft "origin/$TARGET_BRANCH"
+            git add "workspaces/${{ matrix.workspace }}/reel-state.json"
+            if git diff --cached --quiet; then
+              echo "Estado já reconciliado no remoto — nada a publicar."
+              exit 0
+            fi
+            git commit -q -m "chore: reconciliação de Reels do HeyGen (${{ matrix.workspace }}) [skip ci]"
+            if git push origin "HEAD:$TARGET_BRANCH"; then
+              exit 0
+            fi
+            sleep 5
+          done
+
+          echo "Não foi possível publicar o estado após 5 tentativas."
+          exit 1

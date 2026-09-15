@@ -44,3 +44,23 @@ export async function apiPost<T>(
   }
   return data as T;
 }
+
+export async function apiPatch<T>(
+  path: string,
+  body: unknown,
+  signal?: AbortSignal,
+  fallbackMessage?: string,
+): Promise<T> {
+  const response = await fetch(path, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    signal,
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message = (data as { error?: string })?.error ?? fallbackMessage ?? `API ${response.status}: ${path}`;
+    throw new ApiError(message, response.status, data);
+  }
+  return data as T;
+}

@@ -1,12 +1,12 @@
 [
   {
-    "id": "2026-09-15T13:30:03.450Z",
+    "id": "2026-09-14T14:36:59.709Z",
     "origem": "action",
-    "iniciadoEm": "2026-09-15T13:30:03.450Z",
-    "finalizadoEm": "2026-09-15T13:35:26.325Z",
+    "iniciadoEm": "2026-09-14T14:36:59.709Z",
+    "finalizadoEm": "2026-09-14T14:58:05.462Z",
     "tema": "MarkupEmpresa serve para assistência técnica de celular? Veja o que avaliar",
     "status": "publicado",
-    "slug": "markupempresa-assistencia-tecnica-celulares",
+    "slug": "markupempresa-assistencia-tecnica",
     "erro": null,
     "eventos": [
       {
@@ -14,83 +14,95 @@
         "status": "working",
         "tema": "MarkupEmpresa serve para assistência técnica de celular? Veja o que avaliar",
         "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-09-15T13:30:03.460Z"
+        "timestamp": "2026-09-14T14:36:59.773Z"
       },
       {
         "agent": "pesquisa-mercado",
         "status": "done",
-        "message": "**Levantamento em 15/09/2026:**\n\n- **A resposta curta é “sim, ao menos no posicionamento comercial”.** A MarkupEmpresa mantém landing page e vários conteúdos voltados especificamente a assistências de celular. Afirma oferecer OS digital, co",
-        "timestamp": "2026-09-15T13:31:05.262Z"
+        "message": "**Busca realizada em 14/09/2026 — principais achados:**\n\n- **A própria MarkupEmpresa domina a cobertura da consulta**, com vários conteúdos de fundo de funil afirmando que o sistema foi desenvolvido para assistências de celular. O posiciona",
+        "timestamp": "2026-09-14T14:38:22.495Z"
       },
       {
         "agent": "pesquisa-pauta",
         "status": "working",
         "message": "Definindo título, ângulo e estrutura...",
-        "timestamp": "2026-09-15T13:31:05.263Z"
+        "timestamp": "2026-09-14T14:38:22.496Z"
       },
       {
         "agent": "pesquisa-pauta",
         "status": "done",
-        "message": "Título: MarkupEmpresa assistência técnica: serve para celulares?",
-        "timestamp": "2026-09-15T13:31:34.941Z"
+        "message": "Título: MarkupEmpresa assistência técnica: serve para celular?",
+        "timestamp": "2026-09-14T14:38:48.346Z"
       },
       {
         "agent": "redator",
         "status": "working",
         "message": "Escrevendo o rascunho...",
-        "timestamp": "2026-09-15T13:31:34.941Z"
+        "timestamp": "2026-09-14T14:38:48.347Z"
       },
       {
         "agent": "redator",
         "status": "done",
-        "message": "Ao pesquisar por “MarkupEmpresa assistência técnica”, a primeira impressão é que o sistema foi pensado para atender boa parte da rotina de uma loja de conserto de celulares. A proposta comercial desta...",
-        "timestamp": "2026-09-15T13:32:43.746Z"
+        "message": "Quem pesquisa por MarkupEmpresa assistência técnica encontra a proposta de um sistema com ordem de serviço digital, controle de peças, financeiro, histórico do cliente e acesso online. No papel, são r...",
+        "timestamp": "2026-09-14T14:40:36.327Z"
       },
       {
         "agent": "editor-seo",
         "status": "working",
         "message": "Revisando e adicionando links internos...",
-        "timestamp": "2026-09-15T13:32:43.747Z"
+        "timestamp": "2026-09-14T14:40:36.328Z"
       },
       {
         "agent": "editor-seo",
         "status": "done",
-        "message": "Slug: markupempresa-assistencia-tecnica-celulares · Tags: MarkupEmpresa, Assistência técnica, Ordem de serviço, Gestão de estoque, Software de gestão",
-        "timestamp": "2026-09-15T13:34:30.566Z"
+        "message": "Slug: markupempresa-assistencia-tecnica · Tags: MarkupEmpresa, assistência técnica de celular, ordem de serviço, gestão de assistência técnica",
+        "timestamp": "2026-09-14T14:41:51.263Z"
       },
       {
         "agent": "publicador",
         "status": "working",
         "message": "Gerando capa e publicando no blog...",
-        "timestamp": "2026-09-15T13:34:30.566Z"
+        "timestamp": "2026-09-14T14:41:51.264Z"
       },
       {
         "agent": "publicador",
         "status": "done",
-        "message": "Publicado em /blog/markupempresa-assistencia-tecnica-celulares",
-        "timestamp": "2026-09-15T13:35:23.728Z"
+        "message": "Publicado em /blog/markupempresa-assistencia-tecnica",
+        "timestamp": "2026-09-14T14:42:41.929Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-14T14:42:41.929Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "error",
+        "message": "Reel bloqueado: HeyGen API: renderização excedeu o tempo máximo de 15 minutos.",
+        "timestamp": "2026-09-14T14:58:00.469Z"
       },
       {
         "agent": "indexador",
         "status": "working",
         "message": "Notificando o Google e reenviando o sitemap...",
-        "timestamp": "2026-09-15T13:35:23.729Z"
+        "timestamp": "2026-09-14T14:58:00.469Z"
       },
       {
         "agent": "indexador",
         "status": "done",
         "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
-        "timestamp": "2026-09-15T13:35:26.322Z"
+        "timestamp": "2026-09-14T14:58:05.459Z"
       }
     ],
     "usage": {
       "model": "gpt-5.6",
-      "inputTokens": 55099,
-      "outputTokens": 10714,
+      "inputTokens": 58134,
+      "outputTokens": 10011,
       "cacheCreationInputTokens": 0,
       "cacheReadInputTokens": 0,
       "webSearchRequests": 6,
-      "estimatedUsd": 0.386007,
+      "estimatedUsd": 0.38456700000000005,
       "fallbackCount": 0,
       "provider": "openai"
     },
@@ -106,13 +118,13 @@
     }
   },
   {
-    "id": "2026-09-14T13:42:27.893Z",
+    "id": "2026-09-14T13:36:16.207Z",
     "origem": "action",
-    "iniciadoEm": "2026-09-14T13:42:27.893Z",
-    "finalizadoEm": "2026-09-14T13:46:56.732Z",
+    "iniciadoEm": "2026-09-14T13:36:16.207Z",
+    "finalizadoEm": "2026-09-14T13:41:07.399Z",
     "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
     "status": "publicado",
-    "slug": "ordem-servico-online-assistencia-checklist",
+    "slug": "ordem-servico-online-assistencia-tecnica",
     "erro": null,
     "eventos": [
       {
@@ -120,83 +132,95 @@
         "status": "working",
         "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
         "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-09-14T13:42:27.909Z"
+        "timestamp": "2026-09-14T13:36:16.219Z"
       },
       {
         "agent": "pesquisa-mercado",
         "status": "done",
-        "message": "- **GestãoClick tem a cobertura mais completa:** o guia atualizado em **8 de julho de 2026** lista identificação da OS, cliente, IMEI/série, estado visual, acessórios, defeito relatado, diagnóstico, peças, valores, garantia e assinaturas de",
-        "timestamp": "2026-09-14T13:43:13.973Z"
+        "message": "**Recorte da busca em 14/09/2026:**\n\n- **Checklist mínimo já está bastante coberto:** número sequencial, datas de entrada e previsão, dados do cliente, marca/modelo/IMEI, estado visual, acessórios, defeito relatado, diagnóstico, serviço, pe",
+        "timestamp": "2026-09-14T13:37:08.970Z"
       },
       {
         "agent": "pesquisa-pauta",
         "status": "working",
         "message": "Definindo título, ângulo e estrutura...",
-        "timestamp": "2026-09-14T13:43:13.974Z"
+        "timestamp": "2026-09-14T13:37:08.971Z"
       },
       {
         "agent": "pesquisa-pauta",
         "status": "done",
         "message": "Título: Ordem de serviço online assistência técnica: checklist",
-        "timestamp": "2026-09-14T13:43:25.149Z"
+        "timestamp": "2026-09-14T13:37:29.504Z"
       },
       {
         "agent": "redator",
         "status": "working",
         "message": "Escrevendo o rascunho...",
-        "timestamp": "2026-09-14T13:43:25.150Z"
+        "timestamp": "2026-09-14T13:37:29.505Z"
       },
       {
         "agent": "redator",
         "status": "done",
-        "message": "Uma ordem de serviço online para assistência técnica não deve servir apenas para anotar o nome do cliente e o modelo do celular. Ela precisa proteger a assistência contra conflitos, acelerar a aprovaç...",
-        "timestamp": "2026-09-14T13:44:51.772Z"
+        "message": "Uma ordem de serviço online para assistência técnica não deve ser apenas uma ficha digital. Ela precisa registrar o estado do aparelho, comprovar aprovações e conectar todo o caminho do serviço: entra...",
+        "timestamp": "2026-09-14T13:38:45.712Z"
       },
       {
         "agent": "editor-seo",
         "status": "working",
         "message": "Revisando e adicionando links internos...",
-        "timestamp": "2026-09-14T13:44:51.773Z"
+        "timestamp": "2026-09-14T13:38:45.713Z"
       },
       {
         "agent": "editor-seo",
         "status": "done",
-        "message": "Slug: ordem-servico-online-assistencia-checklist · Tags: ordem de serviço, assistência técnica, gestão de assistência, controle de estoque, orçamento de conserto",
-        "timestamp": "2026-09-14T13:46:01.857Z"
+        "message": "Slug: ordem-servico-online-assistencia-tecnica · Tags: ordem de serviço, assistência técnica, gestão de assistência técnica, software para assistência técnica",
+        "timestamp": "2026-09-14T13:40:00.171Z"
       },
       {
         "agent": "publicador",
         "status": "working",
         "message": "Gerando capa e publicando no blog...",
-        "timestamp": "2026-09-14T13:46:01.858Z"
+        "timestamp": "2026-09-14T13:40:00.172Z"
       },
       {
         "agent": "publicador",
         "status": "done",
-        "message": "Publicado em /blog/ordem-servico-online-assistencia-checklist",
-        "timestamp": "2026-09-14T13:46:54.468Z"
+        "message": "Publicado em /blog/ordem-servico-online-assistencia-tecnica",
+        "timestamp": "2026-09-14T13:40:56.588Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-14T13:40:56.589Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "error",
+        "message": "Reel bloqueado: HeyGen API: resposta HTTP 402.",
+        "timestamp": "2026-09-14T13:41:04.740Z"
       },
       {
         "agent": "indexador",
         "status": "working",
         "message": "Notificando o Google e reenviando o sitemap...",
-        "timestamp": "2026-09-14T13:46:54.468Z"
+        "timestamp": "2026-09-14T13:41:04.741Z"
       },
       {
         "agent": "indexador",
         "status": "done",
         "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
-        "timestamp": "2026-09-14T13:46:56.729Z"
+        "timestamp": "2026-09-14T13:41:07.395Z"
       }
     ],
     "usage": {
       "model": "gpt-5.6",
-      "inputTokens": 41760,
-      "outputTokens": 10976,
+      "inputTokens": 55541,
+      "outputTokens": 12428,
       "cacheCreationInputTokens": 0,
       "cacheReadInputTokens": 0,
-      "webSearchRequests": 4,
-      "estimatedUsd": 0.32992,
+      "webSearchRequests": 6,
+      "estimatedUsd": 0.413043,
       "fallbackCount": 0,
       "provider": "openai"
     },
@@ -212,10 +236,10 @@
     }
   },
   {
-    "id": "2026-09-14T13:30:49.756Z",
+    "id": "2026-09-14T13:16:50.038Z",
     "origem": "action",
-    "iniciadoEm": "2026-09-14T13:30:49.756Z",
-    "finalizadoEm": "2026-09-14T13:30:56.028Z",
+    "iniciadoEm": "2026-09-14T13:16:50.038Z",
+    "finalizadoEm": "2026-09-14T13:16:57.108Z",
     "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
     "status": "falhou",
     "slug": null,
@@ -226,58 +250,13 @@
         "status": "working",
         "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
         "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-09-14T13:30:49.765Z"
+        "timestamp": "2026-09-14T13:16:50.056Z"
       },
       {
         "agent": "publicador",
         "status": "error",
         "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
-        "timestamp": "2026-09-14T13:30:56.027Z"
-      }
-    ],
-    "usage": {
-      "model": "claude-sonnet-5",
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "cacheCreationInputTokens": 0,
-      "cacheReadInputTokens": 0,
-      "webSearchRequests": 0,
-      "estimatedUsd": 0,
-      "fallbackCount": 0
-    },
-    "backlog": {
-      "skipped": true,
-      "pendingBefore": 15,
-      "generated": 0,
-      "discardedDuplicates": 0,
-      "discardedForbidden": 0,
-      "discardedInvalid": 0,
-      "pendingAfter": 15,
-      "error": null
-    }
-  },
-  {
-    "id": "2026-09-13T13:25:00.949Z",
-    "origem": "action",
-    "iniciadoEm": "2026-09-13T13:25:00.949Z",
-    "finalizadoEm": "2026-09-13T13:25:06.739Z",
-    "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
-    "status": "falhou",
-    "slug": null,
-    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
-    "eventos": [
-      {
-        "agent": "pesquisa-mercado",
-        "status": "working",
-        "tema": "Ordem de serviço online para assistência técnica: o que precisa ter",
-        "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-09-13T13:25:00.960Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "error",
-        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
-        "timestamp": "2026-09-13T13:25:06.737Z"
+        "timestamp": "2026-09-14T13:16:57.106Z"
       }
     ],
     "usage": {

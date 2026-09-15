@@ -1,4 +1,4 @@
-import { readFile, readdir } from "node:fs/promises";
+import { readFile, readdir, writeFile } from "node:fs/promises";
 
 export interface MarketingWorkspace {
   id: string;
@@ -19,6 +19,7 @@ export interface MarketingWorkspace {
     primary: "leads" | "traffic" | "brand" | "sales";
     monthlyLeadTarget?: number;
     monthlyTrafficTarget?: number;
+    monthlyCustomerTarget?: number;
   };
   channels: {
     blog: boolean;
@@ -30,6 +31,11 @@ export interface MarketingWorkspace {
     cms: { provider: "nextassist"; apiUrl: string };
     searchConsole?: { siteUrl: string; sitemapUrl: string };
     instagram?: { apiVersion: string };
+    heygen?: {
+      transport: "mcp";
+      mcpUrl: string;
+      auth: "oauth";
+    };
   };
   autonomy: {
     mode: "copilot" | "semi-autonomous" | "autonomous";
@@ -40,6 +46,23 @@ export interface MarketingWorkspace {
     replenishAmount: number;
   };
   instagramStrategy?: { frequencyPerWeek: number; pillars: string[]; preferredFormats: string[] };
+  videoStrategy?: {
+    provider: "heygen-mcp" | "heygen-api";
+    /**
+     * Override explícito por modo de runtime (interativo com MCP/OAuth vs.
+     * headless com HEYGEN_API_KEY). Sem isso, todo modo usa `provider` —
+     * nunca há troca automática entre MCP e API.
+     */
+    runtimeProviders?: { interactive?: "heygen-mcp" | "heygen-api"; headless?: "heygen-mcp" | "heygen-api" };
+    avatarId: string;
+    voiceId: string;
+    brandKitId?: string;
+    format: "9:16" | "16:9";
+    music: boolean;
+    musicVolume?: number;
+    requiresApproval: boolean;
+    fallback: "none";
+  };
   secrets: {
     required: string[];
     optional?: string[];
@@ -50,6 +73,8 @@ const DEFAULT_ROOT = new URL("../workspaces/", import.meta.url);
 
 const GOALS_PRIMARY = new Set(["leads", "traffic", "brand", "sales"]);
 const AUTONOMY_MODES = new Set(["copilot", "semi-autonomous", "autonomous"]);
+const VIDEO_PROVIDERS = new Set(["heygen-mcp", "heygen-api"]);
+const VIDEO_FORMATS = new Set(["9:16", "16:9"]);
 
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
@@ -71,7 +96,7 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     return v as Record<string, unknown>;
   };
   const requireString = (v: unknown, path: string): string => {
-    if (typeof v !== "string") fail(`"${path}" precisa ser string`);
+    if (typeof v !== "string" || !v.trim()) fail(`"${path}" precisa ser string não vazia`);
     return v as string;
   };
   const requireBoolean = (v: unknown, path: string): boolean => {
@@ -88,6 +113,12 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
   };
   const requirePositiveInteger = (v: unknown, path: string): number => {
     if (typeof v !== "number" || !Number.isInteger(v) || v <= 0) fail(`"${path}" precisa ser um inteiro positivo`);
+    return v as number;
+  };
+  const requireRange = (v: unknown, path: string, min: number, max: number): number => {
+    if (typeof v !== "number" || !Number.isFinite(v) || v < min || v > max) {
+      fail(`"${path}" precisa ser número entre ${min} e ${max}`);
+    }
     return v as number;
   };
 
@@ -107,6 +138,9 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
 
   const goalsRaw = requireObject(w.goals, "goals");
   requireEnum(goalsRaw.primary, "goals.primary", GOALS_PRIMARY);
+  if (goalsRaw.monthlyLeadTarget !== undefined) requirePositiveInteger(goalsRaw.monthlyLeadTarget, "goals.monthlyLeadTarget");
+  if (goalsRaw.monthlyTrafficTarget !== undefined) requirePositiveInteger(goalsRaw.monthlyTrafficTarget, "goals.monthlyTrafficTarget");
+  if (goalsRaw.monthlyCustomerTarget !== undefined) requirePositiveInteger(goalsRaw.monthlyCustomerTarget, "goals.monthlyCustomerTarget");
 
   const channelsRaw = requireObject(w.channels, "channels");
   for (const key of ["blog", "instagram", "linkedin"]) requireBoolean(channelsRaw[key], `channels.${key}`);
@@ -116,6 +150,12 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
   const cmsRaw = requireObject(integrationsRaw.cms, "integrations.cms");
   if (cmsRaw.provider !== "nextassist") fail('"integrations.cms.provider" precisa ser "nextassist"');
   requireString(cmsRaw.apiUrl, "integrations.cms.apiUrl");
+  if (integrationsRaw.heygen !== undefined) {
+    const heygenRaw = requireObject(integrationsRaw.heygen, "integrations.heygen");
+    if (heygenRaw.transport !== "mcp") fail('"integrations.heygen.transport" precisa ser "mcp"');
+    requireString(heygenRaw.mcpUrl, "integrations.heygen.mcpUrl");
+    if (heygenRaw.auth !== "oauth") fail('"integrations.heygen.auth" precisa ser "oauth"');
+  }
 
   const autonomyRaw = requireObject(w.autonomy, "autonomy");
   requireEnum(autonomyRaw.mode, "autonomy.mode", AUTONOMY_MODES);
@@ -132,10 +172,43 @@ function validateWorkspaceShape(id: string, value: unknown): MarketingWorkspace 
     requireStringArray(instagramRaw.pillars, "instagramStrategy.pillars");
     requireStringArray(instagramRaw.preferredFormats, "instagramStrategy.preferredFormats");
   }
+  let heygenApiConfigured = false;
+  if (w.videoStrategy !== undefined) {
+    const videoRaw = requireObject(w.videoStrategy, "videoStrategy");
+    requireEnum(videoRaw.provider, "videoStrategy.provider", VIDEO_PROVIDERS);
+    requireString(videoRaw.avatarId, "videoStrategy.avatarId");
+    requireString(videoRaw.voiceId, "videoStrategy.voiceId");
+    if (videoRaw.brandKitId !== undefined) requireString(videoRaw.brandKitId, "videoStrategy.brandKitId");
+    requireEnum(videoRaw.format, "videoStrategy.format", VIDEO_FORMATS);
+    requireBoolean(videoRaw.music, "videoStrategy.music");
+    if (videoRaw.musicVolume !== undefined) requireRange(videoRaw.musicVolume, "videoStrategy.musicVolume", 0, 1);
+    if (videoRaw.requiresApproval !== true) fail('"videoStrategy.requiresApproval" precisa ser true — aprovação humana é obrigatória antes de publicar');
+    if (videoRaw.fallback !== "none") fail('"videoStrategy.fallback" precisa ser "none"');
+
+    if (videoRaw.runtimeProviders !== undefined) {
+      const runtimeRaw = requireObject(videoRaw.runtimeProviders, "videoStrategy.runtimeProviders");
+      for (const mode of ["interactive", "headless"] as const) {
+        if (runtimeRaw[mode] !== undefined) requireEnum(runtimeRaw[mode], `videoStrategy.runtimeProviders.${mode}`, VIDEO_PROVIDERS);
+      }
+      heygenApiConfigured = runtimeRaw.interactive === "heygen-api" || runtimeRaw.headless === "heygen-api";
+    }
+    heygenApiConfigured = heygenApiConfigured || videoRaw.provider === "heygen-api";
+  }
 
   const secretsRaw = requireObject(w.secrets, "secrets");
   requireStringArray(secretsRaw.required, "secrets.required");
   if (secretsRaw.optional !== undefined) requireStringArray(secretsRaw.optional, "secrets.optional");
+
+  const declaredSecrets = [
+    ...(secretsRaw.required as string[]),
+    ...((secretsRaw.optional as string[] | undefined) ?? []),
+  ];
+  if (declaredSecrets.includes("HEYGEN_REST_FALLBACK")) {
+    fail("HEYGEN_REST_FALLBACK não é permitido; seleção de provider HeyGen precisa ser explícita via videoStrategy.runtimeProviders, nunca um fallback implícito");
+  }
+  if (declaredSecrets.includes("HEYGEN_API_KEY") && !heygenApiConfigured) {
+    fail("HEYGEN_API_KEY só é permitido quando videoStrategy usa heygen-api (provider ou runtimeProviders); caso contrário HeyGen usa MCP/OAuth");
+  }
 
   return value as MarketingWorkspace;
 }
@@ -161,6 +234,38 @@ export async function loadWorkspace(id: string, root: URL = DEFAULT_ROOT): Promi
     throw new Error(`workspace.json de "${id}" declara id "${workspace.id}" — precisa bater com o nome da pasta.`);
   }
   return workspace;
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** Mescla recursivamente objetos simples; arrays e valores primitivos do patch substituem o valor base inteiro. */
+function deepMerge(base: unknown, patch: unknown): unknown {
+  if (!isPlainObject(base) || !isPlainObject(patch)) return patch;
+  const result: Record<string, unknown> = { ...base };
+  for (const [key, value] of Object.entries(patch)) {
+    result[key] = deepMerge(base[key], value);
+  }
+  return result;
+}
+
+/**
+ * Aplica uma atualização parcial (mesclada recursivamente com o workspace
+ * atual) e regrava `workspace.json` — só depois de revalidar o resultado com
+ * o mesmo `validateWorkspaceShape` usado na leitura, então uma atualização
+ * que deixaria o workspace inválido nunca chega a ser gravada. `id` e
+ * `secrets` são sempre ignorados: o id precisa bater com o nome da pasta, e
+ * quais segredos o workspace exige é uma decisão de código/infra, não algo
+ * editável pela tela de configurações.
+ */
+export async function saveWorkspace(id: string, updates: Record<string, unknown>, root: URL = DEFAULT_ROOT): Promise<MarketingWorkspace> {
+  const current = await loadWorkspace(id, root);
+  const { id: _ignoredId, secrets: _ignoredSecrets, ...safeUpdates } = updates;
+  const merged = deepMerge(current, safeUpdates);
+  const validated = validateWorkspaceShape(id, merged);
+  await writeFile(new URL(`${id}/workspace.json`, root), `${JSON.stringify(validated, null, 2)}\n`);
+  return validated;
 }
 
 /**

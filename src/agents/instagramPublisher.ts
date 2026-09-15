@@ -4,6 +4,7 @@ import { uploadReelVideo } from "../lib/storage.js";
 import { generateNarration } from "../lib/tts.js";
 import { generateVeoReel } from "../lib/veo.js";
 import { generateReelFromImage } from "../lib/video.js";
+import { generateHeyGenMcpReel } from "../lib/heygen.js";
 import { extractJson, runAgent } from "../lib/anthropic.js";
 import type { WorkspaceContext } from "../context.js";
 import type { FinalPost } from "./editorSeo.js";
@@ -19,6 +20,30 @@ export interface ReelBrief {
   textoTela: string[];
   cta: string;
   pergunta: string;
+  /**
+   * Exatamente 5 falas curtas (8-18 palavras, ~4-7s cada) para o Studio
+   * multi-cena da HeyGen (`src/reels/studioScenes.ts`): [0] é a transição do
+   * avatar no meio do vídeo, [1..4] são a narração de cada B-roll, na ordem.
+   * Não usado pelo heygen-mcp nem pelo caminho legado — `roteiro` continua
+   * sendo a fonte para esses.
+   */
+  blocos: string[];
+}
+
+type VideoStrategy = {
+  provider?: "heygen-mcp" | string;
+  avatarId?: string;
+  voiceId?: string;
+  brandKitId?: string;
+  format?: "9:16" | "16:9";
+  music?: boolean;
+  musicVolume?: number;
+  requiresApproval?: boolean;
+  fallback?: "none" | string;
+};
+
+function getVideoStrategy(ctx: WorkspaceContext): VideoStrategy | undefined {
+  return (ctx.workspace as typeof ctx.workspace & { videoStrategy?: VideoStrategy }).videoStrategy;
 }
 
 const REEL_SYSTEM = (ctx: WorkspaceContext) => `Você é o diretor de Reels do ${ctx.workspace.brand.name}.
@@ -26,19 +51,34 @@ Crie conteúdo nativo para Instagram, em português do Brasil, para donos de ass
 Seja direto, humano e específico. Não prometa viralização, não use clichês de marketing e não invente dados.
 O Reel deve ensinar algo útil em 20 a 35 segundos e estimular comentários.
 Responda SOMENTE em JSON neste formato:
-{"gancho":"até 12 palavras","roteiro":"fala natural de 45 a 80 palavras","textoTela":["3 a 5 frases curtas para a tela"],"cta":"CTA curto de conversa","pergunta":"pergunta que convida o público a comentar"}`;
+{"gancho":"até 12 palavras","roteiro":"fala natural de 45 a 80 palavras","textoTela":["3 a 5 frases curtas para a tela"],"cta":"CTA curto de conversa","pergunta":"pergunta que convida o público a comentar","blocos":["exatamente 5 falas curtas de 8 a 18 palavras cada (cabem em 4 a 7 segundos de fala): a primeira é uma transição do apresentador no meio do vídeo, as outras 4 são narração em voice-over sobre telas do produto, continuando a ideia do roteiro em ordem"]}`;
+
+/**
+ * Valida e normaliza o JSON bruto do diretor de Reels — separado de
+ * `createReelBrief` pra ser testável sem precisar mockar a chamada de IA
+ * (mesmo padrão do resto do repo: funções puras são testadas, wrappers de
+ * I/O não).
+ */
+export function parseReelBrief(raw: unknown): ReelBrief {
+  const r = raw as Partial<ReelBrief> & Record<string, unknown>;
+  const textoTela = Array.isArray(r.textoTela) ? r.textoTela.slice(0, 5).map((item) => String(item).trim()).filter(Boolean) : [];
+  if (!r.gancho?.trim() || !r.roteiro?.trim() || textoTela.length < 3 || !r.cta?.trim() || !r.pergunta?.trim()) {
+    throw new Error("O diretor de Reels retornou um roteiro incompleto.");
+  }
+  const blocos = Array.isArray(r.blocos) ? r.blocos.map((item) => String(item).trim()).filter(Boolean) : [];
+  if (blocos.length !== 5) {
+    throw new Error("O diretor de Reels retornou um roteiro sem os 5 blocos exigidos pelo Studio multi-cena.");
+  }
+  return { gancho: r.gancho, roteiro: r.roteiro, textoTela, cta: r.cta, pergunta: r.pergunta, blocos };
+}
 
 export async function createReelBrief(ctx: WorkspaceContext, post: FinalPost): Promise<ReelBrief> {
-  const raw = extractJson<ReelBrief>(await runAgent(ctx, {
+  const raw = await runAgent(ctx, {
     system: REEL_SYSTEM(ctx),
     prompt: `Tema do artigo: ${post.titulo}\nResumo: ${post.resumo}\nTags: ${post.tags.join(", ")}\n\nTransforme o tema em uma situação real de balcão, bancada ou gestão. Priorize uma dica aplicável hoje.`,
     maxTokens: 1200,
-  }));
-  const textoTela = Array.isArray(raw.textoTela) ? raw.textoTela.slice(0, 5).map((item) => String(item).trim()).filter(Boolean) : [];
-  if (!raw.gancho?.trim() || !raw.roteiro?.trim() || textoTela.length < 3 || !raw.cta?.trim() || !raw.pergunta?.trim()) {
-    throw new Error("O diretor de Reels retornou um roteiro incompleto.");
-  }
-  return { ...raw, textoTela };
+  });
+  return parseReelBrief(extractJson<Record<string, unknown>>(raw));
 }
 
 export function buildCaption(ctx: WorkspaceContext, post: FinalPost, blogUrl: string, brief?: ReelBrief): string {
@@ -48,8 +88,23 @@ export function buildCaption(ctx: WorkspaceContext, post: FinalPost, blogUrl: st
   return caption.slice(0, 2200);
 }
 
-function buildNarration(post: FinalPost, brief?: ReelBrief): string {
+export function buildNarration(post: FinalPost, brief?: ReelBrief): string {
   return brief ? `${brief.gancho}. ${brief.roteiro} ${brief.cta}` : `${post.titulo}. Confira o artigo completo, link na bio!`;
+}
+
+function buildHeyGenPrompt(ctx: WorkspaceContext, post: FinalPost, brief?: ReelBrief): string {
+  const onScreen = brief?.textoTela.join(" | ") ?? post.titulo;
+  return [
+    "Crie um Reel vertical 9:16 de 25 a 35 segundos em português do Brasil.",
+    `Use exclusivamente o avatar e a voz enviados na requisição para representar ${ctx.workspace.brand.name}.`,
+    "O apresentador aparece apenas na abertura, em uma passagem curta no meio e no fechamento; evite monólogo estático.",
+    "Intercale cenas dinâmicas de assistência técnica, bancada, ordem de serviço, peças, estoque e uso do sistema, com cortes a cada 2 a 4 segundos.",
+    `Narração: ${buildNarration(post, brief)}`,
+    `Textos de tela: ${onScreen}`,
+    "Use legendas dinâmicas, ritmo de Reel e trilha instrumental discreta sem cobrir a voz.",
+    "Não invente funcionalidades, métricas, preços ou depoimentos.",
+    "Feche convidando o público a conhecer o NextAssist e testar por sete dias, sem publicar o vídeo automaticamente.",
+  ].join(" ");
 }
 
 function buildVeoPrompt(ctx: WorkspaceContext, post: FinalPost, brief?: ReelBrief): string {
@@ -77,7 +132,14 @@ async function generateFallbackReel(ctx: WorkspaceContext, post: FinalPost, imag
   return generateReelFromImage(imagemCapaBuffer, narrationBuffer);
 }
 
-export interface InstagramResult { ok: boolean; mediaId?: string; permalink: string | null; detalhes: string; }
+export interface InstagramResult {
+  ok: boolean;
+  mediaId?: string;
+  permalink: string | null;
+  detalhes: string;
+  pendingApproval?: boolean;
+  videoUrl?: string;
+}
 
 export async function publishToInstagram(ctx: WorkspaceContext, post: FinalPost, imagemCapaBuffer: Buffer, blogUrl: string): Promise<InstagramResult> {
   try {
@@ -89,8 +151,50 @@ export async function publishToInstagram(ctx: WorkspaceContext, post: FinalPost,
       brief = undefined;
     }
     const caption = buildCaption(ctx, post, blogUrl, brief);
-    const geminiKey = await ctx.secrets.get(ctx.workspace.id, "GEMINI_API_KEY");
+    const videoStrategy = getVideoStrategy(ctx);
 
+    if (videoStrategy?.provider === "heygen-mcp") {
+      if (!videoStrategy.avatarId || !videoStrategy.voiceId) {
+        throw new Error("videoStrategy heygen-mcp exige avatarId e voiceId.");
+      }
+      if (videoStrategy.fallback !== "none") {
+        throw new Error("NextAssist com HeyGen MCP precisa usar fallback=none para proteger avatar e voz configurados.");
+      }
+
+      const videoBuffer = await generateHeyGenMcpReel({
+        title: `NextAssist - ${post.titulo}`,
+        prompt: buildHeyGenPrompt(ctx, post, brief),
+        avatarId: videoStrategy.avatarId,
+        voiceId: videoStrategy.voiceId,
+        brandKitId: videoStrategy.brandKitId,
+        aspectRatio: videoStrategy.format ?? "9:16",
+        music: videoStrategy.music ?? true,
+        musicVolume: videoStrategy.musicVolume,
+      });
+      const videoUrl = await uploadReelVideo(ctx, videoBuffer, post.slug);
+
+      if (videoStrategy.requiresApproval !== false) {
+        return {
+          ok: true,
+          permalink: null,
+          pendingApproval: true,
+          videoUrl,
+          detalhes: "Reel gerado pelo HeyGen MCP e salvo como rascunho. Aguardando aprovação humana antes de publicar no Instagram.",
+        };
+      }
+
+      const { mediaId, permalink } = await publishReelToInstagram(ctx, videoUrl, caption);
+      return {
+        ok: true,
+        mediaId,
+        permalink,
+        videoUrl,
+        detalhes: permalink ? `Reel publicado no Instagram: ${permalink}` : `Reel publicado no Instagram (media ${mediaId})`,
+      };
+    }
+
+    // Fluxo legado permanece disponível apenas para workspaces que NÃO optaram por HeyGen MCP.
+    const geminiKey = await ctx.secrets.get(ctx.workspace.id, "GEMINI_API_KEY");
     let videoBuffer: Buffer;
     if (geminiKey) {
       try {
@@ -104,7 +208,7 @@ export async function publishToInstagram(ctx: WorkspaceContext, post: FinalPost,
 
     const videoUrl = await uploadReelVideo(ctx, videoBuffer, post.slug);
     const { mediaId, permalink } = await publishReelToInstagram(ctx, videoUrl, caption);
-    return { ok: true, mediaId, permalink, detalhes: permalink ? `Reel publicado no Instagram: ${permalink}` : `Reel publicado no Instagram (media ${mediaId})` };
+    return { ok: true, mediaId, permalink, videoUrl, detalhes: permalink ? `Reel publicado no Instagram: ${permalink}` : `Reel publicado no Instagram (media ${mediaId})` };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return { ok: false, permalink: null, detalhes: `Falha ao publicar no Instagram: ${message}` };

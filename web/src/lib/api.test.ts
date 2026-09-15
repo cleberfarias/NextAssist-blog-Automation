@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { apiGet, apiPost, ApiError } from "./api";
+import { apiGet, apiPost, apiPatch, ApiError } from "./api";
 
 describe("apiGet", () => {
   beforeEach(() => {
@@ -95,5 +95,33 @@ describe("apiPost", () => {
     mockFetch.mockResolvedValue({ ok: false, status: 409, json: async () => ({ error: "já rodando" }) });
 
     await expect(apiPost("/api/run", {}, undefined, "fallback")).rejects.toThrow("já rodando");
+  });
+});
+
+describe("apiPatch", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn());
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("sends a JSON PATCH and returns parsed data on success", async () => {
+    const mockFetch = fetch as unknown as ReturnType<typeof vi.fn>;
+    mockFetch.mockResolvedValue({ ok: true, json: async () => ({ id: "acme" }) });
+
+    const result = await apiPatch<{ id: string }>("/api/workspace", { workspaceId: "acme", updates: { brand: { name: "Novo" } } });
+
+    expect(result).toEqual({ id: "acme" });
+    const options = mockFetch.mock.calls[0][1] as RequestInit;
+    expect(options.method).toBe("PATCH");
+    expect(JSON.parse(options.body as string)).toEqual({ workspaceId: "acme", updates: { brand: { name: "Novo" } } });
+  });
+
+  it("throws ApiError with the server-provided message on failure", async () => {
+    const mockFetch = fetch as unknown as ReturnType<typeof vi.fn>;
+    mockFetch.mockResolvedValue({ ok: false, status: 400, json: async () => ({ error: "goals.primary inválido" }) });
+
+    await expect(apiPatch("/api/workspace", {})).rejects.toThrow("goals.primary inválido");
   });
 });

@@ -1,28 +1,47 @@
-import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { WorkspaceProvider } from "../hooks/useWorkspace";
 import { PipelineProvider } from "../hooks/usePipeline";
 import { ToastProvider } from "../components/ui/Toast";
 import { Sidebar } from "../components/layout/Sidebar";
 import { Topbar } from "../components/layout/Topbar";
-import { PainelView } from "../views/dashboard/PainelView";
 import { ConfigView } from "../views/settings/ConfigView";
-
-type View = "painel" | "config";
+import { ReelApprovalPanel } from "../views/dashboard/ReelApprovalPanel";
+import { HistoryPanel } from "../views/dashboard/HistoryPanel";
+import { SalesPanel } from "../views/dashboard/SalesPanel";
+import { ReelDetailPage } from "../views/reels/ReelDetailPage";
+import { ConteudoPage } from "../views/pages/ConteudoPage";
+import { RelatoriosPage } from "../views/pages/RelatoriosPage";
+import { DashboardPage } from "../views/pages/DashboardPage";
+import { AgentesPage } from "../views/pages/AgentesPage";
+import { AgenteDetailPage } from "../views/pages/AgenteDetailPage";
 
 export default function App() {
-  const [view, setView] = useState<View>("painel");
-
   return (
     <WorkspaceProvider>
       <ToastProvider>
         <PipelineProvider>
-          <div className="app-shell">
-            <Sidebar active={view} onSelect={setView} />
-            <div className="app-main">
-              <Topbar />
-              {view === "painel" ? <PainelView /> : <ConfigView />}
+          <BrowserRouter>
+            <div className="flex min-h-screen flex-col bg-app lg:flex-row">
+              <Sidebar />
+              <div className="min-w-0 flex-1">
+                <Topbar />
+                <Routes>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/agentes" element={<AgentesPage />} />
+                  <Route path="/agentes/:agentId" element={<AgenteDetailPage />} />
+                  <Route path="/conteudo" element={<ConteudoPage />} />
+                  <Route path="/reels" element={<ReelApprovalPanel />} />
+                  <Route path="/reels/:id" element={<ReelDetailPage />} />
+                  <Route path="/blog" element={<HistoryPanel />} />
+                  <Route path="/leads" element={<SalesPanel />} />
+                  <Route path="/clientes" element={<SalesPanel filterIntent="customer" />} />
+                  <Route path="/relatorios" element={<RelatoriosPage />} />
+                  <Route path="/configuracoes" element={<ConfigView />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </div>
             </div>
-          </div>
+          </BrowserRouter>
         </PipelineProvider>
       </ToastProvider>
     </WorkspaceProvider>

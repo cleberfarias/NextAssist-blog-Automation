@@ -1,7 +1,8 @@
 // src/backlog.ts
 import { countPendingTopics, getAllTopics, addTopics } from "./contentCalendar.js";
 import { getHistory } from "./history.js";
-import { generateContentBacklog, type ContentOpportunity, type GenerateContentBacklogOptions } from "./lib/marketingDirector.js";
+import type { ContentOpportunity, GenerateContentBacklogOptions } from "./lib/marketingDirector.js";
+import { runMarketingDirectorBacklog } from "./harness/marketingDirectorRuntime.js";
 import { normalizeText, jaccardSimilarity } from "./lib/text.js";
 import { emit, type OnEvent } from "./pipelineEvents.js";
 import type { WorkspaceContext } from "./context.js";
@@ -102,15 +103,23 @@ export interface EnsureContentBacklogOptions {
   generate?: (ctx: WorkspaceContext, options: GenerateContentBacklogOptions) => Promise<ContentOpportunity[]>;
 }
 
+async function generateThroughHarness(
+  ctx: WorkspaceContext,
+  options: GenerateContentBacklogOptions,
+): Promise<ContentOpportunity[]> {
+  const result = await runMarketingDirectorBacklog(ctx, options);
+  return result.opportunities;
+}
+
 /**
  * Garante que o calendário sempre tenha pautas suficientes para o pipeline
  * seguir rodando. NUNCA lança por falha do Marketing Director — qualquer
- * falha do LLM/validação vira um evento "error" e um `BacklogResult.error`,
- * deixando o pipeline decidir o que fazer (seguir com um tópico pendente
- * antigo, ou encerrar se não sobrou nenhum — essa decisão é do chamador,
- * não desta função). Falha de leitura/parse do próprio calendário (antes do
- * `try`) continua propagando — igual ao `getNextTopic` logo em seguida no
- * pipeline, que lê o mesmo arquivo pelo mesmo caminho desprotegido.
+ * falha do LLM/validação/Harness vira um evento "error" e um
+ * `BacklogResult.error`, deixando o pipeline decidir o que fazer.
+ *
+ * O gerador padrão agora passa pelo Agent Harness. A injeção `options.generate`
+ * continua existindo para testes e para manter compatibilidade com os testes
+ * atuais sem depender de provider externo.
  */
 export async function ensureContentBacklog(
   ctx: WorkspaceContext,
@@ -130,7 +139,7 @@ export async function ensureContentBacklog(
 
   emit(onEvent, {
     agent: "marketing-director", status: "working",
-    message: `Backlog com ${pendingBefore} tópico(s) pendente(s) (mínimo: ${strategy.minimumPendingTopics}) — analisando contexto do workspace...`,
+    message: `Backlog com ${pendingBefore} tópico(s) pendente(s) (mínimo: ${strategy.minimumPendingTopics}) — analisando contexto do workspace via Agent Harness...`,
   });
 
   try {
@@ -139,7 +148,7 @@ export async function ensureContentBacklog(
     const existingKeywords = allTopics.map((t) => t.palavraChaveAlvo);
     const publishedTitles = history.map((h) => h.titulo);
 
-    const generate = options.generate ?? generateContentBacklog;
+    const generate = options.generate ?? generateThroughHarness;
     const opportunities = await generate(ctx, {
       count: strategy.replenishAmount,
       existingThemes, existingKeywords, publishedTitles,
