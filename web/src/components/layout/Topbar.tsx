@@ -6,7 +6,7 @@ export function Topbar() {
   const { runMode, running, topicLine, runBlog, runInstagram } = usePipeline();
 
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-border bg-surface px-6 py-3">
+    <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-surface px-6 py-3">
       <div className="flex items-center gap-3">
         <span className="text-2xl" aria-hidden="true">🏢</span>
         <div>
@@ -14,7 +14,7 @@ export function Topbar() {
           <p id="topic-line" className="text-xs text-secondary">{topicLine}</p>
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <span className="flex items-center gap-1 text-xs text-status-ok">
           <span className="h-2 w-2 rounded-full bg-status-ok" aria-hidden="true" />
           Sistema operacional
@@ -30,7 +30,7 @@ export function Topbar() {
             <option key={w.id} value={w.id}>{w.name}</option>
           ))}
         </select>
-        <div className="pipeline-actions flex gap-2" aria-label="Frentes de conteúdo">
+        <div className="pipeline-actions flex flex-wrap gap-2" aria-label="Frentes de conteúdo">
           {runMode !== "disabled" && (
             <button id="run-blog-btn" onClick={() => void runBlog()} disabled={running} className="rounded-md bg-accent px-3 py-1.5 text-sm text-white disabled:opacity-50">
               {running ? "⏳ Blog rodando..." : "▶ Rodar blog"}
