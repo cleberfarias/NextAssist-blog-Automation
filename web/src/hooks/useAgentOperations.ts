@@ -123,7 +123,8 @@ export function deriveAgentOperations(sources: AgentOperationsSources): Record<O
   };
 }
 
-function useAgentData<T>(path: string): T | null {
+/** Exportado para outras telas (ex.: Dashboard) que precisam de um dos 5 endpoints crus, sem passar pela derivação de status. */
+export function useAgentData<T>(path: string): T | null {
   const { workspace } = useWorkspace();
   const [data, setData] = useState<T | null>(null);
   useEffect(() => {

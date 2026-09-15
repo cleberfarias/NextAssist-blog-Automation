@@ -21,9 +21,9 @@ export default function App() {
       <ToastProvider>
         <PipelineProvider>
           <BrowserRouter>
-            <div className="app-shell flex min-h-screen bg-app">
+            <div className="app-shell flex min-h-screen flex-col bg-app lg:flex-row">
               <Sidebar />
-              <div className="app-main flex-1">
+              <div className="app-main min-w-0 flex-1">
                 <Topbar />
                 <Routes>
                   <Route path="/" element={<DashboardPage />} />

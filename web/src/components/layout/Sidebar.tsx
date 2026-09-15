@@ -14,14 +14,14 @@ const ITEMS: { to: string; label: string; icon: string; end?: boolean }[] = [
 
 export function Sidebar() {
   return (
-    <nav className="sidebar flex w-56 shrink-0 flex-col gap-1 bg-surface p-3" aria-label="Menu principal">
+    <nav className="sidebar flex shrink-0 gap-1 overflow-x-auto bg-surface p-3 lg:w-56 lg:flex-col lg:overflow-visible" aria-label="Menu principal">
       {ITEMS.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
           end={item.end}
           className={({ isActive }) =>
-            `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? "bg-accent text-white" : "text-secondary hover:bg-app hover:text-primary"}`
+            `flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm ${isActive ? "bg-accent text-white" : "text-secondary hover:bg-app hover:text-primary"}`
           }
         >
           <span aria-hidden="true">{item.icon}</span>

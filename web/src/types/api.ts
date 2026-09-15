@@ -269,6 +269,36 @@ export interface ReelDashboardResponse {
   entries: ReelListEntry[];
 }
 
+export type HarnessAgentId = "marketing-director" | "sales-agent" | "revenue-director" | "video-producer";
+export type AgentRunStatus = "completed" | "blocked" | "failed";
+
+export interface TraceStep {
+  index: number;
+  skill: string;
+  startedAt: string;
+  finishedAt: string;
+  status: "completed" | "failed";
+  error?: string;
+}
+
+export interface AgentTrace {
+  runId: string;
+  workspaceId: string;
+  agent: HarnessAgentId;
+  goal: string;
+  startedAt: string;
+  finishedAt?: string;
+  status: AgentRunStatus;
+  steps: TraceStep[];
+  costUsd: number;
+  error?: string;
+}
+
+export interface HarnessTraceReport {
+  updatedAt: string;
+  traces: AgentTrace[];
+}
+
 export interface CalendarTopic {
   tema: string;
   palavraChaveAlvo: string;
