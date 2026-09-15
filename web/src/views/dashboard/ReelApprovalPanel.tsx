@@ -1,12 +1,72 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useWorkspace } from "../../hooks/useWorkspace";
 import { apiGet, apiPost } from "../../lib/api";
-import { formatDateTime, nf } from "../../lib/formatters";
-import { REEL_STATUS_LABEL } from "../../lib/reelStatus";
-import type { ReelDashboardResponse } from "../../types/api";
+import { formatDateTime } from "../../lib/formatters";
+import { REEL_STATUS_COLOR, reelCardStatusLabel } from "../../lib/reelStatus";
+import { REEL_TABS, filterReelsByTab, type ReelTab } from "./reelTabs";
+import type { ReelDashboardResponse, ReelListEntry } from "../../types/api";
 
-function Kpi({ label, value }: { label: string; value: string }) {
-  return <div className="kpi"><div className="kpi-label">{label}</div><div className="kpi-value">{value}</div></div>;
+function ReelThumbnail({ entry }: { entry: ReelListEntry }) {
+  if (entry.videoUrl) {
+    return <video src={entry.videoUrl} muted className="h-20 w-14 shrink-0 rounded-md bg-app object-cover" />;
+  }
+  return (
+    <div className="flex h-20 w-14 shrink-0 items-center justify-center rounded-md bg-app text-lg text-secondary" aria-hidden="true">
+      🎬
+    </div>
+  );
+}
+
+function ReelActions({ entry, busyId, onReview, onPublish }: {
+  entry: ReelListEntry;
+  busyId: string | null;
+  onReview: (id: string, decision: "approved" | "rejected") => void;
+  onPublish: (id: string) => void;
+}) {
+  const busy = busyId === entry.id;
+  if (entry.status === "pending_approval") {
+    return (
+      <div className="flex shrink-0 gap-2">
+        <button type="button" disabled={busy} onClick={() => onReview(entry.id, "approved")} className="rounded-md bg-accent px-3 py-1.5 text-sm text-white disabled:opacity-50">Aprovar</button>
+        <button type="button" disabled={busy} onClick={() => onReview(entry.id, "rejected")} className="rounded-md border border-border px-3 py-1.5 text-sm text-secondary disabled:opacity-50">Rejeitar</button>
+      </div>
+    );
+  }
+  if (entry.status === "approved") {
+    return (
+      <button type="button" disabled={busy} onClick={() => onPublish(entry.id)} className="shrink-0 rounded-md bg-accent px-3 py-1.5 text-sm text-white disabled:opacity-50">Publicar</button>
+    );
+  }
+  if (entry.status === "published" && entry.permalink) {
+    return <a href={entry.permalink} target="_blank" rel="noreferrer" className="shrink-0 text-sm font-semibold text-accent hover:underline">Ver no Instagram</a>;
+  }
+  return null;
+}
+
+function ReelCard({ entry, busyId, onReview, onPublish }: {
+  entry: ReelListEntry;
+  busyId: string | null;
+  onReview: (id: string, decision: "approved" | "rejected") => void;
+  onPublish: (id: string) => void;
+}) {
+  const color = REEL_STATUS_COLOR[entry.status];
+  return (
+    <div className="flex items-center gap-4 rounded-lg border border-border bg-surface p-3">
+      <ReelThumbnail entry={entry} />
+      <div className="min-w-0 flex-1">
+        <Link to={`/reels/${entry.id}`} className="block truncate text-sm font-semibold text-primary hover:text-accent">{entry.title}</Link>
+        <div className="mt-1 flex items-center gap-1.5 text-sm">
+          <span className={`h-2 w-2 shrink-0 rounded-full ${color.dot}`} aria-hidden="true" />
+          <span className={color.text}>{reelCardStatusLabel(entry)}</span>
+        </div>
+        <div className="mt-1 text-xs text-secondary">
+          {entry.createdAt ? `Criado em ${formatDateTime(entry.createdAt)}` : `Atualizado em ${formatDateTime(entry.updatedAt)}`}
+        </div>
+      </div>
+      <ReelActions entry={entry} busyId={busyId} onReview={onReview} onPublish={onPublish} />
+    </div>
+  );
 }
 
 export function ReelApprovalPanel() {
@@ -14,6 +74,7 @@ export function ReelApprovalPanel() {
   const [data, setData] = useState<ReelDashboardResponse | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [tab, setTab] = useState<ReelTab>("todos");
 
   async function load(signal?: AbortSignal) {
     if (!workspace) return;
@@ -32,9 +93,10 @@ export function ReelApprovalPanel() {
   }, [workspace]);
 
   const entries = useMemo(
-    () => [...(data?.entries ?? [])].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 12),
+    () => [...(data?.entries ?? [])].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
     [data],
   );
+  const visible = useMemo(() => filterReelsByTab(entries, tab), [entries, tab]);
 
   async function review(reelId: string, decision: "approved" | "rejected") {
     setBusyId(reelId);
@@ -62,64 +124,38 @@ export function ReelApprovalPanel() {
     }
   }
 
-  if (!data || !workspace) {
-    return (
-      <section className="usage-panel sales-panel">
-        <div className="usage-header">
-          <div><h2>Reels para aprovação</h2><p>Vídeos do HeyGen ficam bloqueados até revisão humana.</p></div>
-          <span>Aguardando dados</span>
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section className="usage-panel sales-panel">
-      <div className="usage-header">
-        <div><h2>Reels para aprovação</h2><p>Gerar, revisar e publicar são etapas separadas. Só Reel aprovado pode ir ao Instagram.</p></div>
-        <span>{data.updatedAt ? `Atualizado ${formatDateTime(data.updatedAt)}` : "Sem drafts"}</span>
+    <div className="p-6 text-primary">
+      <h1 className="text-xl font-semibold">Reels</h1>
+      <p className="text-sm text-secondary">Gerencie a produção e publicação dos seus vídeos</p>
+
+      <div role="tablist" className="mb-4 mt-4 flex flex-wrap gap-2 border-b border-border" aria-label="Filtro de Reels">
+        {REEL_TABS.map((t) => (
+          <button
+            key={t.id}
+            role="tab"
+            aria-selected={tab === t.id}
+            className={`px-3 py-2 text-sm ${tab === t.id ? "border-b-2 border-accent text-primary" : "text-secondary"}`}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      <div className="kpi-row">
-        <Kpi label="Total" value={nf.format(data.summary.total)} />
-        <Kpi label="Aguardando aprovação" value={nf.format(data.summary.pendingApproval)} />
-        <Kpi label="Aprovados" value={nf.format(data.summary.approved)} />
-        <Kpi label="Publicados" value={nf.format(data.summary.published)} />
-        <Kpi label="Falhas" value={nf.format(data.summary.failed)} />
-      </div>
+      {error ? <p className="mb-3 text-sm text-status-error">{error}</p> : null}
 
-      {error ? <p className="error-text">{error}</p> : null}
-      {entries.length === 0 ? <p className="empty-state">Nenhum Reel foi gerado ainda.</p> : (
-        <div className="perf-table-wrap">
-          <table>
-            <thead><tr><th>Conteúdo</th><th>Status</th><th>Prévia</th><th>Ações</th></tr></thead>
-            <tbody>
-              {entries.map((entry) => (
-                <tr key={entry.id}>
-                  <td>
-                    <strong>{entry.title}</strong>
-                    <div className="muted">{entry.slug}</div>
-                    <div className="muted">{formatDateTime(entry.updatedAt)}</div>
-                    {entry.error ? <div className="error-text">{entry.error}</div> : null}
-                  </td>
-                  <td>{REEL_STATUS_LABEL[entry.status]}</td>
-                  <td>
-                    {entry.videoUrl ? <a href={entry.videoUrl} target="_blank" rel="noreferrer">Abrir vídeo</a> : "—"}
-                    {entry.permalink ? <div><a href={entry.permalink} target="_blank" rel="noreferrer">Ver no Instagram</a></div> : null}
-                  </td>
-                  <td>
-                    <div className="sales-review-actions">
-                      <button type="button" disabled={busyId === entry.id || entry.status !== "pending_approval"} onClick={() => void review(entry.id, "approved")}>Aprovar</button>
-                      <button type="button" disabled={busyId === entry.id || entry.status !== "pending_approval"} onClick={() => void review(entry.id, "rejected")}>Rejeitar</button>
-                      <button type="button" disabled={busyId === entry.id || entry.status !== "approved"} onClick={() => void publish(entry.id)}>Publicar</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {!data ? (
+        <p className="text-sm text-secondary">Aguardando dados</p>
+      ) : visible.length === 0 ? (
+        <p className="text-sm text-secondary">Nenhum Reel nesta categoria.</p>
+      ) : (
+        <div className="space-y-3">
+          {visible.map((entry) => (
+            <ReelCard key={entry.id} entry={entry} busyId={busyId} onReview={review} onPublish={publish} />
+          ))}
         </div>
       )}
-    </section>
+    </div>
   );
 }

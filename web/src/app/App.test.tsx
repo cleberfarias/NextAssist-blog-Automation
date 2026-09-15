@@ -41,7 +41,7 @@ describe("App shell", () => {
     expect(screen.getByText("Metas do mês")).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("link", { name: "Reels" }));
-    expect(await screen.findByText("Reels para aprovação")).toBeInTheDocument();
+    expect(await screen.findByText("Gerencie a produção e publicação dos seus vídeos")).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("link", { name: "Blog" }));
     expect(await screen.findByText("Nenhum post publicado ainda.")).toBeInTheDocument();

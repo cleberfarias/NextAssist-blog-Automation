@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useAgentData } from "../../../hooks/useAgentOperations";
 import { formatDateTime, formatElapsed } from "../../../lib/formatters";
-import { REEL_STATUS_LABEL, TIMELINE_STEP_LABEL, TIMELINE_STEP_ORDER, pickFeaturedReel } from "../../../lib/reelStatus";
+import { TIMELINE_STEP_LABEL, TIMELINE_STEP_ORDER, pickFeaturedReel, currentStepLabel } from "../../../lib/reelStatus";
 import type { ReelDashboardResponse, ReelStatus } from "../../../types/api";
 
 const CARD_HEADING: Record<ReelStatus, string> = {
@@ -37,7 +37,7 @@ export function SocialAgentOverview() {
   const lastRecordedStep = steps.length > 0 ? steps[steps.length - 1].step : null;
   const isFullyPublished = lastRecordedStep === "publicado";
 
-  const statusAtual = lastRecordedStep ? TIMELINE_STEP_LABEL[lastRecordedStep] : REEL_STATUS_LABEL[featured.status];
+  const statusAtual = currentStepLabel(featured);
   const avatarScenes = (featured.scenes ?? []).filter((s) => s.type === "avatar_video").length;
   const brollScenes = (featured.scenes ?? []).filter((s) => s.type === "video").length;
 

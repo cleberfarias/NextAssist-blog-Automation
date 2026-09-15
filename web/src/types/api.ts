@@ -258,6 +258,7 @@ export interface ReelListEntry {
   videoUrl?: string;
   permalink?: string | null;
   error?: string;
+  createdAt?: string;
   updatedAt: string;
   audit: ReelAuditEvent[];
   scenes?: SceneSummary[];
