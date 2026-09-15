@@ -4,10 +4,13 @@ import { usePipeline } from "../../hooks/usePipeline";
 import { RunsPanel } from "../dashboard/RunsPanel";
 import { SalesPanel } from "../dashboard/SalesPanel";
 import { RevenuePanel } from "../dashboard/RevenuePanel";
+import { PerformancePanel } from "../dashboard/PerformancePanel";
+import { UsagePanel } from "../dashboard/UsagePanel";
 import { SocialAgentOverview } from "./agente-detail/SocialAgentOverview";
+import { AgentStatusHeader } from "./agente-detail/AgentStatusHeader";
 import { STATUS_LABEL } from "../dashboard/LiveStatus";
 import { PIPELINE_STAGE_BY_ID } from "../../lib/pipelineStages";
-import type { OfficeAgentId } from "../../hooks/useAgentOperations";
+import { useAgentOperations, pipelineStatusToOperational, type OfficeAgentId } from "../../hooks/useAgentOperations";
 import type { AgentId } from "../../types/api";
 
 type AnyAgentId = OfficeAgentId | AgentId;
@@ -21,8 +24,12 @@ function isPipelineStage(id: string): id is AgentId {
   return id in PIPELINE_STAGE_BY_ID;
 }
 
+function isOfficeAgent(id: string): id is OfficeAgentId {
+  return id in OFFICE_TITLES;
+}
+
 function titleFor(id: AnyAgentId): string {
-  if (id in OFFICE_TITLES) return OFFICE_TITLES[id as OfficeAgentId];
+  if (isOfficeAgent(id)) return OFFICE_TITLES[id];
   if (isPipelineStage(id)) return PIPELINE_STAGE_BY_ID[id].label;
   return id;
 }
@@ -35,27 +42,47 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "acoes", label: "Ações" },
 ];
 
-function PipelineStageOverview({ id }: { id: AgentId }) {
-  const { desks } = usePipeline();
-  const event = desks[id];
-  const status = event?.status ?? "idle";
-  return (
-    <section className="rounded-lg border border-border bg-surface p-4">
-      <div className="flex items-center gap-2">
-        <span className="text-lg" aria-hidden="true">{PIPELINE_STAGE_BY_ID[id].icon}</span>
-        <strong className="text-primary">{STATUS_LABEL[status]}</strong>
-      </div>
-      <p className="mt-2 text-sm text-secondary">{event?.message || "Dados ainda não disponíveis."}</p>
-    </section>
-  );
-}
+const OFFICE_BODY: Record<OfficeAgentId, React.ComponentType | null> = {
+  social: SocialAgentOverview,
+  sales: SalesPanel,
+  revenue: RevenuePanel,
+  analytics: PerformancePanel,
+  finance: UsagePanel,
+};
 
+/**
+ * Visão geral de TODOS os agentes segue o mesmo padrão: cabeçalho de
+ * status (ícone + bolinha + mensagem real) e, abaixo, o corpo específico
+ * daquele agente — nunca o inverso, pra não duplicar a lógica de
+ * status/mensagem entre Dashboard, página Agentes e esta tela.
+ */
 function VisaoGeral({ agentId }: { agentId: AnyAgentId }) {
-  if (agentId === "sales") return <SalesPanel />;
-  if (agentId === "revenue") return <RevenuePanel />;
-  if (agentId === "social") return <SocialAgentOverview />;
-  if (isPipelineStage(agentId)) return <PipelineStageOverview id={agentId} />;
-  return <p className="text-secondary">Sem painel detalhado para este agente ainda — veja o card em <Link className="text-accent" to="/agentes">Agentes (IA)</Link>.</p>;
+  const { agents } = useAgentOperations();
+  const { desks } = usePipeline();
+
+  if (isPipelineStage(agentId)) {
+    const event = desks[agentId];
+    const status = event?.status ?? "idle";
+    return (
+      <div>
+        <AgentStatusHeader
+          icon={PIPELINE_STAGE_BY_ID[agentId].icon}
+          status={pipelineStatusToOperational(status)}
+          statusLabel={STATUS_LABEL[status]}
+          message={event?.message || "Dados ainda não disponíveis."}
+        />
+      </div>
+    );
+  }
+
+  const state = agents[agentId as OfficeAgentId];
+  const Body = OFFICE_BODY[agentId as OfficeAgentId];
+  return (
+    <div>
+      <AgentStatusHeader icon={state.icon} status={state.status} statusLabel={state.statusLabel} message={state.message} />
+      {Body ? <Body /> : null}
+    </div>
+  );
 }
 
 export function AgenteDetailPage() {

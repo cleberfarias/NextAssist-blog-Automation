@@ -79,10 +79,10 @@ export function PerformancePanel() {
   useEffect(() => {
     if (!workspace) return;
     const controller = new AbortController();
-    apiGet<PerformanceReport>("/api/performance", workspace, controller.signal, "Não foi possível carregar o desempenho.")
+    apiGet<PerformanceReport | null>("/api/performance", workspace, controller.signal, "Não foi possível carregar o desempenho.")
       .then((data) => {
         setReport(data);
-        if (data.posts.length) {
+        if (data && data.posts.length) {
           setStart(data.periodo.inicio);
           setEnd(data.periodo.fim);
         }
