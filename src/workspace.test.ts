@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { loadWorkspace, listWorkspaces } from "./workspace.js";
+import { loadWorkspace, listWorkspaces, saveWorkspace } from "./workspace.js";
 
 async function makeFixtureRoot(workspaces: Record<string, object | null>): Promise<URL> {
   const dir = await mkdtemp(path.join(tmpdir(), "workspaces-"));
@@ -174,4 +174,47 @@ test("workspace continua rejeitando fallback REST implícito por secret", async 
   const root = await makeFixtureRoot({ acme: { ...heygenWorkspace,
     secrets: { required: [], optional: ["HEYGEN_REST_FALLBACK"] } } });
   await assert.rejects(() => loadWorkspace("acme", root), /HEYGEN_REST_FALLBACK/);
+});
+
+test("saveWorkspace mescla uma atualização parcial de uma seção aninhada, preservando os campos irmãos não tocados", async () => {
+  const root = await makeFixtureRoot({ acme: baseWorkspace });
+  const updated = await saveWorkspace("acme", { brand: { description: "Nova descrição real" } }, root);
+  assert.equal(updated.brand.description, "Nova descrição real");
+  assert.equal(updated.brand.name, "Acme"); // campo irmão preservado
+  assert.equal(updated.brand.toneOfVoice, "t");
+});
+
+test("saveWorkspace mescla dois níveis de profundidade sem apagar o resto da subseção", async () => {
+  const withSearchConsole = {
+    ...heygenWorkspace,
+    integrations: { ...heygenWorkspace.integrations, searchConsole: { siteUrl: "sc-domain:a.test", sitemapUrl: "https://a.test/sitemap.xml" } },
+  };
+  const root = await makeFixtureRoot({ acme: withSearchConsole });
+  const patched = await saveWorkspace("acme", { integrations: { searchConsole: { siteUrl: "sc-domain:b.test" } } }, root);
+  assert.equal(patched.integrations.searchConsole?.siteUrl, "sc-domain:b.test");
+  assert.equal(patched.integrations.searchConsole?.sitemapUrl, "https://a.test/sitemap.xml"); // preservado, não sobrescrito
+  assert.equal(patched.integrations.cms.apiUrl, heygenWorkspace.integrations.cms.apiUrl); // seção irmã intacta
+});
+
+test("saveWorkspace grava de fato no workspace.json, persistindo entre leituras", async () => {
+  const root = await makeFixtureRoot({ acme: baseWorkspace });
+  await saveWorkspace("acme", { goals: { monthlyCustomerTarget: 10 } }, root);
+  const reloaded = await loadWorkspace("acme", root);
+  assert.equal(reloaded.goals.monthlyCustomerTarget, 10);
+  const raw = JSON.parse(await readFile(new URL("acme/workspace.json", root), "utf-8"));
+  assert.equal(raw.goals.monthlyCustomerTarget, 10);
+});
+
+test("saveWorkspace ignora silenciosamente tentativas de mudar id ou secrets", async () => {
+  const root = await makeFixtureRoot({ acme: baseWorkspace });
+  const updated = await saveWorkspace("acme", { id: "outro-id", secrets: { required: [] } } as never, root);
+  assert.equal(updated.id, "acme");
+  assert.deepEqual(updated.secrets.required, ["OPENAI_API_KEY"]);
+});
+
+test("saveWorkspace rejeita uma atualização que deixaria o workspace inválido, sem gravar nada", async () => {
+  const root = await makeFixtureRoot({ acme: baseWorkspace });
+  await assert.rejects(() => saveWorkspace("acme", { goals: { primary: "world-domination" } }, root), /goals\.primary/);
+  const reloaded = await loadWorkspace("acme", root);
+  assert.equal(reloaded.goals.primary, "leads"); // nada foi gravado
 });

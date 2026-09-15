@@ -1,4 +1,4 @@
-import { readFile, readdir } from "node:fs/promises";
+import { readFile, readdir, writeFile } from "node:fs/promises";
 
 export interface MarketingWorkspace {
   id: string;
@@ -234,6 +234,38 @@ export async function loadWorkspace(id: string, root: URL = DEFAULT_ROOT): Promi
     throw new Error(`workspace.json de "${id}" declara id "${workspace.id}" — precisa bater com o nome da pasta.`);
   }
   return workspace;
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** Mescla recursivamente objetos simples; arrays e valores primitivos do patch substituem o valor base inteiro. */
+function deepMerge(base: unknown, patch: unknown): unknown {
+  if (!isPlainObject(base) || !isPlainObject(patch)) return patch;
+  const result: Record<string, unknown> = { ...base };
+  for (const [key, value] of Object.entries(patch)) {
+    result[key] = deepMerge(base[key], value);
+  }
+  return result;
+}
+
+/**
+ * Aplica uma atualização parcial (mesclada recursivamente com o workspace
+ * atual) e regrava `workspace.json` — só depois de revalidar o resultado com
+ * o mesmo `validateWorkspaceShape` usado na leitura, então uma atualização
+ * que deixaria o workspace inválido nunca chega a ser gravada. `id` e
+ * `secrets` são sempre ignorados: o id precisa bater com o nome da pasta, e
+ * quais segredos o workspace exige é uma decisão de código/infra, não algo
+ * editável pela tela de configurações.
+ */
+export async function saveWorkspace(id: string, updates: Record<string, unknown>, root: URL = DEFAULT_ROOT): Promise<MarketingWorkspace> {
+  const current = await loadWorkspace(id, root);
+  const { id: _ignoredId, secrets: _ignoredSecrets, ...safeUpdates } = updates;
+  const merged = deepMerge(current, safeUpdates);
+  const validated = validateWorkspaceShape(id, merged);
+  await writeFile(new URL(`${id}/workspace.json`, root), `${JSON.stringify(validated, null, 2)}\n`);
+  return validated;
 }
 
 /**

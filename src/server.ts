@@ -17,7 +17,8 @@ import { getSalesState, reviewSalesDraft } from "./sales/state.js";
 import { runRevenueDirector } from "./harness/revenueDirectorRuntime.js";
 import { getHarnessTraces } from "./harness/traceStore.js";
 import { triggerDailyPostWorkflow } from "./lib/githubDispatch.js";
-import { listWorkspaces, loadWorkspace, type MarketingWorkspace } from "./workspace.js";
+import { listWorkspaces, loadWorkspace, saveWorkspace, type MarketingWorkspace } from "./workspace.js";
+import { getSecretsStatus } from "./secretsStatus.js";
 import { EnvSecretProvider } from "./lib/secrets.js";
 import { buildWorkspaceContext, type WorkspaceContext } from "./context.js";
 import { createReelRoutes } from "./reels/routes.js";
@@ -122,6 +123,30 @@ app.use("/api/reels", express.json(), createReelRoutes({ contextFor }));
 app.get("/api/workspaces", asyncHandler(async (_req, res) => {
   const workspaces = await listWorkspaces();
   res.json(workspaces.map((w: MarketingWorkspace) => ({ id: w.id, name: w.name })));
+}));
+
+app.get("/api/workspace", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  res.json(await loadWorkspace(workspaceId));
+}));
+
+app.patch("/api/workspace", express.json(), asyncHandler(async (req, res) => {
+  const workspaceId = String(req.body?.workspaceId ?? "");
+  if (!workspaceId) { res.status(400).json({ error: "workspaceId é obrigatório." }); return; }
+  const updates = req.body?.updates;
+  if (typeof updates !== "object" || updates === null || Array.isArray(updates)) {
+    res.status(400).json({ error: "updates precisa ser um objeto." });
+    return;
+  }
+  res.json(await saveWorkspace(workspaceId, updates));
+}));
+
+app.get("/api/workspace/secrets-status", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  const workspace = await loadWorkspace(workspaceId);
+  res.json(await getSecretsStatus(workspace, secrets));
 }));
 
 app.post("/api/conversions", express.json(), asyncHandler(async (req, res) => {

@@ -3,6 +3,58 @@ export interface WorkspaceSummary {
   name: string;
 }
 
+export interface WorkspaceConfig {
+  id: string;
+  name: string;
+  active: boolean;
+  brand: {
+    name: string;
+    description: string;
+    toneOfVoice: string;
+    targetAudience: string[];
+    competitors: string[];
+    forbiddenTerms?: string[];
+    valuePropositions?: string[];
+    requiredLinks?: string[];
+  };
+  goals: {
+    primary: "leads" | "traffic" | "brand" | "sales";
+    monthlyLeadTarget?: number;
+    monthlyTrafficTarget?: number;
+    monthlyCustomerTarget?: number;
+  };
+  channels: { blog: boolean; instagram: boolean; linkedin: boolean };
+  integrations: {
+    siteUrl: string;
+    cms: { provider: "nextassist"; apiUrl: string };
+    searchConsole?: { siteUrl: string; sitemapUrl: string };
+    instagram?: { apiVersion: string };
+    heygen?: { transport: "mcp"; mcpUrl: string; auth: "oauth" };
+  };
+  autonomy: { mode: "copilot" | "semi-autonomous" | "autonomous" };
+  aiFallbackProvider?: "openai" | "anthropic" | "none";
+  contentStrategy?: { minimumPendingTopics: number; replenishAmount: number };
+  instagramStrategy?: { frequencyPerWeek: number; pillars: string[]; preferredFormats: string[] };
+  videoStrategy?: {
+    provider: "heygen-mcp" | "heygen-api";
+    avatarId: string;
+    voiceId: string;
+    brandKitId?: string;
+    format: "9:16" | "16:9";
+    music: boolean;
+    musicVolume?: number;
+    requiresApproval: boolean;
+    fallback: "none";
+  };
+  secrets: { required: string[]; optional?: string[] };
+}
+
+export interface SecretStatus {
+  key: string;
+  required: boolean;
+  configured: boolean;
+}
+
 export type AgentId =
   | "marketing-director"
   | "pesquisa-mercado"
