@@ -133,7 +133,7 @@ function ReviewControls({ workspace, entry, onSaved }: ReviewControlsProps) {
   );
 }
 
-export function SalesPanel() {
+export function SalesPanel({ filterIntent }: { filterIntent?: "customer" } = {}) {
   const { workspace } = useWorkspace();
   const [data, setData] = useState<SalesDashboardResponse | null>(null);
 
@@ -157,7 +157,7 @@ export function SalesPanel() {
     return (
       <section className="usage-panel sales-panel">
         <div className="usage-header">
-          <div><h2>Sales Agent</h2><p>Leads priorizados pelo Harness a partir do funil real.</p></div>
+          <div><h2>{filterIntent === "customer" ? "Clientes" : "Sales Agent"}</h2><p>Leads priorizados pelo Harness a partir do funil real.</p></div>
           <span>Aguardando dados</span>
         </div>
       </section>
@@ -165,14 +165,14 @@ export function SalesPanel() {
   }
 
   const priority = [...data.entries]
-    .filter((entry) => entry.assessment.intent !== "low")
+    .filter((entry) => filterIntent ? entry.assessment.intent === filterIntent : entry.assessment.intent !== "low")
     .sort((a, b) => b.assessment.score - a.assessment.score)
     .slice(0, 12);
 
   return (
     <section className="usage-panel sales-panel">
       <div className="usage-header">
-        <div><h2>Sales Agent</h2><p>Leads reais classificados por intenção. Aprovar autoriza a próxima etapa, mas ainda não envia mensagem.</p></div>
+        <div><h2>{filterIntent === "customer" ? "Clientes" : "Sales Agent"}</h2><p>Leads reais classificados por intenção. Aprovar autoriza a próxima etapa, mas ainda não envia mensagem.</p></div>
         <span>{data.updatedAt ? `Atualizado ${formatDateTime(data.updatedAt)}` : "Sem execução salva"}</span>
       </div>
 

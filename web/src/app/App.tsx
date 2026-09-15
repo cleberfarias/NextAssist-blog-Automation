@@ -32,7 +32,7 @@ export default function App() {
                   <Route path="/reels/:id" element={<Placeholder testId="page-reel-detalhe" title="Reel" />} />
                   <Route path="/blog" element={<HistoryPanel />} />
                   <Route path="/leads" element={<SalesPanel />} />
-                  <Route path="/clientes" element={<Placeholder testId="page-clientes" title="Clientes" />} />
+                  <Route path="/clientes" element={<SalesPanel filterIntent="customer" />} />
                   <Route path="/relatorios" element={<Placeholder testId="page-relatorios" title="Relatórios" />} />
                   <Route path="/configuracoes" element={<ConfigView />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
