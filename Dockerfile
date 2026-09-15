@@ -16,8 +16,9 @@ WORKDIR /app/web
 COPY web/package.json web/package-lock.json ./
 RUN npm ci
 
-COPY web/tsconfig.json web/tsconfig.node.json web/vite.config.ts web/index.html ./
+COPY web/tsconfig.json web/tsconfig.node.json web/vite.config.ts web/tailwind.config.ts web/postcss.config.js web/index.html ./
 COPY web/src ./src
+COPY web/public ./public
 RUN npm run build
 
 FROM node:22-slim AS runtime
