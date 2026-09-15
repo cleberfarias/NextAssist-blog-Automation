@@ -22,6 +22,9 @@ describe("App shell", () => {
       if (url.includes("/api/history")) return Promise.resolve({ ok: true, json: async () => [] });
       if (url.includes("/api/sales")) return Promise.resolve({ ok: true, json: async () => ({ updatedAt: null, summary: { total: 0, hot: 0, medium: 0, customers: 0, draftsPendingApproval: 0 }, entries: [] }) });
       if (url.includes("/api/reels")) return Promise.resolve({ ok: true, json: async () => ({ updatedAt: null, summary: { total: 0, pendingApproval: 0, approved: 0, published: 0, failed: 0 }, entries: [] }) });
+      if (url.includes("/api/performance")) return Promise.resolve({ ok: true, json: async () => ({ atualizadoEm: "2026-09-15T00:00:00.000Z", periodo: { inicio: "", fim: "" }, posts: [] }) });
+      if (url.includes("/api/usage")) return Promise.resolve({ ok: true, json: async () => ({ trackedRuns: 0, month: { estimatedUsd: 0, inputTokens: 0, outputTokens: 0, webSearchRequests: 0 }, total: { estimatedUsd: 0, inputTokens: 0, outputTokens: 0, webSearchRequests: 0 }, averagePublishedUsd: 0 }) });
+      if (url.includes("/api/attribution")) return Promise.resolve({ ok: true, json: async () => ({ rows: [], unattributedEvents: 0 }) });
       return Promise.resolve({ ok: true, json: async () => ({}) });
     }));
 
@@ -40,5 +43,8 @@ describe("App shell", () => {
 
     await userEvent.click(screen.getByRole("link", { name: "Leads" }));
     expect(await screen.findByText("Sales Agent")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("link", { name: "Relatórios" }));
+    expect(await screen.findByText("Consumo de IA")).toBeInTheDocument();
   });
 });

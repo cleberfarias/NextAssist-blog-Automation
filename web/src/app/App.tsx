@@ -10,6 +10,7 @@ import { HistoryPanel } from "../views/dashboard/HistoryPanel";
 import { SalesPanel } from "../views/dashboard/SalesPanel";
 import { ReelDetailPage } from "../views/reels/ReelDetailPage";
 import { ConteudoPage } from "../views/pages/ConteudoPage";
+import { RelatoriosPage } from "../views/pages/RelatoriosPage";
 
 function Placeholder({ testId, title }: { testId: string; title: string }) {
   return <div data-testid={testId} className="p-6 text-primary"><h1 className="text-xl font-semibold">{title}</h1></div>;
@@ -35,7 +36,7 @@ export default function App() {
                   <Route path="/blog" element={<HistoryPanel />} />
                   <Route path="/leads" element={<SalesPanel />} />
                   <Route path="/clientes" element={<SalesPanel filterIntent="customer" />} />
-                  <Route path="/relatorios" element={<Placeholder testId="page-relatorios" title="Relatórios" />} />
+                  <Route path="/relatorios" element={<RelatoriosPage />} />
                   <Route path="/configuracoes" element={<ConfigView />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
