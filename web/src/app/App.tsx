@@ -13,6 +13,7 @@ import { ConteudoPage } from "../views/pages/ConteudoPage";
 import { RelatoriosPage } from "../views/pages/RelatoriosPage";
 import { DashboardPage } from "../views/pages/DashboardPage";
 import { AgentesPage } from "../views/pages/AgentesPage";
+import { AgenteDetailPage } from "../views/pages/AgenteDetailPage";
 
 function Placeholder({ testId, title }: { testId: string; title: string }) {
   return <div data-testid={testId} className="p-6 text-primary"><h1 className="text-xl font-semibold">{title}</h1></div>;
@@ -31,7 +32,7 @@ export default function App() {
                 <Routes>
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/agentes" element={<AgentesPage />} />
-                  <Route path="/agentes/:agentId" element={<Placeholder testId="page-agente-detalhe" title="Agente" />} />
+                  <Route path="/agentes/:agentId" element={<AgenteDetailPage />} />
                   <Route path="/conteudo" element={<ConteudoPage />} />
                   <Route path="/reels" element={<ReelApprovalPanel />} />
                   <Route path="/reels/:id" element={<ReelDetailPage />} />
