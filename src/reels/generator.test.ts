@@ -58,6 +58,15 @@ test("generateInstagramReelDraft (heygen-api): envia ao HeyGen via Studio multi-
     assert.equal(record.status, "rendering");
     assert.equal(record.videoId, "hg_new");
     assert.equal(record.provider, "heygen-api");
+
+    // novo: scenes persistidas com rótulos, e a timeline registra os 3 marcos de envio.
+    assert.equal(record.scenes?.length, 7);
+    assert.deepEqual(record.scenes?.map((s) => s.type), [
+      "avatar_video", "video", "video", "avatar_video", "video", "video", "avatar_video",
+    ]);
+    assert.ok(record.scenes?.every((s) => s.type === "video" ? Boolean(s.assetId) : true));
+    const stepNames = record.timelineSteps?.map((s) => s.step);
+    assert.deepEqual(stepNames, ["roteiro_gerado", "cenas_montadas", "enviado_heygen"]);
   } finally {
     await temp.cleanup();
   }

@@ -7,9 +7,9 @@ import { createHeyGenApiClient } from "../harness/heygenApi.js";
 import { selectHeyGenProvider, type HeyGenProviderName } from "../lib/heygenProvider.js";
 import { uploadReelVideo } from "../lib/storage.js";
 import { reconcileReelWithRemote } from "./reconciler.js";
-import { selectBrollForPost } from "./broll.js";
-import { buildStudioScenes } from "./studioScenes.js";
-import { createQueuedReel, findReel, patchStoredReel, planReelGeneration, transitionStoredReel, type ReelRecord } from "./state.js";
+import { selectBrollForPost, type BrollAsset } from "./broll.js";
+import { buildStudioScenes, type StudioScene } from "./studioScenes.js";
+import { createQueuedReel, findReel, patchStoredReel, planReelGeneration, transitionStoredReel, appendTimelineStep, type ReelRecord, type SceneSummary } from "./state.js";
 
 export interface ReelDraftInput {
   caption: string;
@@ -24,6 +24,18 @@ type VideoStrategy = NonNullable<MarketingWorkspace["videoStrategy"]>;
 
 function providerLabel(provider: HeyGenProviderName): string {
   return provider === "heygen-mcp" ? "HeyGen MCP" : "HeyGen API";
+}
+
+function toSceneSummaries(scenes: StudioScene[], broll: BrollAsset[]): SceneSummary[] {
+  const brollById = new Map(broll.map((asset) => [asset.assetId, asset]));
+  return scenes.map((scene, index) => {
+    if (scene.type === "avatar_video") {
+      const label = index === 0 ? "Abertura (avatar)" : index === scenes.length - 1 ? "Fechamento / CTA (avatar)" : "Transição (avatar)";
+      return { type: "avatar_video" as const, label };
+    }
+    const asset = brollById.get(scene.source.asset_id);
+    return { type: "video" as const, label: asset?.label ?? "B-roll", assetId: scene.source.asset_id };
+  });
 }
 
 /**
@@ -127,15 +139,18 @@ export async function generateInstagramReelDraft(
   // retorna — nunca espera o vídeo terminar aqui.
   try {
     if (!input.brief) throw new Error("HeyGen API (Studio) exige o roteiro estruturado (brief) para montar as cenas.");
+    await appendTimelineStep(ctx, reelId, "roteiro_gerado");
     const client = createHeyGenApiClient(ctx, ctx.workspace.id);
     const broll = selectBrollForPost(post);
     const scenes = buildStudioScenes({ brief: input.brief, broll, avatarId: strategy.avatarId, voiceId: strategy.voiceId });
+    await appendTimelineStep(ctx, reelId, "cenas_montadas");
     const { videoId } = await client.generateStudio({
       title: `NextAssist - ${post.titulo}`,
       scenes,
       aspectRatio: strategy.format ?? "9:16",
     });
-    return await patchStoredReel(ctx, reelId, { videoId });
+    await patchStoredReel(ctx, reelId, { videoId, scenes: toSceneSummaries(scenes, broll) });
+    return await appendTimelineStep(ctx, reelId, "enviado_heygen");
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     await transitionStoredReel(ctx, reelId, "failed", "system", "Falha ao enviar o Reel para o HeyGen.", { error: message });
