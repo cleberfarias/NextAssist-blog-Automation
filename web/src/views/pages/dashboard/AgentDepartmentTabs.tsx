@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AgentOfficeCanvas } from "./AgentOfficeCanvas";
-import { LiveStatus } from "../../dashboard/LiveStatus";
+import { ContentPipelineBoard } from "./ContentPipelineBoard";
 
 type Department = "office" | "content";
 
@@ -33,7 +33,7 @@ export function AgentDepartmentTabs() {
           </button>
         ))}
       </div>
-      {department === "office" ? <AgentOfficeCanvas /> : <LiveStatus />}
+      {department === "office" ? <AgentOfficeCanvas /> : <ContentPipelineBoard />}
     </div>
   );
 }
