@@ -14,7 +14,7 @@ const ITEMS: { to: string; label: string; icon: string; end?: boolean }[] = [
 
 export function Sidebar() {
   return (
-    <nav className="sidebar flex shrink-0 gap-1 overflow-x-auto bg-surface p-3 lg:w-56 lg:flex-col lg:overflow-visible" aria-label="Menu principal">
+    <nav className="flex shrink-0 flex-col gap-1 overflow-x-auto bg-surface p-3 lg:w-56 lg:overflow-visible" aria-label="Menu principal">
       {ITEMS.map((item) => (
         <NavLink
           key={item.to}

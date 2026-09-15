@@ -6,9 +6,9 @@ export function Topbar() {
   const { runMode, running, topicLine, runBlog, runInstagram } = usePipeline();
 
   return (
-    <header className="topbar flex items-center justify-between gap-4 border-b border-border bg-surface px-6 py-3">
-      <div className="brand flex items-center gap-3">
-        <span className="brand-logo text-2xl" aria-hidden="true">🏢</span>
+    <header className="flex items-center justify-between gap-4 border-b border-border bg-surface px-6 py-3">
+      <div className="flex items-center gap-3">
+        <span className="text-2xl" aria-hidden="true">🏢</span>
         <div>
           <h1 className="text-base font-semibold text-primary">Escritório NextAssist</h1>
           <p id="topic-line" className="text-xs text-secondary">{topicLine}</p>
