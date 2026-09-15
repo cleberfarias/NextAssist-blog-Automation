@@ -25,13 +25,18 @@ function stubFetch(response: unknown) {
 describe("SalesPanel", () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it("filterIntent='customer' mostra só o lead com intent customer, sem abas", async () => {
+  it("filterIntent='customer' segue o mesmo padrão de Leads (mesmas abas), mas só com dados reais de clientes convertidos", async () => {
     stubFetch(RESPONSE);
     render(<WorkspaceProvider><SalesPanel filterIntent="customer" /></WorkspaceProvider>);
 
     expect(await screen.findByText("Cliente Atual")).toBeInTheDocument();
     expect(screen.queryByText("Lead Quente")).not.toBeInTheDocument();
-    expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+    expect(screen.getByRole("tablist")).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "Quentes" })).toBeInTheDocument();
+
+    // A aba Quentes não teria conteúdo real aqui — só clientes convertidos entram nesta tela.
+    await userEvent.click(screen.getByRole("tab", { name: "Quentes" }));
+    expect(await screen.findByText("Nenhum lead nesta categoria.")).toBeInTheDocument();
   });
 
   it("/leads (sem filtro) mostra todos os leads reais com status e interesse derivados dos dados reais", async () => {

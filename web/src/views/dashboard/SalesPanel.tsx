@@ -202,33 +202,31 @@ export function SalesPanel({ filterIntent }: { filterIntent?: "customer" } = {})
   const byIntent = filterIntent
     ? data.entries.filter((entry) => entry.assessment.intent === filterIntent)
     : data.entries;
-  const visible = [...(filterIntent ? byIntent : filterLeadsByTab(byIntent, tab))].sort((a, b) => b.assessment.score - a.assessment.score);
+  const visible = [...filterLeadsByTab(byIntent, tab)].sort((a, b) => b.assessment.score - a.assessment.score);
 
   return (
     <div className="p-6 text-primary">
       <h1 className="text-xl font-semibold">{title}</h1>
       <p className="text-sm text-secondary">{subtitle}</p>
 
-      {filterIntent ? null : (
-        <div role="tablist" className="mb-4 mt-4 flex flex-wrap gap-2 border-b border-border" aria-label="Filtro de leads">
-          {LEAD_TABS.map((t) => (
-            <button
-              key={t.id}
-              role="tab"
-              aria-selected={tab === t.id}
-              className={`px-3 py-2 text-sm ${tab === t.id ? "border-b-2 border-accent text-primary" : "text-secondary"}`}
-              onClick={() => setTab(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-      )}
+      <div role="tablist" className="mb-4 mt-4 flex flex-wrap gap-2 border-b border-border" aria-label="Filtro de leads">
+        {LEAD_TABS.map((t) => (
+          <button
+            key={t.id}
+            role="tab"
+            aria-selected={tab === t.id}
+            className={`px-3 py-2 text-sm ${tab === t.id ? "border-b-2 border-accent text-primary" : "text-secondary"}`}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
 
       {visible.length === 0 ? (
-        <p className={filterIntent ? "mt-6 text-sm text-secondary" : "mt-4 text-sm text-secondary"}>Nenhum lead nesta categoria.</p>
+        <p className="text-sm text-secondary">Nenhum lead nesta categoria.</p>
       ) : (
-        <div className={filterIntent ? "mt-6 overflow-x-auto" : "mt-4 overflow-x-auto"}>
+        <div className="overflow-x-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-secondary">
