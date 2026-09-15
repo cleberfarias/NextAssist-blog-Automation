@@ -3,7 +3,7 @@ import test from "node:test";
 import type { WorkspaceContext } from "../context.js";
 import { createTempWorkspace } from "../testing/tempWorkspace.js";
 import {
-  canTransitionReel, createQueuedReel, findReel, patchStoredReel, planReelGeneration,
+  appendTimelineStep, canTransitionReel, createQueuedReel, findReel, patchStoredReel, planReelGeneration,
   transitionStoredReel, type ReelRecord, type ReelStatus,
 } from "./state.js";
 
@@ -114,4 +114,25 @@ test("planReelGeneration: queued e failed sem videoId pedem retry explícito", (
   const failed = reelRecord("failed", { error: "boom" });
   assert.deepEqual(planReelGeneration(queued), { action: "retry", record: queued });
   assert.deepEqual(planReelGeneration(failed), { action: "retry", record: failed });
+});
+
+test("appendTimelineStep: adiciona o step com timestamp e é idempotente (não duplica)", async () => {
+  const { temp, ctx } = await fixtureCtx();
+  try {
+    const created = await createQueuedReel(ctx, {
+      id: "nextassist:teste", workspaceId: "nextassist", slug: "teste", title: "Teste",
+      blogUrl: "https://example.com/teste", caption: "Legenda", provider: "heygen-api",
+      avatarId: "avatar", voiceId: "voice",
+    });
+    await transitionStoredReel(ctx, created.id, "rendering", "system", "Renderização iniciada.");
+
+    const once = await appendTimelineStep(ctx, created.id, "enviado_heygen");
+    assert.equal(once.timelineSteps?.length, 1);
+    assert.equal(once.timelineSteps?.[0].step, "enviado_heygen");
+
+    const twice = await appendTimelineStep(ctx, created.id, "enviado_heygen");
+    assert.equal(twice.timelineSteps?.length, 1); // não duplicou
+  } finally {
+    await temp.cleanup();
+  }
 });

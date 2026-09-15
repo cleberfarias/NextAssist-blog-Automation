@@ -15,6 +15,28 @@ export interface ReelAuditEvent {
   note?: string;
 }
 
+export type TimelineStepName =
+  | "roteiro_gerado"
+  | "cenas_montadas"
+  | "enviado_heygen"
+  | "processando"
+  | "video_concluido"
+  | "aguardando_aprovacao"
+  | "publicado";
+
+export interface TimelineStep {
+  step: TimelineStepName;
+  at: string;
+}
+
+export interface SceneSummary {
+  type: "avatar_video" | "video";
+  label: string;
+  /** Presente só em cenas de B-roll (asset_id do HeyGen). */
+  assetId?: string;
+  thumbnailUrl?: string;
+}
+
 export interface ReelRecord {
   id: string;
   workspaceId: string;
@@ -35,6 +57,8 @@ export interface ReelRecord {
   createdAt: string;
   updatedAt: string;
   audit: ReelAuditEvent[];
+  scenes?: SceneSummary[];
+  timelineSteps?: TimelineStep[];
 }
 
 export interface ReelStateReport {
@@ -110,6 +134,18 @@ export async function getReel(ctx: WorkspaceContext, reelId: string): Promise<Re
 export async function patchStoredReel(ctx: WorkspaceContext, reelId: string, patch: Partial<Omit<ReelRecord, "id" | "workspaceId" | "slug" | "status" | "audit">>): Promise<ReelRecord> {
   const record = await getReel(ctx, reelId);
   return upsertReel(ctx, { ...record, ...patch, updatedAt: new Date().toISOString() });
+}
+
+/**
+ * Registra um marco da timeline de geração — idempotente (chamar de novo com
+ * o mesmo `step` não duplica), porque o reconciler pode observar o mesmo
+ * estado remoto em várias execuções seguidas antes de `completed`.
+ */
+export async function appendTimelineStep(ctx: WorkspaceContext, reelId: string, step: TimelineStepName): Promise<ReelRecord> {
+  const record = await getReel(ctx, reelId);
+  if (record.timelineSteps?.some((entry) => entry.step === step)) return record;
+  const timelineSteps = [...(record.timelineSteps ?? []), { step, at: new Date().toISOString() }];
+  return patchStoredReel(ctx, reelId, { timelineSteps });
 }
 
 export async function createQueuedReel(ctx: WorkspaceContext, input: Omit<ReelRecord, "status" | "createdAt" | "updatedAt" | "audit">): Promise<ReelRecord> {
