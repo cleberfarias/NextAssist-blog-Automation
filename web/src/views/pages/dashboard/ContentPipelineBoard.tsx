@@ -7,7 +7,7 @@ import { PIPELINE_STAGES } from "../../../lib/pipelineStages";
 import { STATUS_LABEL } from "../../dashboard/LiveStatus";
 import { computePipelineStats } from "./contentPipelineStats";
 import { AgentBubble } from "./AgentBubble";
-import type { AgentOperationalStatus } from "../../../hooks/useAgentOperations";
+import { pipelineStatusToOperational } from "../../../hooks/useAgentOperations";
 import type { AgentId, AgentStatus, RunRecord, CalendarTopic } from "../../../types/api";
 
 /**
@@ -45,13 +45,6 @@ const RUN_MODE_LABEL: Record<string, string> = {
   dispatch: "GitHub Actions",
   disabled: "Execução manual desabilitada",
 };
-
-function toOperationalStatus(status: AgentStatus): AgentOperationalStatus {
-  if (status === "done") return "completed";
-  if (status === "working") return "working";
-  if (status === "error") return "failed";
-  return "idle";
-}
 
 function useWorkspaceData<T>(path: string): T | null {
   const { workspace } = useWorkspace();
@@ -127,7 +120,7 @@ export function ContentPipelineBoard() {
               to={`/agentes/${stage.id}`}
               icon={stage.icon}
               title={stage.label}
-              status={toOperationalStatus(status)}
+              status={pipelineStatusToOperational(status)}
               statusLabel={STATUS_LABEL[status]}
               message={event?.message || "Dados ainda não disponíveis."}
               position={PHOTO_POSITION[stage.id]}

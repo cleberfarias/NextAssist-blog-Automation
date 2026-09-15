@@ -28,6 +28,14 @@ const STATUS_LABELS: Record<AgentOperationalStatus, string> = {
 
 const NO_DATA_MESSAGE = "Dados ainda não disponíveis.";
 
+/** Mapeia o status de 4 valores do pipeline (idle/working/done/error) pro status operacional de 6 valores usado nos balões/cards de agente — só a cor/semântica, o rótulo de texto continua vindo de STATUS_LABEL (LiveStatus.tsx), que já é o texto certo pra um estágio de pipeline. */
+export function pipelineStatusToOperational(status: "idle" | "working" | "done" | "error"): AgentOperationalStatus {
+  if (status === "done") return "completed";
+  if (status === "working") return "working";
+  if (status === "error") return "failed";
+  return "idle";
+}
+
 function idleState(agentId: OfficeAgentId, title: string, icon: string): AgentOperationalState {
   return { agentId, title, icon, status: "idle", statusLabel: STATUS_LABELS.idle, message: NO_DATA_MESSAGE, kpis: [] };
 }
