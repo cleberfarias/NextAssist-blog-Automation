@@ -1,5 +1,5 @@
 import type { WorkspaceContext } from "../context.js";
-import { getReelState, transitionStoredReel, type ReelRecord } from "./state.js";
+import { getReelState, transitionStoredReel, appendTimelineStep, type ReelRecord } from "./state.js";
 
 export interface ApprovedReelPublisher {
   publish(input: { videoUrl: string; caption: string }): Promise<{ mediaId: string; permalink: string | null }>;
@@ -28,11 +28,12 @@ export async function publishApprovedInstagramReel(
   await transitionStoredReel(ctx, reelId, "publishing", "system", "Publicação iniciada.");
   try {
     const result = await publisher.publish({ videoUrl: current.videoUrl, caption: current.caption });
-    return await transitionStoredReel(ctx, reelId, "published", "system", "Reel publicado.", {
+    await transitionStoredReel(ctx, reelId, "published", "system", "Reel publicado.", {
       mediaId: result.mediaId,
       permalink: result.permalink,
       error: undefined,
     });
+    return await appendTimelineStep(ctx, reelId, "publicado");
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     await transitionStoredReel(ctx, reelId, "failed", "system", "Falha na publicação.", { error: message });

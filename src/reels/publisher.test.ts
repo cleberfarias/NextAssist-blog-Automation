@@ -85,3 +85,18 @@ test("approved reel can publish once and persists published state", async () => 
     await temp.cleanup();
   }
 });
+
+test("publishApprovedInstagramReel: registra o step 'publicado' na timeline", async () => {
+  const { temp, ctx, reelId } = await fixture();
+  try {
+    await reviewInstagramReel(ctx, reelId, "approved", "Aprovado no painel");
+    const record = await publishApprovedInstagramReel(ctx, reelId, {
+      async publish() {
+        return { mediaId: "media_1", permalink: "https://instagram.com/p/1" };
+      },
+    });
+    assert.deepEqual(record.timelineSteps?.map((s) => s.step), ["publicado"]);
+  } finally {
+    await temp.cleanup();
+  }
+});
