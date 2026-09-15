@@ -4,7 +4,7 @@ import { RunsPanel } from "../dashboard/RunsPanel";
 import { SalesPanel } from "../dashboard/SalesPanel";
 import { RevenuePanel } from "../dashboard/RevenuePanel";
 import { ReelApprovalPanel } from "../dashboard/ReelApprovalPanel";
-import type { OfficeAgentId } from "./AgentesPage";
+import type { OfficeAgentId } from "../../hooks/useAgentOperations";
 
 const TITLES: Record<OfficeAgentId, string> = {
   social: "Social Agent", analytics: "Analytics Agent", sales: "Sales Agent",

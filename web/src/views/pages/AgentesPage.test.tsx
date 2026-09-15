@@ -26,7 +26,7 @@ describe("AgentesPage", () => {
     expect(screen.getByText("Sales Agent")).toBeInTheDocument();
     expect(screen.getByText("Finance Agent")).toBeInTheDocument();
     expect(screen.getByText("Revenue Director")).toBeInTheDocument();
-    expect(await screen.findByText(/1 aguardando aprovação/)).toBeInTheDocument();
+    expect(await screen.findByText(/1 Reel\(s\) aguardando sua aprovação/)).toBeInTheDocument();
     expect(screen.getByText(/Pouco tráfego ainda\./)).toBeInTheDocument();
   });
 });
