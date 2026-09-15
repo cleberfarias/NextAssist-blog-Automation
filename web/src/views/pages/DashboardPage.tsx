@@ -3,7 +3,7 @@ import { useWorkspace } from "../../hooks/useWorkspace";
 import { useAgentData } from "../../hooks/useAgentOperations";
 import { nf } from "../../lib/formatters";
 import type { ReelDashboardResponse, SalesDashboardResponse, RevenueDashboardResponse } from "../../types/api";
-import { AgentOfficeCanvas } from "./dashboard/AgentOfficeCanvas";
+import { AgentDepartmentTabs } from "./dashboard/AgentDepartmentTabs";
 import { ActivityFeed } from "./dashboard/ActivityFeed";
 
 function KpiCard({ icon, label, value }: { icon: string; label: string; value: string }) {
@@ -68,7 +68,7 @@ export function DashboardPage() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2"><AgentOfficeCanvas /></div>
+        <div className="lg:col-span-2"><AgentDepartmentTabs /></div>
         <ActivityFeed />
       </div>
 
