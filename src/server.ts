@@ -20,6 +20,7 @@ import { listWorkspaces, loadWorkspace, type MarketingWorkspace } from "./worksp
 import { EnvSecretProvider } from "./lib/secrets.js";
 import { buildWorkspaceContext, type WorkspaceContext } from "./context.js";
 import { createReelRoutes } from "./reels/routes.js";
+import { getAllTopics } from "./contentCalendar.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4173;
@@ -290,6 +291,11 @@ app.post("/api/run", express.json(), asyncHandler(async (req, res) => {
 app.get("/api/history", asyncHandler(async (req, res) => {
   const workspaceId = requireWorkspaceId(req, res); if (!workspaceId) return;
   res.json(await getHistory(await contextFor(workspaceId)));
+}));
+
+app.get("/api/content-calendar", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res); if (!workspaceId) return;
+  res.json(await getAllTopics(await contextFor(workspaceId)));
 }));
 
 app.get("/api/runs", asyncHandler(async (req, res) => {
