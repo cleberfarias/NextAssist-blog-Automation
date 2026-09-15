@@ -5,6 +5,9 @@ import { ToastProvider } from "../components/ui/Toast";
 import { Sidebar } from "../components/layout/Sidebar";
 import { Topbar } from "../components/layout/Topbar";
 import { ConfigView } from "../views/settings/ConfigView";
+import { ReelApprovalPanel } from "../views/dashboard/ReelApprovalPanel";
+import { HistoryPanel } from "../views/dashboard/HistoryPanel";
+import { SalesPanel } from "../views/dashboard/SalesPanel";
 
 function Placeholder({ testId, title }: { testId: string; title: string }) {
   return <div data-testid={testId} className="p-6 text-primary"><h1 className="text-xl font-semibold">{title}</h1></div>;
@@ -25,10 +28,10 @@ export default function App() {
                   <Route path="/agentes" element={<Placeholder testId="page-agentes" title="Agentes (IA)" />} />
                   <Route path="/agentes/:agentId" element={<Placeholder testId="page-agente-detalhe" title="Agente" />} />
                   <Route path="/conteudo" element={<Placeholder testId="page-conteudo" title="Conteúdo" />} />
-                  <Route path="/reels" element={<Placeholder testId="page-reels" title="Reels" />} />
+                  <Route path="/reels" element={<ReelApprovalPanel />} />
                   <Route path="/reels/:id" element={<Placeholder testId="page-reel-detalhe" title="Reel" />} />
-                  <Route path="/blog" element={<Placeholder testId="page-blog" title="Blog" />} />
-                  <Route path="/leads" element={<Placeholder testId="page-leads" title="Leads" />} />
+                  <Route path="/blog" element={<HistoryPanel />} />
+                  <Route path="/leads" element={<SalesPanel />} />
                   <Route path="/clientes" element={<Placeholder testId="page-clientes" title="Clientes" />} />
                   <Route path="/relatorios" element={<Placeholder testId="page-relatorios" title="Relatórios" />} />
                   <Route path="/configuracoes" element={<ConfigView />} />

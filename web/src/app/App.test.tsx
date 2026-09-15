@@ -17,12 +17,11 @@ describe("App shell", () => {
     vi.stubGlobal("EventSource", FakeEventSource as unknown as typeof EventSource);
     vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL) => {
       const url = String(input);
-      if (url.includes("/api/workspaces")) {
-        return Promise.resolve({ ok: true, json: async () => [{ id: "nextassist", name: "NextAssist" }] });
-      }
-      if (url.includes("/api/status")) {
-        return Promise.resolve({ ok: true, json: async () => ({ running: false, lastEvents: [], runMode: "local" }) });
-      }
+      if (url.includes("/api/workspaces")) return Promise.resolve({ ok: true, json: async () => [{ id: "nextassist", name: "NextAssist" }] });
+      if (url.includes("/api/status")) return Promise.resolve({ ok: true, json: async () => ({ running: false, lastEvents: [], runMode: "local" }) });
+      if (url.includes("/api/history")) return Promise.resolve({ ok: true, json: async () => [] });
+      if (url.includes("/api/sales")) return Promise.resolve({ ok: true, json: async () => ({ updatedAt: null, summary: { total: 0, hot: 0, medium: 0, customers: 0, draftsPendingApproval: 0 }, entries: [] }) });
+      if (url.includes("/api/reels")) return Promise.resolve({ ok: true, json: async () => ({ updatedAt: null, summary: { total: 0, pendingApproval: 0, approved: 0, published: 0, failed: 0 }, entries: [] }) });
       return Promise.resolve({ ok: true, json: async () => ({}) });
     }));
 
@@ -34,6 +33,12 @@ describe("App shell", () => {
     }
 
     await userEvent.click(screen.getByRole("link", { name: "Reels" }));
-    expect(await screen.findByTestId("page-reels")).toBeInTheDocument();
+    expect(await screen.findByText("Reels para aprovação")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("link", { name: "Blog" }));
+    expect(await screen.findByText("Nenhum post publicado ainda.")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("link", { name: "Leads" }));
+    expect(await screen.findByText("Sales Agent")).toBeInTheDocument();
   });
 });
