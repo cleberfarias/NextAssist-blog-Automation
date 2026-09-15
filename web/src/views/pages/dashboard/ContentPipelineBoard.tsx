@@ -7,16 +7,24 @@ import { STATUS_LABEL } from "../../dashboard/LiveStatus";
 import { computePipelineStats } from "./contentPipelineStats";
 import type { AgentId, AgentStatus, RunRecord, CalendarTopic } from "../../../types/api";
 
-const STAGES: { id: AgentId; label: string; icon: string }[] = [
-  { id: "marketing-director", label: "Marketing Director", icon: "📊" },
-  { id: "pesquisa-mercado", label: "Pesquisa de mercado", icon: "🔍" },
-  { id: "pesquisa-pauta", label: "Pesquisa de pauta", icon: "🗂️" },
-  { id: "redator", label: "Redação", icon: "✍️" },
-  { id: "editor-seo", label: "Editor / SEO", icon: "🧐" },
-  { id: "publicador", label: "Publicação", icon: "🚀" },
-  { id: "instagram", label: "Instagram", icon: "📸" },
-  { id: "indexador", label: "Indexação / Google", icon: "📈" },
+const STAGES: { id: AgentId; label: string; icon: string; photoLeft: string }[] = [
+  { id: "marketing-director", label: "Marketing Director", icon: "📊", photoLeft: "11%" },
+  { id: "pesquisa-mercado", label: "Pesquisa de mercado", icon: "🔍", photoLeft: "23%" },
+  { id: "pesquisa-pauta", label: "Pesquisa de pauta", icon: "🗂️", photoLeft: "35%" },
+  { id: "redator", label: "Redação", icon: "✍️", photoLeft: "47%" },
+  { id: "editor-seo", label: "Editor / SEO", icon: "🧐", photoLeft: "59%" },
+  { id: "publicador", label: "Publicação", icon: "🚀", photoLeft: "71%" },
+  { id: "instagram", label: "Instagram", icon: "📸", photoLeft: "83%" },
+  { id: "indexador", label: "Indexação / Google", icon: "📈", photoLeft: "95%" },
 ];
+
+/**
+ * Imagem de cenário da equipe de conteúdo — decorativa, os 8 estágios já
+ * são desenhados como componentes React sobre ela. Se o arquivo não
+ * existir em `web/public/content-pipeline-bg.png`, cai para um gradiente.
+ */
+const BACKGROUND_SRC = "/content-pipeline-bg.png";
+const BACKGROUND_ASPECT = "1942 / 809";
 
 const STATUS_DOT: Record<AgentStatus, string> = {
   idle: "bg-secondary", working: "bg-accent", done: "bg-status-ok", error: "bg-status-error",
@@ -57,6 +65,7 @@ export function ContentPipelineBoard() {
   const runs = useWorkspaceData<RunRecord[]>("/api/runs");
   const topics = useWorkspaceData<CalendarTopic[]>("/api/content-calendar");
   const stats = computePipelineStats(runs ?? [], topics ?? [], new Date());
+  const [imageFailed, setImageFailed] = useState(false);
 
   const completedStages = STAGES.filter((s) => desks[s.id]?.status === "done").length;
   const currentStage = STAGES.find((s) => desks[s.id]?.status === "working");
@@ -80,6 +89,34 @@ export function ContentPipelineBoard() {
           <span className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-secondary">{RUN_MODE_LABEL[runMode] ?? runMode}</span>
           <Link to="/relatorios" className="rounded-md border border-border px-3 py-1.5 text-sm text-primary hover:border-accent">Ver detalhes →</Link>
         </div>
+      </div>
+
+      <div className="relative mt-4 overflow-hidden rounded-lg bg-gradient-to-br from-app to-surface" style={{ aspectRatio: BACKGROUND_ASPECT }}>
+        {!imageFailed && (
+          <img
+            src={BACKGROUND_SRC}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-cover"
+            onError={() => setImageFailed(true)}
+          />
+        )}
+        {STAGES.map((stage) => {
+          const status = desks[stage.id]?.status ?? "idle";
+          return (
+            <div
+              key={stage.id}
+              className="absolute top-2 hidden -translate-x-1/2 flex-col items-center sm:flex"
+              style={{ left: stage.photoLeft }}
+            >
+              <div className="flex items-center gap-1 rounded-full border border-border bg-surface px-2 py-1 shadow-lg" title={stage.label}>
+                <span className="text-xs" aria-hidden="true">{stage.icon}</span>
+                <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[status]}`} aria-label={STATUS_LABEL[status]} />
+              </div>
+              <span className="h-6 w-px bg-border" aria-hidden="true" />
+            </div>
+          );
+        })}
       </div>
 
       <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
