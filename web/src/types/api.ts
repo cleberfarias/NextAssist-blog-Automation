@@ -80,6 +80,33 @@ export interface ConversionSummary {
   updatedAt: string;
 }
 
+export interface AnalyticsOverviewKpi {
+  value: number;
+  changePct: number | null;
+}
+
+export interface AnalyticsOverviewSeriesPoint {
+  date: string;
+  visits: number;
+  leads: number;
+}
+
+export interface AnalyticsOverviewLeadSource {
+  source: string;
+  count: number;
+  pct: number;
+}
+
+export interface AnalyticsOverview {
+  rangeDays: number;
+  visits: AnalyticsOverviewKpi;
+  leads: AnalyticsOverviewKpi;
+  conversionRate: { value: number; changePoints: number | null };
+  customers: AnalyticsOverviewKpi;
+  series: AnalyticsOverviewSeriesPoint[];
+  leadSources: AnalyticsOverviewLeadSource[];
+}
+
 export interface AttributionRow {
   contentId: string;
   campaignId: string | null;

@@ -1,5 +1,6 @@
 import "./agents/instagramPublisher.test.js";
 import "./agents/topicPlanner.test.js";
+import "./analyticsOverview.test.js";
 import "./attribution.test.js";
 import "./backlog.test.js";
 import "./context.test.js";

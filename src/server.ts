@@ -11,7 +11,8 @@ import { getRuns } from "./runsHistory.js";
 import { getPerformance, refreshPerformance } from "./performance.js";
 import { computeAttribution } from "./attribution.js";
 import { config } from "./config.js";
-import { getConversionSummary, recordConversion, type ConversionEventName } from "./conversions.js";
+import { getConversionSummary, getConversionEvents, recordConversion, type ConversionEventName } from "./conversions.js";
+import { summarizeOverview } from "./analyticsOverview.js";
 import { getSalesState, reviewSalesDraft } from "./sales/state.js";
 import { runRevenueDirector } from "./harness/revenueDirectorRuntime.js";
 import { getHarnessTraces } from "./harness/traceStore.js";
@@ -158,6 +159,15 @@ app.get("/api/conversions", asyncHandler(async (req, res) => {
   const workspaceId = requireWorkspaceId(req, res);
   if (!workspaceId) return;
   res.json(await getConversionSummary(await contextFor(workspaceId)));
+}));
+
+app.get("/api/analytics/overview", asyncHandler(async (req, res) => {
+  const workspaceId = requireWorkspaceId(req, res);
+  if (!workspaceId) return;
+  const days = Number(req.query.days ?? 30);
+  const rangeDays = [7, 30, 90].includes(days) ? days : 30;
+  const events = await getConversionEvents(await contextFor(workspaceId));
+  res.json(summarizeOverview(events, rangeDays, new Date()));
 }));
 
 app.get("/api/sales", asyncHandler(async (req, res) => {
