@@ -4,10 +4,10 @@ import { useAgentOperations, type AgentOperationalState, type AgentOperationalSt
 
 /**
  * Imagem de cenário do escritório — puramente decorativa (nenhum status,
- * nome ou métrica embutido nela). Enquanto o arquivo não existir em
- * `web/public/agent-office-bg.jpg`, o canvas cai para um gradiente escuro.
+ * nome ou métrica embutido nela). Se o arquivo não existir em
+ * `web/public/agent-office-bg.png`, o canvas cai para um gradiente escuro.
  */
-const BACKGROUND_SRC = "/agent-office-bg.jpg";
+const BACKGROUND_SRC = "/agent-office-bg.png";
 
 const STATUS_DOT: Record<AgentOperationalStatus, string> = {
   working: "bg-accent",
