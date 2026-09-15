@@ -49,14 +49,12 @@ describe("ContentPipelineBoard", () => {
     const completedCard = screen.getByText("Concluídos").closest("div")!.parentElement!;
     expect(within(completedCard).getByText("1")).toBeInTheDocument(); // completedLast7Days
 
-    // Cada estágio aparece 2x de propósito: o balão sobre a foto e o card de detalhe abaixo.
-    expect(screen.getAllByText("Marketing Director").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Pesquisa de mercado").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Indexação / Google").length).toBeGreaterThan(0);
+    expect(screen.getByText("Marketing Director")).toBeInTheDocument();
+    expect(screen.getByText("Pesquisa de mercado")).toBeInTheDocument();
+    expect(screen.getByText("Indexação / Google")).toBeInTheDocument();
 
-    // Os dois — balão e card — precisam levar pro drill-down do agente, não só decorar.
-    const marketingDirectorLinks = screen.getAllByText("Marketing Director").map((el) => el.closest("a"));
-    expect(marketingDirectorLinks.every((a) => a?.getAttribute("href") === "/agentes/marketing-director")).toBe(true);
+    // O card precisa levar pro drill-down do agente, não só decorar.
+    expect(screen.getByText("Marketing Director").closest("a")).toHaveAttribute("href", "/agentes/marketing-director");
 
     expect(screen.getByText(/Nenhum conteúdo em produção no momento/)).toBeInTheDocument();
   });

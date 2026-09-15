@@ -3,41 +3,30 @@ import { Link } from "react-router-dom";
 import { useWorkspace } from "../../../hooks/useWorkspace";
 import { usePipeline } from "../../../hooks/usePipeline";
 import { apiGet } from "../../../lib/api";
-import { PIPELINE_STAGES } from "../../../lib/pipelineStages";
+import { PIPELINE_STAGES, type PipelineStage } from "../../../lib/pipelineStages";
 import { STATUS_LABEL } from "../../dashboard/LiveStatus";
 import { computePipelineStats } from "./contentPipelineStats";
-import { AgentBubble } from "./AgentBubble";
-import { pipelineStatusToOperational } from "../../../hooks/useAgentOperations";
-import type { AgentId, AgentStatus, RunRecord, CalendarTopic } from "../../../types/api";
+import { STATUS_DOT } from "./AgentBubble";
+import { pipelineStatusToOperational, type AgentOperationalStatus } from "../../../hooks/useAgentOperations";
+import type { AgentStatus, RunRecord, CalendarTopic } from "../../../types/api";
 
 /**
- * Posição de cada estágio sobre a foto — centro de cada pessoa na fileira,
- * alternando duas alturas (top-1/top-16) pra balões vizinhos não se
- * encostarem. Classes literais completas — o scanner do Tailwind precisa
- * encontrar a string exata no código-fonte, não dá pra montar por
- * interpolação de variável.
- */
-const PHOTO_POSITION: Record<AgentId, string> = {
-  "marketing-director": "sm:left-[11%] sm:-translate-x-1/2 sm:top-1",
-  "pesquisa-mercado": "sm:left-[23%] sm:-translate-x-1/2 sm:top-16",
-  "pesquisa-pauta": "sm:left-[35%] sm:-translate-x-1/2 sm:top-1",
-  redator: "sm:left-[47%] sm:-translate-x-1/2 sm:top-16",
-  "editor-seo": "sm:left-[59%] sm:-translate-x-1/2 sm:top-1",
-  publicador: "sm:left-[71%] sm:-translate-x-1/2 sm:top-16",
-  instagram: "sm:left-[83%] sm:-translate-x-1/2 sm:top-1",
-  indexador: "sm:left-[95%] sm:-translate-x-1/2 sm:top-16",
-};
-
-/**
- * Imagem de cenário da equipe de conteúdo — decorativa, os 8 estágios já
- * são desenhados como componentes React sobre ela. Se o arquivo não
+ * Imagem de cenário da equipe de conteúdo — decorativa. Os 8 cards logo
+ * abaixo ficam alinhados com a posição de cada pessoa na foto (pessoas
+ * praticamente equidistantes, por isso uma grade de 8 colunas iguais já
+ * alinha sem precisar de posicionamento por porcentagem). Se o arquivo não
  * existir em `web/public/content-pipeline-bg.png`, cai para um gradiente.
  */
 const BACKGROUND_SRC = "/content-pipeline-bg.png";
 const BACKGROUND_ASPECT = "1942 / 809";
 
-const STATUS_DOT: Record<AgentStatus, string> = {
-  idle: "bg-secondary", working: "bg-accent", done: "bg-status-ok", error: "bg-status-error",
+const STATUS_PILL: Record<AgentOperationalStatus, string> = {
+  completed: "bg-status-ok/15 text-status-ok",
+  working: "bg-accent/15 text-accent",
+  waiting: "bg-status-warn/15 text-status-warn",
+  needs_attention: "bg-status-warn/15 text-status-warn",
+  failed: "bg-status-error/15 text-status-error",
+  idle: "bg-secondary/15 text-secondary",
 };
 
 const RUN_MODE_LABEL: Record<string, string> = {
@@ -67,6 +56,25 @@ function KpiCard({ icon, label, value, hint }: { icon: string; label: string; va
       <div className="mt-1 text-xl font-semibold text-primary">{value}</div>
       <div className="text-xs text-secondary">{hint}</div>
     </div>
+  );
+}
+
+function StageCard({ index, stage, status, count }: { index: number; stage: PipelineStage; status: AgentStatus; count: number }) {
+  const operational = pipelineStatusToOperational(status);
+  return (
+    <Link
+      to={`/agentes/${stage.id}`}
+      className="rounded-b-lg border border-t-0 border-border bg-surface p-2.5 hover:border-accent sm:rounded-none sm:first:rounded-bl-lg sm:last:rounded-br-lg"
+    >
+      <div className="flex items-center gap-1.5">
+        <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white ${STATUS_DOT[operational]}`}>{index + 1}</span>
+        <span aria-hidden="true">{stage.icon}</span>
+      </div>
+      <div className="mt-2 text-xs font-semibold text-primary">{stage.label}</div>
+      <p className="mt-1 text-[11px] leading-snug text-secondary">{stage.description}</p>
+      <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[10px] ${STATUS_PILL[operational]}`}>{STATUS_LABEL[status]}</span>
+      <div className="mt-2 text-[10px] text-secondary">{count} concluído(s) · 7 dias</div>
+    </Link>
   );
 }
 
@@ -101,7 +109,7 @@ export function ContentPipelineBoard() {
         </div>
       </div>
 
-      <div className="relative mt-4 overflow-hidden rounded-lg bg-gradient-to-br from-app to-surface" style={{ aspectRatio: BACKGROUND_ASPECT }}>
+      <div className="relative mt-4 overflow-hidden rounded-t-lg bg-gradient-to-br from-app to-surface" style={{ aspectRatio: BACKGROUND_ASPECT }}>
         {!imageFailed && (
           <img
             src={BACKGROUND_SRC}
@@ -111,41 +119,11 @@ export function ContentPipelineBoard() {
             onError={() => setImageFailed(true)}
           />
         )}
-        {PIPELINE_STAGES.map((stage) => {
-          const event = desks[stage.id];
-          const status = event?.status ?? "idle";
-          return (
-            <AgentBubble
-              key={stage.id}
-              to={`/agentes/${stage.id}`}
-              icon={stage.icon}
-              title={stage.label}
-              status={pipelineStatusToOperational(status)}
-              statusLabel={STATUS_LABEL[status]}
-              message={event?.message || "Dados ainda não disponíveis."}
-              position={PHOTO_POSITION[stage.id]}
-              tailDirection="down"
-              tailPosition="sm:-bottom-2 sm:left-1/2 sm:-translate-x-1/2"
-            />
-          );
-        })}
       </div>
-
-      <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
-        {PIPELINE_STAGES.map((stage) => {
-          const status = desks[stage.id]?.status ?? "idle";
-          return (
-            <Link key={stage.id} to={`/agentes/${stage.id}`} className="w-40 shrink-0 rounded-lg border border-border bg-surface p-3 hover:border-accent">
-              <div className="flex items-center justify-between">
-                <span className="text-lg" aria-hidden="true">{stage.icon}</span>
-                <span className={`h-2 w-2 rounded-full ${STATUS_DOT[status]}`} aria-label={STATUS_LABEL[status]} />
-              </div>
-              <div className="mt-2 text-sm font-semibold text-primary">{stage.label}</div>
-              <div className="mt-1 text-xs text-secondary">{STATUS_LABEL[status]}</div>
-              <div className="mt-2 text-xs text-secondary">{stats.stageCounts[stage.id]} concluído(s) · 7 dias</div>
-            </Link>
-          );
-        })}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8">
+        {PIPELINE_STAGES.map((stage, index) => (
+          <StageCard key={stage.id} index={index} stage={stage} status={desks[stage.id]?.status ?? "idle"} count={stats.stageCounts[stage.id]} />
+        ))}
       </div>
 
       <section className="mt-6 rounded-lg border border-border bg-surface p-4">
