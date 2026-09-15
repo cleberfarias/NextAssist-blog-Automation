@@ -25,6 +25,7 @@ describe("App shell", () => {
       if (url.includes("/api/performance")) return Promise.resolve({ ok: true, json: async () => ({ atualizadoEm: "2026-09-15T00:00:00.000Z", periodo: { inicio: "", fim: "" }, posts: [] }) });
       if (url.includes("/api/usage")) return Promise.resolve({ ok: true, json: async () => ({ trackedRuns: 0, month: { estimatedUsd: 0, inputTokens: 0, outputTokens: 0, webSearchRequests: 0 }, total: { estimatedUsd: 0, inputTokens: 0, outputTokens: 0, webSearchRequests: 0 }, averagePublishedUsd: 0 }) });
       if (url.includes("/api/attribution")) return Promise.resolve({ ok: true, json: async () => ({ rows: [], unattributedEvents: 0 }) });
+      if (url.includes("/api/revenue")) return Promise.resolve({ ok: true, json: async () => ({ runId: "r1", monthlyCustomerTarget: 10, snapshot: { visits: 0, trials: 0, activated: 0, customers: 0, hotLeads: 0, pendingSalesApprovals: 0, visitToTrialRate: 0, trialToActivationRate: 0, activationToCustomerRate: 0 }, decision: { objective: "increase_paying_customers", bottleneck: "traffic", action: "create_content", priority: "medium", reason: "Pouco tráfego ainda.", evidence: [], requiresHumanApproval: true } }) });
       return Promise.resolve({ ok: true, json: async () => ({}) });
     }));
 
@@ -34,6 +35,8 @@ describe("App shell", () => {
     for (const label of items) {
       expect(await screen.findByRole("link", { name: label })).toBeInTheDocument();
     }
+
+    expect(await screen.findByText("Frente Blog")).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("link", { name: "Reels" }));
     expect(await screen.findByText("Reels para aprovação")).toBeInTheDocument();

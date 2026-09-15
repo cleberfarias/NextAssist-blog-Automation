@@ -11,6 +11,7 @@ import { SalesPanel } from "../views/dashboard/SalesPanel";
 import { ReelDetailPage } from "../views/reels/ReelDetailPage";
 import { ConteudoPage } from "../views/pages/ConteudoPage";
 import { RelatoriosPage } from "../views/pages/RelatoriosPage";
+import { DashboardPage } from "../views/pages/DashboardPage";
 
 function Placeholder({ testId, title }: { testId: string; title: string }) {
   return <div data-testid={testId} className="p-6 text-primary"><h1 className="text-xl font-semibold">{title}</h1></div>;
@@ -27,7 +28,7 @@ export default function App() {
               <div className="app-main flex-1">
                 <Topbar />
                 <Routes>
-                  <Route path="/" element={<Placeholder testId="page-dashboard" title="Dashboard" />} />
+                  <Route path="/" element={<DashboardPage />} />
                   <Route path="/agentes" element={<Placeholder testId="page-agentes" title="Agentes (IA)" />} />
                   <Route path="/agentes/:agentId" element={<Placeholder testId="page-agente-detalhe" title="Agente" />} />
                   <Route path="/conteudo" element={<ConteudoPage />} />
