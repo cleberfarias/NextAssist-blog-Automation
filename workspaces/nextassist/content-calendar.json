@@ -251,11 +251,12 @@
     {
       "tema": "Como controlar o lucro de cada ordem de serviço",
       "palavraChaveAlvo": "lucro por ordem de serviço",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-28T17:25:37.849Z",
       "reason": "Mostra como unir custos de peças, mão de obra e valor cobrado, problema com forte ligação ao uso diário de um sistema de gestão.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-09-16T00:03:00.104Z"
     },
     {
       "tema": "Como fazer follow-up de orçamento sem pressionar o cliente",

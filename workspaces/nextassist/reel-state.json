@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-14T21:23:29.000Z",
+  "updatedAt": "2026-09-16T00:03:00.901Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -83,6 +83,85 @@
         }
       ],
       "videoId": "e11607ffa8aac473d3b2393c3d8df995"
+    },
+    {
+      "id": "nextassist:lucro-por-ordem-de-servico",
+      "workspaceId": "nextassist",
+      "slug": "lucro-por-ordem-de-servico",
+      "title": "Como controlar o lucro por ordem de serviço",
+      "blogUrl": "https://www.nextassist-app.com.br/blog/lucro-por-ordem-de-servico",
+      "caption": "Essa troca de tela deu lucro mesmo?\n\nQual custo você ainda não registra em cada ordem de serviço?\n\nConta pra gente como você faz.\n\n📖 Aprofunde no blog (link na bio): https://www.nextassist-app.com.br/blog/lucro-por-ordem-de-servico\n\n#lucroporordemdeservico #gestaofinanceira #precificacaodeservicos #ordemdeservico #assistenciatecnica #nextassist",
+      "provider": "heygen-api",
+      "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+      "voiceId": "e75248a57197482d80ca91826b2b7f72",
+      "status": "rendering",
+      "createdAt": "2026-09-16T00:02:48.987Z",
+      "updatedAt": "2026-09-16T00:02:54.215Z",
+      "audit": [
+        {
+          "from": null,
+          "to": "queued",
+          "at": "2026-09-16T00:02:48.987Z",
+          "actor": "pipeline",
+          "note": "Reel enfileirado para renderização."
+        },
+        {
+          "from": "queued",
+          "to": "rendering",
+          "at": "2026-09-16T00:02:48.988Z",
+          "actor": "system",
+          "note": "Renderização iniciada no HeyGen API."
+        }
+      ],
+      "timelineSteps": [
+        {
+          "step": "roteiro_gerado",
+          "at": "2026-09-16T00:02:48.988Z"
+        },
+        {
+          "step": "cenas_montadas",
+          "at": "2026-09-16T00:02:48.990Z"
+        },
+        {
+          "step": "enviado_heygen",
+          "at": "2026-09-16T00:02:54.214Z"
+        }
+      ],
+      "videoId": "22087d401a4944c0993055ffae83043b",
+      "scenes": [
+        {
+          "type": "avatar_video",
+          "label": "Abertura (avatar)"
+        },
+        {
+          "type": "video",
+          "label": "Salvando a OS",
+          "assetId": "ed6e56e360f94998ba68c704b2316aaf"
+        },
+        {
+          "type": "video",
+          "label": "Fechamento de OS",
+          "assetId": "8d08e75c81d34ea3b066d2db18ed72c5"
+        },
+        {
+          "type": "avatar_video",
+          "label": "Transição (avatar)"
+        },
+        {
+          "type": "video",
+          "label": "Simulação RR Info",
+          "assetId": "4beb92ff4a39403389f636f2963c5e88"
+        },
+        {
+          "type": "video",
+          "label": "Aprovação de manutenção",
+          "assetId": "eb2eeff63cce403e889e6daa852b2055"
+        },
+        {
+          "type": "avatar_video",
+          "label": "Fechamento / CTA (avatar)"
+        }
+      ]
     }
   ]
 }

@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-09-15T23:58:32.626Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-15T23:58:32.626Z",
+    "finalizadoEm": "2026-09-16T00:03:00.107Z",
+    "tema": "Como controlar o lucro de cada ordem de serviço",
+    "status": "publicado",
+    "slug": "lucro-por-ordem-de-servico",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como controlar o lucro de cada ordem de serviço",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-15T23:58:32.643Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "**Pesquisa realizada em 15 de setembro de 2026:**\n\n- **GestãoClick oferece a cobertura mais completa:** inclui custo das peças, hora técnica, rateio das despesas fixas pela capacidade produtiva real, impostos, deslocamento, taxa de cartão, ",
+        "timestamp": "2026-09-15T23:59:11.834Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-15T23:59:11.835Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Como controlar o lucro por ordem de serviço",
+        "timestamp": "2026-09-15T23:59:28.511Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-15T23:59:28.511Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Controlar o lucro por ordem de serviço exige mais do que subtrair o valor da peça do preço cobrado. Uma OS pode faturar R$ 900 e deixar uma margem menor do que um reparo de R$ 180, dependendo do tempo...",
+        "timestamp": "2026-09-16T00:00:39.830Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-16T00:00:39.831Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: lucro-por-ordem-de-servico · Tags: lucro por ordem de serviço, gestão financeira, precificação de serviços, ordem de serviço, assistência técnica",
+        "timestamp": "2026-09-16T00:01:41.240Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-16T00:01:41.240Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/lucro-por-ordem-de-servico",
+        "timestamp": "2026-09-16T00:02:35.418Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-16T00:02:35.419Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "submitted — Reel enviado ao HeyGen, aguardando renderização. videoId=22087d401a4944c0993055ffae83043b",
+        "timestamp": "2026-09-16T00:02:54.215Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-16T00:02:54.216Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-16T00:03:00.102Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 42143,
+      "outputTokens": 12242,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.35005899999999995,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 13,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 13,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-14T14:36:59.709Z",
     "origem": "action",
     "iniciadoEm": "2026-09-14T14:36:59.709Z",

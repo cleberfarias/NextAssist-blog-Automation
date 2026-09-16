@@ -152,5 +152,16 @@
     "publicadoEm": "2026-09-14T14:58:05.462Z",
     "status": "published",
     "url": "https://www.nextassist-app.com.br/blog/markupempresa-assistencia-tecnica"
+  },
+  {
+    "contentId": "lucro-por-ordem-de-servico",
+    "campaignId": null,
+    "tema": "Como controlar o lucro de cada ordem de serviço",
+    "formato": "blog",
+    "channel": "blog",
+    "funnelStage": "meio",
+    "publicadoEm": "2026-09-16T00:03:00.106Z",
+    "status": "published",
+    "url": "https://www.nextassist-app.com.br/blog/lucro-por-ordem-de-servico"
   }
 ]
