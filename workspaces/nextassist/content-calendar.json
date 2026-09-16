@@ -271,11 +271,12 @@
     {
       "tema": "LGPD na assistência técnica: como proteger os dados do cliente e do aparelho",
       "palavraChaveAlvo": "LGPD assistência técnica celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-28T17:25:37.849Z",
       "reason": "Cobre um risco comum no recebimento de aparelhos e permite conectar cadastro, acesso aos dados e registro de consentimento na OS.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-09-16T19:52:11.636Z"
     },
     {
       "tema": "Senha do celular na ordem de serviço: como solicitar e armazenar com segurança",

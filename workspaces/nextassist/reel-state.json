@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-16T14:25:49.699Z",
+  "updatedAt": "2026-09-16T19:52:12.440Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -279,6 +279,85 @@
         }
       ],
       "videoUrl": "https://files2.heygen.ai/aws_pacific/avatar_tmp/0b1a7a35392943a6848bbf7b9d85a2f9/cb2739647d5153827f4eec21dcd37c31.mp4?Expires=1790171095&Signature=ElX55UIcYWC3-re7bOa5HqSissvZfl45fRwlC3wDCzNttbDSKe9o682oRlkKJtYbnRMMA7Bq0ZW3XCoeb~RcsNt-hD-7sb3thFjQbVPR96M8ISZbdTeOwWBexndQSQ2vYYlDywwaJf4vBTbuMmFVePE7A-HBPBbXSuaK4JsVplCHETKGuiWMvNTgkH~QtS-0V5uYEeJgBTPAbdfN0G80C7QGHtij92bUwmtRbZGK6vRYwlm~dZ9abKy7~D55dwLur3aDYQgNqNhwLn9tV3EkleitOiFPb8Fm1~7q844LLTa04Ae~xziozHnA8lPqEUuxpNQTR~8S8fVpCNe3zl10sA__&Key-Pair-Id=K38HBHX5LX3X2H"
+    },
+    {
+      "id": "nextassist:lgpd-assistencia-tecnica-celular",
+      "workspaceId": "nextassist",
+      "slug": "lgpd-assistencia-tecnica-celular",
+      "title": "LGPD assistência técnica celular: guia prático",
+      "blogUrl": "https://www.nextassist-app.com.br/blog/lgpd-assistencia-tecnica-celular",
+      "caption": "Celular desbloqueado não é autorização para acessar tudo\n\nSua ordem de serviço já registra autorização para acessar o aparelho?\n\nConta como você faz hoje.\n\n📖 Aprofunde no blog (link na bio): https://www.nextassist-app.com.br/blog/lgpd-assistencia-tecnica-celular\n\n#lgpd #assistenciatecnicadecelular #ordemdeservico #segurancadedados #nextassist",
+      "provider": "heygen-api",
+      "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+      "voiceId": "e75248a57197482d80ca91826b2b7f72",
+      "status": "rendering",
+      "createdAt": "2026-09-16T19:52:05.500Z",
+      "updatedAt": "2026-09-16T19:52:07.054Z",
+      "audit": [
+        {
+          "from": null,
+          "to": "queued",
+          "at": "2026-09-16T19:52:05.500Z",
+          "actor": "pipeline",
+          "note": "Reel enfileirado para renderização."
+        },
+        {
+          "from": "queued",
+          "to": "rendering",
+          "at": "2026-09-16T19:52:05.501Z",
+          "actor": "system",
+          "note": "Renderização iniciada no HeyGen API."
+        }
+      ],
+      "timelineSteps": [
+        {
+          "step": "roteiro_gerado",
+          "at": "2026-09-16T19:52:05.502Z"
+        },
+        {
+          "step": "cenas_montadas",
+          "at": "2026-09-16T19:52:05.504Z"
+        },
+        {
+          "step": "enviado_heygen",
+          "at": "2026-09-16T19:52:07.053Z"
+        }
+      ],
+      "videoId": "75777a15f953dabefcfeb856111b3971",
+      "scenes": [
+        {
+          "type": "avatar_video",
+          "label": "Abertura (avatar)"
+        },
+        {
+          "type": "video",
+          "label": "Salvando a OS",
+          "assetId": "ed6e56e360f94998ba68c704b2316aaf"
+        },
+        {
+          "type": "video",
+          "label": "Fechamento de OS",
+          "assetId": "8d08e75c81d34ea3b066d2db18ed72c5"
+        },
+        {
+          "type": "avatar_video",
+          "label": "Transição (avatar)"
+        },
+        {
+          "type": "video",
+          "label": "Simulação RR Info",
+          "assetId": "4beb92ff4a39403389f636f2963c5e88"
+        },
+        {
+          "type": "video",
+          "label": "Aprovação de manutenção",
+          "assetId": "eb2eeff63cce403e889e6daa852b2055"
+        },
+        {
+          "type": "avatar_video",
+          "label": "Fechamento / CTA (avatar)"
+        }
+      ]
     }
   ]
 }

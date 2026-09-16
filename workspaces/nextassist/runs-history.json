@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-09-16T19:47:09.368Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-16T19:47:09.368Z",
+    "finalizadoEm": "2026-09-16T19:52:11.638Z",
+    "tema": "LGPD na assistência técnica: como proteger os dados do cliente e do aparelho",
+    "status": "publicado",
+    "slug": "lgpd-assistencia-tecnica-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "LGPD na assistência técnica: como proteger os dados do cliente e do aparelho",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-16T19:47:09.401Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "**Levantamento realizado em 16/09/2026:**\n\n- **A cobertura específica ainda é pequena.** Entre os concorrentes pesquisados, MarkupEmpresa e Tecniko possuem artigos diretamente voltados à LGPD em assistências técnicas. O GestãoClick aborda L",
+        "timestamp": "2026-09-16T19:47:53.389Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-16T19:47:53.391Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: LGPD assistência técnica celular: guia prático",
+        "timestamp": "2026-09-16T19:48:11.003Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-16T19:48:11.003Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Quando o assunto é LGPD, assistência técnica de celular precisa cuidar de dois grupos de informações: os dados usados no atendimento e tudo o que pode ser visto dentro do aparelho. Nome, telefone e CP...",
+        "timestamp": "2026-09-16T19:49:45.313Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-16T19:49:45.314Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: lgpd-assistencia-tecnica-celular · Tags: LGPD, Assistência técnica de celular, Ordem de serviço, Segurança de dados",
+        "timestamp": "2026-09-16T19:50:55.995Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-16T19:50:55.995Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/lgpd-assistencia-tecnica-celular",
+        "timestamp": "2026-09-16T19:51:48.451Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-16T19:51:48.452Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "submitted — Reel enviado ao HeyGen, aguardando renderização. videoId=75777a15f953dabefcfeb856111b3971",
+        "timestamp": "2026-09-16T19:52:07.054Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-16T19:52:07.055Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-16T19:52:11.634Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 59349,
+      "outputTokens": 12707,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 6,
+      "estimatedUsd": 0.428652,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 11,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 11,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-16T13:29:07.576Z",
     "origem": "action",
     "iniciadoEm": "2026-09-16T13:29:07.576Z",
