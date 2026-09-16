@@ -623,11 +623,21 @@ git commit -m "feat(sales-agent): persona de SDR sênior + steering do Revenue D
 
 **Files:**
 - Modify: `src/sales/pipeline.ts`
+- Modify: `src/sales/state.ts` (achado da revisão: `saveSalesState` reanexa incondicionalmente `old.review` a qualquer entrada nova pelo mesmo `leadId` — isso reata uma revisão "rejected" antiga a um rascunho recém-recomposto, escondendo-o de uma fila de revisão pendente; ver correção abaixo)
 - Test: `src/sales/pipeline.test.ts`
 
 **Interfaces:**
 - Consumes: `runSalesOutreachCopilot(ctx, lead, assessment, steering?, causedBy?)` (Task 5), `getSalesState`/`SalesHumanReview` (`src/sales/state.ts`, `src/sales/types.ts` — já existentes).
 - Produces: `SalesPipelineRunResult { entries, outreachCreated, outreachReused }` — consumido por Task 8.
+
+**Correção obrigatória em `src/sales/state.ts`:** dentro de `saveSalesState`, remover a linha
+`...(old?.review ? { review: old.review } : {})` do `merged = entries.map(...)`. A revisão de
+uma pessoa pertence a um rascunho específico — quando `pipeline.ts` compõe um rascunho novo
+(branch "senão" do dedup), a entrada não deve herdar a revisão antiga. Em compensação,
+`pipeline.ts` passa a propagar `prior.review` explicitamente no branch de reaproveitamento
+(`hasUnresolvedDraft`), junto com `prior.outreach` — ver Step 3. A linha de `executions` no
+merge de `state.ts` NÃO muda (log de tentativas de envio não é atrelado à identidade do
+rascunho).
 
 - [ ] **Step 1: Escrever o teste que falha**
 
@@ -822,9 +832,11 @@ export async function runWorkspaceSalesCopilot(
 
       if (hasUnresolvedDraft) {
         entry.outreach = prior!.outreach;
+        entry.review = prior!.review; // mesmo rascunho — a revisão em andamento/aprovada continua válida
         outreachReused++;
       } else {
         entry.outreach = await composeOutreachFn(ctx, lead, assessment, options.steering, options.causedBy);
+        // entry.review fica ausente de propósito: rascunho novo, revisão antiga (se existia) não se aplica mais
         outreachCreated++;
       }
     }
