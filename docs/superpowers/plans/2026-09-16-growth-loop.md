@@ -159,46 +159,21 @@ git commit -m "feat(harness): AgentTrace ganha causedBy para correlacionar runs 
 **Files:**
 - Modify: `src/revenue/types.ts`
 - Modify: `src/contentCalendar.ts`
-- Test: `src/contentCalendar.test.ts` (arquivo não existe ainda — criar)
+- Test: `src/contentCalendar.test.ts` (**já existe** — tem testes de `getNextTopic`/`countPendingTopics`/`markTopicPublished`/`addTopics`. ACRESCENTAR o teste abaixo ao final do arquivo, nunca sobrescrever — os testes existentes cobrem `getNextTopic`/`markTopicPublished`, únicos consumidos por `src/pipeline.ts:53,133`, e não têm cobertura em nenhum outro lugar do repo)
 
 **Interfaces:**
 - Produces: `GrowthLoopProvenance` (de `src/revenue/types.ts`), `CalendarTopic.growthLoop?`, `NewTopicInput.growthLoop?` — usados por Task 7 (`marketingAlreadyHandled` lê `CalendarTopic.growthLoop`) e Task 6 do backlog (estampagem).
 
 - [ ] **Step 1: Escrever o teste que falha**
 
-Criar `src/contentCalendar.test.ts`:
+Adicionar ao final de `src/contentCalendar.test.ts` (o arquivo já existe com outros testes — não sobrescrever):
+
+O arquivo já importa `buildWorkspaceContext`, `createTempWorkspace`, `addTopics`, `getAllTopics`, e já tem os helpers `workspace` (const) e `contextWithCalendar(topicos)` — reaproveitar, não redeclarar:
 
 ```ts
-// src/contentCalendar.test.ts
-import assert from "node:assert/strict";
-import test from "node:test";
-import { buildWorkspaceContext } from "./context.js";
-import type { MarketingWorkspace } from "./workspace.js";
-import type { SecretProvider } from "./lib/secrets.js";
-import { createTempWorkspace } from "./testing/tempWorkspace.js";
-import { addTopics, getAllTopics } from "./contentCalendar.js";
-
-function baseWorkspace(): MarketingWorkspace {
-  return {
-    id: "acme", name: "Acme", active: true,
-    brand: { name: "Acme", description: "d", toneOfVoice: "t", targetAudience: [], competitors: [] },
-    goals: { primary: "leads" },
-    channels: { blog: true, instagram: false, linkedin: false },
-    integrations: { siteUrl: "https://acme.test", cms: { provider: "nextassist", apiUrl: "https://api.acme.test" } },
-    autonomy: { mode: "copilot" },
-    secrets: { required: [] },
-  };
-}
-
-function fakeSecrets(): SecretProvider {
-  return { async get() { return undefined; } };
-}
-
 test("addTopics propaga growthLoop quando informado, e não exige o campo quando ausente", async () => {
-  const temp = await createTempWorkspace("acme", { "content-calendar.json": { topicos: [] } });
+  const { ctx, cleanup } = await contextWithCalendar([]);
   try {
-    const ctx = await buildWorkspaceContext(baseWorkspace(), fakeSecrets(), { workspacesRoot: temp.root, requireAiProvider: false });
-
     await addTopics(ctx, [
       { tema: "Tema com proveniência", palavraChaveAlvo: "k1", growthLoop: { bottleneck: "traffic", action: "create_content", runId: "run-1" } },
       { tema: "Tema sem proveniência", palavraChaveAlvo: "k2" },
@@ -211,7 +186,7 @@ test("addTopics propaga growthLoop quando informado, e não exige o campo quando
     assert.deepEqual(withProvenance?.growthLoop, { bottleneck: "traffic", action: "create_content", runId: "run-1" });
     assert.equal(withoutProvenance?.growthLoop, undefined);
   } finally {
-    await temp.cleanup();
+    await cleanup();
   }
 });
 ```
@@ -1543,7 +1518,7 @@ export async function runGrowthLoop(
 - [ ] **Step 4: Rodar e confirmar que passa**
 
 Run: `npm test -- src/harness/growthLoopRuntime.test.ts`
-Expected: PASS (9 testes).
+Expected: PASS (8 testes).
 
 - [ ] **Step 5: Rodar a suíte inteira**
 
