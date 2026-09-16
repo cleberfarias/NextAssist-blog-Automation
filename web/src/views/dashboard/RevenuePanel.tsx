@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useWorkspace } from "../../hooks/useWorkspace";
 import { apiGet } from "../../lib/api";
 import { nf } from "../../lib/formatters";
-import type { RevenueDashboardResponse } from "../../types/api";
+import type { GrowthLoopOutcome, RevenueDashboardResponse } from "../../types/api";
 
 function pct(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
@@ -10,6 +10,21 @@ function pct(value: number): string {
 
 function label(value: string): string {
   return value.split("_").join(" ");
+}
+
+function outcomeLabel(outcome: GrowthLoopOutcome): string {
+  switch (outcome.type) {
+    case "marketing":
+      return `Marketing Director preparou ${outcome.generated} pauta(s) nova(s) direcionada(s) ao gargalo.`;
+    case "marketing_skipped":
+      return `Marketing Director não precisou agir — ${outcome.reason}`;
+    case "sales":
+      return `Sales Agent preparou ${outcome.outreachCreated} rascunho(s) novo(s) e reaproveitou ${outcome.outreachReused} reaproveitado(s) — aguardando aprovação.`;
+    case "no_owner":
+      return outcome.note;
+    case "no_action":
+      return "Nenhuma ação necessária nesta rodada.";
+  }
 }
 
 export function RevenuePanel() {
@@ -82,6 +97,14 @@ export function RevenuePanel() {
           <strong>Evidências:</strong>
           <ul>{decision.evidence.map((item) => <li key={item}>{item}</li>)}</ul>
         </div>
+      ) : null}
+
+      {data.growthLoop ? (
+        <section>
+          <h3>Loop de Crescimento</h3>
+          <p>{outcomeLabel(data.growthLoop.outcome)}</p>
+          <p><small>Última rodada: {new Date(data.growthLoop.completedAt).toLocaleString("pt-BR")}</small></p>
+        </section>
       ) : null}
     </section>
   );
