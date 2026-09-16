@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-16T00:03:00.901Z",
+  "updatedAt": "2026-09-16T00:57:48.649Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -49,9 +49,9 @@
       "provider": "heygen-api",
       "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
       "voiceId": "e75248a57197482d80ca91826b2b7f72",
-      "status": "rendering",
+      "status": "pending_approval",
       "createdAt": "2026-09-14T14:42:52.692Z",
-      "updatedAt": "2026-09-14T21:23:29.000Z",
+      "updatedAt": "2026-09-16T00:57:47.845Z",
       "audit": [
         {
           "from": null,
@@ -80,9 +80,23 @@
           "at": "2026-09-14T21:23:29.000Z",
           "actor": "manual-retry",
           "note": "Nova tentativa criada após falha terminal confirmada no HeyGen; job pendente duplicado removido."
+        },
+        {
+          "from": "rendering",
+          "to": "pending_approval",
+          "at": "2026-09-16T00:57:47.843Z",
+          "actor": "system",
+          "note": "HeyGen concluiu a renderização."
         }
       ],
-      "videoId": "e11607ffa8aac473d3b2393c3d8df995"
+      "videoId": "e11607ffa8aac473d3b2393c3d8df995",
+      "videoUrl": "https://files2.heygen.ai/aws_pacific/avatar_tmp/0b1a7a35392943a6848bbf7b9d85a2f9/e11607ffa8aac473d3b2393c3d8df995.mp4?Expires=1790025955&Signature=U0~X9xFGZY013oqFv1FfryMvGJxF11~XMRYihHfFhWZBUFmZglcp4Eyj0DQ-rg0-59yR0wRud5UDOvQtZ-b2gt8kEtxbe0UTO8wI5tBT7gsnRIX5eTmW6jE2l~EaYduIvEFtecljGxK-hhIgxtDH4WFS5eDMmgvPrlHq9DIuuW5m6dncp0~wp5PiRXcMT8jihDqvFJOhw91ELzf1oDXTzAimhvfJ0jnztigCVqG1j4aYUiqBh9AbS7SQETzDHQJeNW69ePvxM4NIBO9Z527iqY4EiVoY1wLVmI0E6TGiKECfTMV~YiC-4S-0IYEpRYi12n5C1I5ztnTpU~6J6mKISw__&Key-Pair-Id=K38HBHX5LX3X2H",
+      "timelineSteps": [
+        {
+          "step": "video_concluido",
+          "at": "2026-09-16T00:57:47.844Z"
+        }
+      ]
     },
     {
       "id": "nextassist:lucro-por-ordem-de-servico",
@@ -94,9 +108,9 @@
       "provider": "heygen-api",
       "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
       "voiceId": "e75248a57197482d80ca91826b2b7f72",
-      "status": "rendering",
+      "status": "pending_approval",
       "createdAt": "2026-09-16T00:02:48.987Z",
-      "updatedAt": "2026-09-16T00:02:54.215Z",
+      "updatedAt": "2026-09-16T00:57:47.960Z",
       "audit": [
         {
           "from": null,
@@ -111,6 +125,13 @@
           "at": "2026-09-16T00:02:48.988Z",
           "actor": "system",
           "note": "Renderização iniciada no HeyGen API."
+        },
+        {
+          "from": "rendering",
+          "to": "pending_approval",
+          "at": "2026-09-16T00:57:47.959Z",
+          "actor": "system",
+          "note": "HeyGen concluiu a renderização."
         }
       ],
       "timelineSteps": [
@@ -125,6 +146,10 @@
         {
           "step": "enviado_heygen",
           "at": "2026-09-16T00:02:54.214Z"
+        },
+        {
+          "step": "video_concluido",
+          "at": "2026-09-16T00:57:47.960Z"
         }
       ],
       "videoId": "22087d401a4944c0993055ffae83043b",
@@ -161,7 +186,8 @@
           "type": "avatar_video",
           "label": "Fechamento / CTA (avatar)"
         }
-      ]
+      ],
+      "videoUrl": "https://files2.heygen.ai/aws_pacific/avatar_tmp/0b1a7a35392943a6848bbf7b9d85a2f9/22087d401a4944c0993055ffae83043b.mp4?Expires=1790121912&Signature=jJfvpHLRwEOLYkLPGeCv8tG44mBSWTPDr0QT4HW3IdBP7A1oY19KPzDUUNjM-6n7n3seITqrzj0xnb9gbODi~WSEuAG7K-MFyEqpHp-TWC5vjlCDBwlVjoOJX4IYPygaeBpn1RmY9Zn-Xofx232wNIEEwB~c20-71rH7j9WyZKC6P1ZACG0Pg-wF3486k~w1~gak2RyjEZHPrXjejpJo3kh-rJwgtHL5IhVAXs95Dy4TE5vDxgKx5bI~Ns57mI~NO15UL8yHVns90UuWEPZqKoB7FzniHjgNmxm7qqBKHZAOrV86O1mRaBM9nOsmS4fAWUkh37zspr5RBo7d-vbl~w__&Key-Pair-Id=K38HBHX5LX3X2H"
     }
   ]
 }
