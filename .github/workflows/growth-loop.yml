@@ -90,7 +90,7 @@ jobs:
             echo "Tentativa ${tentativa} de publicar o estado em ${TARGET_BRANCH}..."
             git fetch origin "$TARGET_BRANCH"
             npx tsx src/scripts/mergeWorkspaceState.ts "${{ matrix.workspace }}" "origin/$TARGET_BRANCH"
-            git reset --soft "origin/$TARGET_BRANCH"
+            git reset --mixed "origin/$TARGET_BRANCH"
             git add "workspaces/${{ matrix.workspace }}/content-calendar.json"
             if git diff --cached --quiet; then
               echo "Estado já reconciliado no remoto — nada a publicar."
