@@ -19,8 +19,12 @@ function outcomeLabel(outcome: GrowthLoopOutcome): string {
       return `Marketing Director preparou ${outcome.generated} pauta(s) nova(s) direcionada(s) ao gargalo.`;
     case "marketing_skipped":
       return `Marketing Director não precisou agir — ${outcome.reason}`;
-    case "sales":
-      return `Sales Agent preparou ${outcome.outreachCreated} rascunho(s) novo(s) e reaproveitou ${outcome.outreachReused} antigo(s) — aguardando aprovação.`;
+    case "sales": {
+      const failureNote = outcome.outreachFailed > 0
+        ? ` (${outcome.outreachFailed} falharam ao compor — verifique os logs.)`
+        : "";
+      return `Sales Agent preparou ${outcome.outreachCreated} rascunho(s) novo(s) e reaproveitou ${outcome.outreachReused} antigo(s) — aguardando aprovação.${failureNote}`;
+    }
     case "no_owner":
       return outcome.note;
     case "no_action":

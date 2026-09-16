@@ -98,8 +98,8 @@ export async function runGrowthLoop(
       return { type: "marketing", ...result };
     }
     if (route.owner === "sales") {
-      const { entries, outreachCreated, outreachReused } = await composeSales(ctx, { composeOutreach: true, steering: route.steering, causedBy: runId });
-      return { type: "sales", leadsAssessed: entries.length, outreachCreated, outreachReused };
+      const { entries, outreachCreated, outreachReused, outreachFailed } = await composeSales(ctx, { composeOutreach: true, steering: route.steering, causedBy: runId });
+      return { type: "sales", leadsAssessed: entries.length, outreachCreated, outreachReused, outreachFailed };
     }
     if (decision.action === "do_nothing") return { type: "no_action" };
     return { type: "no_owner", note: route.note };

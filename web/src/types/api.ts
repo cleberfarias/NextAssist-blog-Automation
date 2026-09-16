@@ -305,7 +305,7 @@ export interface BacklogOutcome {
 export type GrowthLoopOutcome =
   | BacklogOutcome
   | { type: "marketing_skipped"; reason: string }
-  | { type: "sales"; leadsAssessed: number; outreachCreated: number; outreachReused: number }
+  | { type: "sales"; leadsAssessed: number; outreachCreated: number; outreachReused: number; outreachFailed: number }
   | { type: "no_owner"; note: string }
   | { type: "no_action" };
 

@@ -169,6 +169,7 @@ test("falha ao compor abordagem de um lead não descarta os rascunhos já compos
     const result = await runWorkspaceSalesCopilot(ctx, { composeOutreach: true, composeOutreachFn });
 
     assert.equal(result.outreachCreated, 1, "apenas o lead com sucesso deve contar — o que falhou não conta");
+    assert.equal(result.outreachFailed, 1, "a falha precisa ficar contada separadamente — 0 criados não pode parecer 'nada a fazer'");
 
     const failedEntry = result.entries.find((e) => e.lead.leadId === "lead-1");
     const successEntry = result.entries.find((e) => e.lead.leadId === "lead-2");

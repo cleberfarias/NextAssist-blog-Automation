@@ -72,7 +72,7 @@ describe("RevenuePanel", () => {
       growthLoop: {
         runId: "gl-2", startedAt: "2026-09-16T12:00:00.000Z", completedAt: "2026-09-16T12:00:05.000Z", updatedAt: "2026-09-16T12:00:05.000Z",
         snapshot: BASE_RESPONSE.snapshot, decision: { ...BASE_RESPONSE.decision, bottleneck: "sales_followup", action: "prioritize_hot_leads" },
-        outcome: { type: "sales", leadsAssessed: 5, outreachCreated: 2, outreachReused: 1 },
+        outcome: { type: "sales", leadsAssessed: 5, outreachCreated: 2, outreachReused: 1, outreachFailed: 0 },
       },
     });
     render(<WorkspaceProvider><RevenuePanel /></WorkspaceProvider>);
@@ -80,5 +80,25 @@ describe("RevenuePanel", () => {
     expect(await screen.findByText("Loop de Crescimento")).toBeInTheDocument();
     expect(screen.getByText(/2 rascunho\(s\) novo\(s\)/)).toBeInTheDocument();
     expect(screen.getByText(/1 antigo\(s\)/)).toBeInTheDocument();
+    // outreachFailed: 0 — nenhuma menção a falha deve aparecer no texto.
+    expect(screen.queryByText(/falharam ao compor/)).not.toBeInTheDocument();
+  });
+
+  it("com growthLoop roteado pro Sales Agent e falhas de composição, distingue 'falhou' de 'não havia nada a fazer'", async () => {
+    stubFetch({
+      ...BASE_RESPONSE,
+      decision: { ...BASE_RESPONSE.decision, bottleneck: "sales_followup", action: "prioritize_hot_leads" },
+      growthLoop: {
+        runId: "gl-4", startedAt: "2026-09-16T12:00:00.000Z", completedAt: "2026-09-16T12:00:05.000Z", updatedAt: "2026-09-16T12:00:05.000Z",
+        snapshot: BASE_RESPONSE.snapshot, decision: { ...BASE_RESPONSE.decision, bottleneck: "sales_followup", action: "prioritize_hot_leads" },
+        outcome: { type: "sales", leadsAssessed: 3, outreachCreated: 0, outreachReused: 0, outreachFailed: 3 },
+      },
+    });
+    render(<WorkspaceProvider><RevenuePanel /></WorkspaceProvider>);
+
+    expect(await screen.findByText("Loop de Crescimento")).toBeInTheDocument();
+    // "0 criados e 0 reaproveitados" por si só pareceria "nada a fazer" — o
+    // texto renderizado precisa deixar claro que 3 falharam ao compor.
+    expect(screen.getByText(/3 falharam ao compor/)).toBeInTheDocument();
   });
 });

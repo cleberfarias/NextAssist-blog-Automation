@@ -149,7 +149,7 @@ test("runGrowthLoop roteia para sales", async () => {
       options: SalesPipelineOptions | undefined,
     ): Promise<SalesPipelineRunResult> => {
       capturedCausedBy = options?.causedBy;
-      return { entries: [], outreachCreated: 2, outreachReused: 1 };
+      return { entries: [], outreachCreated: 2, outreachReused: 1, outreachFailed: 0 };
     };
 
     const state = await runGrowthLoop(ctx, undefined, {
@@ -158,7 +158,7 @@ test("runGrowthLoop roteia para sales", async () => {
       composeSales: fakeComposeSales,
     });
 
-    assert.deepEqual(state.outcome, { type: "sales", leadsAssessed: 0, outreachCreated: 2, outreachReused: 1 });
+    assert.deepEqual(state.outcome, { type: "sales", leadsAssessed: 0, outreachCreated: 2, outreachReused: 1, outreachFailed: 0 });
     // Mesma proteção contra typo do teste da branch marketing acima, agora
     // para o hand-off `composeSales` → `runWorkspaceSalesCopilot`.
     assert.equal(capturedCausedBy, state.runId);

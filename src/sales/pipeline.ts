@@ -19,6 +19,7 @@ export interface SalesPipelineRunResult {
   entries: SalesPipelineEntry[];
   outreachCreated: number;
   outreachReused: number;
+  outreachFailed: number;
 }
 
 export function shouldComposeOutreach(assessment: SalesAssessment): boolean {
@@ -53,6 +54,7 @@ export async function runWorkspaceSalesCopilot(
   const results: SalesPipelineEntry[] = [];
   let outreachCreated = 0;
   let outreachReused = 0;
+  let outreachFailed = 0;
 
   // Sequencial de propósito: evita burst de chamadas de IA caso vários leads
   // quentes sejam encontrados ao mesmo tempo.
@@ -73,12 +75,21 @@ export async function runWorkspaceSalesCopilot(
           entry.outreach = await composeOutreachFn(ctx, lead, assessment, options.steering, options.causedBy);
           // entry.review fica ausente de propósito: rascunho novo, revisão antiga (se existia) não se aplica mais
           outreachCreated++;
-        } catch {
+        } catch (err) {
           // Falha ao compor abordagem para ESTE lead (ex.: LLM retornou JSON
           // inválido, budget por lead excedido) não pode descartar o trabalho
           // já feito para os outros leads deste mesmo loop — segue sem
           // rascunho para este lead, como se `shouldComposeOutreach` fosse
-          // false, e continua para o próximo.
+          // false, e continua para o próximo. Mas precisa ficar observável —
+          // "0 rascunhos novos porque não havia nada a fazer" e "0 rascunhos
+          // novos porque a IA caiu" não podem parecer a mesma coisa no painel.
+          outreachFailed++;
+          // Sanitizado de propósito: só leadId + mensagem curta. Nunca o erro
+          // completo/stack, os sinais do lead, ou conteúdo de rascunho/LLM —
+          // isso pode conter dados sensíveis do lead.
+          console.warn(
+            `[sales-agent] falha ao compor abordagem para lead ${lead.leadId}: ${err instanceof Error ? err.message : "erro desconhecido"}`,
+          );
         }
       }
     }
@@ -88,5 +99,5 @@ export async function runWorkspaceSalesCopilot(
 
   const sorted = results.sort((a, b) => b.assessment.score - a.assessment.score);
   await saveSalesState(ctx, sorted);
-  return { entries: sorted, outreachCreated, outreachReused };
+  return { entries: sorted, outreachCreated, outreachReused, outreachFailed };
 }

@@ -10,7 +10,7 @@ const GROWTH_LOOP_STATE_FILE = "growth-loop-state.json";
 export type GrowthLoopOutcome =
   | ({ type: "marketing" } & BacklogResult)
   | { type: "marketing_skipped"; reason: string }
-  | { type: "sales"; leadsAssessed: number; outreachCreated: number; outreachReused: number }
+  | { type: "sales"; leadsAssessed: number; outreachCreated: number; outreachReused: number; outreachFailed: number }
   | { type: "no_owner"; note: string }
   | { type: "no_action" };
 
