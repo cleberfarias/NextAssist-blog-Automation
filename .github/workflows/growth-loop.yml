@@ -1,0 +1,107 @@
+name: Loop de Crescimento
+
+on:
+  schedule:
+    - cron: "0 12 * * *" # 12:00 UTC — antes do post diário (13:18 UTC)
+  workflow_dispatch:
+    inputs:
+      workspace_id:
+        description: "Rodar só este workspace (vazio = todos os ativos)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  list-workspaces:
+    runs-on: ubuntu-latest
+    outputs:
+      workspaces: ${{ steps.list.outputs.workspaces }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        env:
+          WORKSPACE_ID_INPUT: ${{ github.event.inputs.workspace_id }}
+        run: |
+          if [ -n "$WORKSPACE_ID_INPUT" ]; then
+            echo "workspaces=$(jq -nc --arg id "$WORKSPACE_ID_INPUT" '[$id]')" >> "$GITHUB_OUTPUT"
+          else
+            ids=$(for f in workspaces/*/workspace.json; do
+              active=$(jq -r '.active' "$f")
+              if [ "$active" = "true" ]; then jq -r '.id' "$f"; fi
+            done | jq -R . | jq -sc .)
+            echo "workspaces=$ids" >> "$GITHUB_OUTPUT"
+          fi
+
+  run-growth-loop:
+    needs: list-workspaces
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        workspace: ${{ fromJson(needs.list-workspaces.outputs.workspaces) }}
+    environment: ${{ matrix.workspace }}
+    concurrency:
+      group: growth-loop-${{ matrix.workspace }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Rodar o Loop de Crescimento (Revenue Director aciona Marketing/Sales)
+        env:
+          WORKSPACE_ID: ${{ matrix.workspace }}
+          DATA_SOURCE: github
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          FIREBASE_WEB_API_KEY: ${{ secrets.FIREBASE_WEB_API_KEY }}
+          FIREBASE_ADMIN_EMAIL: ${{ secrets.FIREBASE_ADMIN_EMAIL }}
+          FIREBASE_ADMIN_PASSWORD: ${{ secrets.FIREBASE_ADMIN_PASSWORD }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_FALLBACK: ${{ secrets.GEMINI_API_KEY_FALLBACK }}
+        run: npx tsx src/scripts/runGrowthLoop.ts
+
+      - name: Commitar content-calendar.json atualizado
+        if: always()
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "workspaces/${{ matrix.workspace }}/content-calendar.json"
+          if git diff --staged --quiet; then
+            echo "Nada mudou no calendário — nenhum commit necessário."
+            exit 0
+          fi
+
+          for tentativa in 1 2 3 4 5; do
+            echo "Tentativa ${tentativa} de publicar o estado em ${TARGET_BRANCH}..."
+            git fetch origin "$TARGET_BRANCH"
+            npx tsx src/scripts/mergeWorkspaceState.ts "${{ matrix.workspace }}" "origin/$TARGET_BRANCH"
+            git reset --soft "origin/$TARGET_BRANCH"
+            git add "workspaces/${{ matrix.workspace }}/content-calendar.json"
+            if git diff --cached --quiet; then
+              echo "Estado já reconciliado no remoto — nada a publicar."
+              exit 0
+            fi
+            git commit -q -m "chore: pautas do Loop de Crescimento (${{ matrix.workspace }}) [skip ci]"
+            if git push origin "HEAD:$TARGET_BRANCH"; then
+              exit 0
+            fi
+            sleep 5
+          done
+
+          echo "Não foi possível publicar o estado após 5 tentativas."
+          exit 1
