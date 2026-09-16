@@ -35,6 +35,7 @@ import "./reels/publisher.test.js";
 import "./revenue/director.test.js";
 import "./sales/funnel.test.js";
 import "./sales/pipeline.test.js";
+import "./sales/state.test.js";
 import "./scripts/mergeWorkspaceState.test.js";
 import "./scripts/workspaceStateMerge.test.js";
 import "./secretsStatus.test.js";

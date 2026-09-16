@@ -57,6 +57,29 @@ export async function getSalesState(ctx: WorkspaceContext): Promise<SalesStateRe
   }
 }
 
+/**
+ * Como `getSalesState`, mas NÃO trata qualquer erro de leitura como "nenhum
+ * estado existe ainda". Uma falha transiente de leitura (permissão, JSON
+ * corrompido, etc.) não é o mesmo que "arquivo nunca foi criado" — tratar as
+ * duas coisas como iguais faria o pipeline comercial recompor/sobrescrever
+ * rascunhos pendentes de revisão humana como se nada existisse. Usado
+ * apenas por `runWorkspaceSalesCopilot` para decidir dedup; os demais
+ * chamadores de `getSalesState` (revisão humana, registro de execução, rota
+ * `GET /api/sales`) continuam com o comportamento antigo — não é o objetivo
+ * desta função mudar isso.
+ */
+export async function getSalesStateStrict(ctx: WorkspaceContext): Promise<SalesStateReport | null> {
+  if (config.dataSource === "github") {
+    return await readStoredStateJson<SalesStateReport | null>(ctx, SALES_STATE_FILE, null);
+  }
+  try {
+    return JSON.parse(await readFile(localFile(ctx), "utf-8")) as SalesStateReport;
+  } catch (err) {
+    if ((err as { code?: string })?.code === "ENOENT") return null;
+    throw err;
+  }
+}
+
 export async function reviewSalesDraft(
   ctx: WorkspaceContext,
   input: {

@@ -1,7 +1,7 @@
 import type { WorkspaceContext } from "../context.js";
 import { runSalesCopilot, runSalesOutreachCopilot } from "../harness/salesAgentRuntime.js";
 import { getSalesLeads } from "./funnel.js";
-import { getSalesState, saveSalesState } from "./state.js";
+import { getSalesStateStrict, saveSalesState } from "./state.js";
 import type { SalesAssessment, SalesOutreachDraft, SalesPipelineEntry } from "./types.js";
 
 export interface SalesPipelineOptions {
@@ -44,7 +44,10 @@ export async function runWorkspaceSalesCopilot(
   const maxLeads = Math.max(1, options.maxLeads ?? 50);
   const composeOutreachFn = options.composeOutreachFn ?? runSalesOutreachCopilot;
   const leads = (await getSalesLeads(ctx)).slice(0, maxLeads);
-  const previous = await getSalesState(ctx);
+  // Estrito de propósito: uma falha de leitura real (não "arquivo não
+  // existe ainda") precisa abortar o run inteiro, não ser tratada como "sem
+  // estado anterior, pode recompor tudo" — ver `getSalesStateStrict`.
+  const previous = await getSalesStateStrict(ctx);
   const previousByLead = new Map((previous?.entries ?? []).map((e) => [e.lead.leadId, e] as const));
 
   const results: SalesPipelineEntry[] = [];
@@ -66,9 +69,17 @@ export async function runWorkspaceSalesCopilot(
         entry.review = prior!.review; // mesmo rascunho — a revisão em andamento/aprovada continua válida
         outreachReused++;
       } else {
-        entry.outreach = await composeOutreachFn(ctx, lead, assessment, options.steering, options.causedBy);
-        // entry.review fica ausente de propósito: rascunho novo, revisão antiga (se existia) não se aplica mais
-        outreachCreated++;
+        try {
+          entry.outreach = await composeOutreachFn(ctx, lead, assessment, options.steering, options.causedBy);
+          // entry.review fica ausente de propósito: rascunho novo, revisão antiga (se existia) não se aplica mais
+          outreachCreated++;
+        } catch {
+          // Falha ao compor abordagem para ESTE lead (ex.: LLM retornou JSON
+          // inválido, budget por lead excedido) não pode descartar o trabalho
+          // já feito para os outros leads deste mesmo loop — segue sem
+          // rascunho para este lead, como se `shouldComposeOutreach` fosse
+          // false, e continua para o próximo.
+        }
       }
     }
 

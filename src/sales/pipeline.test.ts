@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { buildWorkspaceContext } from "../context.js";
+import type { WorkspaceContext } from "../context.js";
 import type { MarketingWorkspace } from "../workspace.js";
 import type { SecretProvider } from "../lib/secrets.js";
 import { createTempWorkspace } from "../testing/tempWorkspace.js";
 import { runWorkspaceSalesCopilot, shouldComposeOutreach } from "./pipeline.js";
 import { getSalesState } from "./state.js";
-import type { SalesOutreachDraft } from "./types.js";
+import type { SalesAssessment, SalesLeadContext, SalesOutreachDraft } from "./types.js";
 
 test("gera abordagem apenas para lead de alta intenção que pede contato humano", () => {
   assert.equal(shouldComposeOutreach({
@@ -112,6 +113,76 @@ test("gera rascunho novo quando não existe nenhum anterior", async () => {
     assert.equal(result.outreachCreated, 1);
     assert.equal(result.outreachReused, 0);
     assert.equal(result.entries[0]?.outreach?.message, "Rascunho novo");
+  } finally {
+    await temp.cleanup();
+  }
+});
+
+test("repassa o causedBy recebido (runId do Loop de Crescimento) até o composer de abordagem", async () => {
+  const temp = await createTempWorkspace("acme", { "conversion-events.json": hotLeadEvents });
+  try {
+    const ctx = await buildWorkspaceContext(baseWorkspace(), fakeSecrets(), { workspacesRoot: temp.root, requireAiProvider: false });
+    let capturedCausedBy: string | undefined;
+    const composeOutreachFn = async (
+      _ctx: WorkspaceContext,
+      _lead: SalesLeadContext,
+      _assessment: SalesAssessment,
+      _steering: string | undefined,
+      causedBy: string | undefined,
+    ): Promise<SalesOutreachDraft> => {
+      capturedCausedBy = causedBy;
+      return fakeDraft;
+    };
+
+    await runWorkspaceSalesCopilot(ctx, { composeOutreach: true, composeOutreachFn, causedBy: "some-run-id" });
+
+    // Um typo como `causedBy: options.steering` no lugar de `causedBy:
+    // options.causedBy` na chamada real passaria despercebido sem isto —
+    // nenhum outro teste aqui inspeciona o 5º argumento recebido pelo composer.
+    assert.equal(capturedCausedBy, "some-run-id");
+  } finally {
+    await temp.cleanup();
+  }
+});
+
+test("falha ao compor abordagem de um lead não descarta os rascunhos já compostos para os outros leads do mesmo loop", async () => {
+  const hotLeadEventsFor = (anonymousId: string) => [
+    { name: "page_view", anonymousId, path: "/", createdAt: "2026-09-14T09:00:00.000Z" },
+    { name: "page_view", anonymousId, path: "/precos", createdAt: "2026-09-14T09:30:00.000Z" },
+    { name: "trial_started", anonymousId, createdAt: "2026-09-14T10:00:00.000Z" },
+    { name: "contact_submit", anonymousId, createdAt: "2026-09-14T10:05:00.000Z" },
+  ];
+  const temp = await createTempWorkspace("acme", {
+    "conversion-events.json": [...hotLeadEventsFor("lead-1"), ...hotLeadEventsFor("lead-2")],
+  });
+  try {
+    const ctx = await buildWorkspaceContext(baseWorkspace(), fakeSecrets(), { workspacesRoot: temp.root, requireAiProvider: false });
+    const composeOutreachFn = async (
+      _ctx: WorkspaceContext,
+      lead: SalesLeadContext,
+      _assessment: SalesAssessment,
+    ): Promise<SalesOutreachDraft> => {
+      if (lead.leadId === "lead-1") throw new Error("IA retornou JSON inválido");
+      return { leadId: lead.leadId, channel: "human", message: `Rascunho para ${lead.leadId}`, rationale: "r", requiresHumanApproval: true };
+    };
+
+    const result = await runWorkspaceSalesCopilot(ctx, { composeOutreach: true, composeOutreachFn });
+
+    assert.equal(result.outreachCreated, 1, "apenas o lead com sucesso deve contar — o que falhou não conta");
+
+    const failedEntry = result.entries.find((e) => e.lead.leadId === "lead-1");
+    const successEntry = result.entries.find((e) => e.lead.leadId === "lead-2");
+    assert.ok(failedEntry, "lead cuja composição falhou continua presente no resultado, sem outreach");
+    assert.equal(failedEntry?.outreach, undefined);
+    assert.equal(successEntry?.outreach?.message, "Rascunho para lead-2");
+
+    // Persistido, não só em memória — a falha em um lead não pode fazer o
+    // saveSalesState nunca ser alcançado e derrubar o rascunho do outro lead.
+    const persisted = await getSalesState(ctx);
+    const persistedFailed = persisted?.entries.find((e) => e.lead.leadId === "lead-1");
+    const persistedSuccess = persisted?.entries.find((e) => e.lead.leadId === "lead-2");
+    assert.equal(persistedFailed?.outreach, undefined);
+    assert.equal(persistedSuccess?.outreach?.message, "Rascunho para lead-2");
   } finally {
     await temp.cleanup();
   }
