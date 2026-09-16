@@ -2,14 +2,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { buildWorkspaceContext } from "../context.js";
+import type { WorkspaceContext } from "../context.js";
 import type { MarketingWorkspace } from "../workspace.js";
 import type { SecretProvider } from "../lib/secrets.js";
 import { createTempWorkspace } from "../testing/tempWorkspace.js";
 import { routeDecision, runGrowthLoop } from "./growthLoopRuntime.js";
 import { getAllTopics } from "../contentCalendar.js";
 import type { RevenueDecision } from "../revenue/types.js";
-import type { SalesPipelineRunResult } from "../sales/pipeline.js";
+import type { SalesPipelineOptions, SalesPipelineRunResult } from "../sales/pipeline.js";
 import type { ContentOpportunity } from "../lib/marketingDirector.js";
+import type { BacklogResult, ReplenishContentBacklogOptions } from "../backlog.js";
 
 function baseWorkspace(): MarketingWorkspace {
   return {
@@ -87,6 +89,34 @@ test("runGrowthLoop roteia para marketing, estampa growthLoop e persiste o estad
   }
 });
 
+test("runGrowthLoop repassa seu próprio runId como causedBy para replenishContentBacklog (branch marketing)", async () => {
+  const temp = await createTempWorkspace("acme", { "content-calendar.json": { topicos: [] } });
+  try {
+    const ctx = await buildWorkspaceContext(baseWorkspace(), fakeSecrets(), { workspacesRoot: temp.root, requireAiProvider: false });
+    let capturedCausedBy: string | undefined;
+    const fakeReplenish = async (
+      _ctx: WorkspaceContext,
+      options: ReplenishContentBacklogOptions,
+    ): Promise<BacklogResult> => {
+      capturedCausedBy = options.causedBy;
+      return { skipped: false, pendingBefore: 0, generated: 1, discardedDuplicates: 0, discardedForbidden: 0, discardedInvalid: 0, pendingAfter: 1, error: null };
+    };
+
+    const state = await runGrowthLoop(ctx, undefined, {
+      revenueDecision: decision({ bottleneck: "traffic", action: "create_content" }),
+      revenueSnapshot: { visits: 5, trials: 0, activated: 0, customers: 0, hotLeads: 0, pendingSalesApprovals: 0, visitToTrialRate: 0, trialToActivationRate: 0, activationToCustomerRate: 0 },
+      replenish: fakeReplenish,
+    });
+
+    // Um typo como `causedBy: options.steering` na chamada real de
+    // `replenish` passaria despercebido sem isto — os outros testes deste
+    // arquivo injetam `generate`, cuja assinatura nem recebe `causedBy`.
+    assert.equal(capturedCausedBy, state.runId);
+  } finally {
+    await temp.cleanup();
+  }
+});
+
 test("runGrowthLoop não gera de novo quando já existe pauta pendente pro mesmo bottleneck/action", async () => {
   const temp = await createTempWorkspace("acme", {
     "content-calendar.json": { topicos: [{ tema: "Já gerada", palavraChaveAlvo: "k", publicado: false, growthLoop: { bottleneck: "traffic", action: "create_content", runId: "run-antigo" } }] },
@@ -113,7 +143,14 @@ test("runGrowthLoop roteia para sales", async () => {
   const temp = await createTempWorkspace("acme");
   try {
     const ctx = await buildWorkspaceContext(baseWorkspace(), fakeSecrets(), { workspacesRoot: temp.root, requireAiProvider: false });
-    const fakeComposeSales = async (): Promise<SalesPipelineRunResult> => ({ entries: [], outreachCreated: 2, outreachReused: 1 });
+    let capturedCausedBy: string | undefined;
+    const fakeComposeSales = async (
+      _ctx: WorkspaceContext,
+      options: SalesPipelineOptions | undefined,
+    ): Promise<SalesPipelineRunResult> => {
+      capturedCausedBy = options?.causedBy;
+      return { entries: [], outreachCreated: 2, outreachReused: 1 };
+    };
 
     const state = await runGrowthLoop(ctx, undefined, {
       revenueDecision: decision({ bottleneck: "sales_followup", action: "prioritize_hot_leads" }),
@@ -122,6 +159,9 @@ test("runGrowthLoop roteia para sales", async () => {
     });
 
     assert.deepEqual(state.outcome, { type: "sales", leadsAssessed: 0, outreachCreated: 2, outreachReused: 1 });
+    // Mesma proteção contra typo do teste da branch marketing acima, agora
+    // para o hand-off `composeSales` → `runWorkspaceSalesCopilot`.
+    assert.equal(capturedCausedBy, state.runId);
   } finally {
     await temp.cleanup();
   }
