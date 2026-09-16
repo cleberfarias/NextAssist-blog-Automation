@@ -5,6 +5,7 @@ import type { MarketingWorkspace } from "../workspace.js";
 import type { SecretProvider } from "../lib/secrets.js";
 import { createTempWorkspace } from "../testing/tempWorkspace.js";
 import { runWorkspaceSalesCopilot, shouldComposeOutreach } from "./pipeline.js";
+import { getSalesState } from "./state.js";
 import type { SalesOutreachDraft } from "./types.js";
 
 test("gera abordagem apenas para lead de alta intenção que pede contato humano", () => {
@@ -87,6 +88,12 @@ test("não reescreve rascunho de venda com review pendente — não chama o comp
     assert.equal(result.outreachCreated, 0);
     assert.equal(result.outreachReused, 1);
     assert.equal(result.entries[0]?.outreach?.message, "Rascunho antigo aguardando revisão");
+
+    // Persistido, não só em memória: a revisão pendente precisa sobreviver no
+    // sales-state.json, senão o painel perde o rastro dela no próximo GET.
+    const persisted = await getSalesState(ctx);
+    assert.equal(persisted?.entries[0]?.review?.status, "pending");
+    assert.equal(persisted?.entries[0]?.outreach?.message, "Rascunho antigo aguardando revisão");
   } finally {
     await temp.cleanup();
   }
@@ -133,6 +140,14 @@ test("gera rascunho novo quando o anterior foi rejeitado", async () => {
     assert.equal(composeCalls, 1, "review rejeitada libera uma nova tentativa");
     assert.equal(result.outreachCreated, 1);
     assert.equal(result.outreachReused, 0);
+    assert.equal(result.entries[0]?.review, undefined, "rascunho novo não herda a review antiga em memória");
+
+    // Persistido, não só em memória: sem isso, sales-state.json reata a review
+    // "rejected" antiga ao rascunho novo e um filtro de "pendente revisão" no
+    // painel esconderia o rascunho novo do humano — exatamente o bug relatado.
+    const persisted = await getSalesState(ctx);
+    assert.equal(persisted?.entries[0]?.review, undefined);
+    assert.equal(persisted?.entries[0]?.outreach?.message, "Rascunho novo");
   } finally {
     await temp.cleanup();
   }

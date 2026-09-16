@@ -34,7 +34,6 @@ export async function saveSalesState(
     const old = previousByLead.get(entry.lead.leadId);
     return {
       ...entry,
-      ...(old?.review ? { review: old.review } : {}),
       ...(old?.executions?.length ? { executions: old.executions } : {}),
     };
   });

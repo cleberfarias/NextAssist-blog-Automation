@@ -63,9 +63,11 @@ export async function runWorkspaceSalesCopilot(
 
       if (hasUnresolvedDraft) {
         entry.outreach = prior!.outreach;
+        entry.review = prior!.review; // mesmo rascunho — a revisão em andamento/aprovada continua válida
         outreachReused++;
       } else {
         entry.outreach = await composeOutreachFn(ctx, lead, assessment, options.steering, options.causedBy);
+        // entry.review fica ausente de propósito: rascunho novo, revisão antiga (se existia) não se aplica mais
         outreachCreated++;
       }
     }
