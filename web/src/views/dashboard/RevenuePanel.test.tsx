@@ -41,8 +41,28 @@ describe("RevenuePanel", () => {
     });
     render(<WorkspaceProvider><RevenuePanel /></WorkspaceProvider>);
 
-    expect(await screen.findByText("Loop de Crescimento")).toBeInTheDocument();
+    const heading = await screen.findByText("Loop de Crescimento");
     expect(screen.getByText(/Marketing Director preparou 3 pauta/)).toBeInTheDocument();
+    // Decisão que produziu ESTE outcome persistido, distinta da tabela ao vivo acima —
+    // checa o textContent da seção inteira (o texto é quebrado entre <strong> e o resto do <p>).
+    const section = heading.closest("section");
+    expect(section?.textContent).toMatch(/Gargalo desta rodada:.*traffic.*create content/);
+  });
+
+  it("com growthLoop cujo Marketing Director falhou ao gerar pautas, mostra a falha em vez de 'preparou 0'", async () => {
+    stubFetch({
+      ...BASE_RESPONSE,
+      growthLoop: {
+        runId: "gl-3", startedAt: "2026-09-16T12:00:00.000Z", completedAt: "2026-09-16T12:00:05.000Z", updatedAt: "2026-09-16T12:00:05.000Z",
+        snapshot: BASE_RESPONSE.snapshot, decision: BASE_RESPONSE.decision,
+        outcome: { type: "marketing", skipped: false, pendingBefore: 1, generated: 0, discardedDuplicates: 0, discardedForbidden: 0, discardedInvalid: 0, pendingAfter: 1, error: "IA retornou JSON inválido" },
+      },
+    });
+    render(<WorkspaceProvider><RevenuePanel /></WorkspaceProvider>);
+
+    expect(await screen.findByText("Loop de Crescimento")).toBeInTheDocument();
+    expect(screen.getByText(/não conseguiu gerar pautas: IA retornou JSON inválido/)).toBeInTheDocument();
+    expect(screen.queryByText(/preparou 0 pauta/)).not.toBeInTheDocument();
   });
 
   it("com growthLoop roteado pro Sales Agent, mostra rascunhos criados e reaproveitados", async () => {
@@ -59,6 +79,6 @@ describe("RevenuePanel", () => {
 
     expect(await screen.findByText("Loop de Crescimento")).toBeInTheDocument();
     expect(screen.getByText(/2 rascunho\(s\) novo\(s\)/)).toBeInTheDocument();
-    expect(screen.getByText(/1 reaproveitado\(s\)/)).toBeInTheDocument();
+    expect(screen.getByText(/1 antigo\(s\)/)).toBeInTheDocument();
   });
 });
