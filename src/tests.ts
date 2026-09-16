@@ -7,6 +7,8 @@ import "./context.test.js";
 import "./contentCalendar.test.js";
 import "./contentRegistry.test.js";
 import "./conversions.test.js";
+import "./growthLoop.test.js";
+import "./harness/growthLoopRuntime.test.js";
 import "./harness/runtime.test.js";
 import "./harness/salesAgentRuntime.test.js";
 import "./harness/salesExecutionRuntime.test.js";
