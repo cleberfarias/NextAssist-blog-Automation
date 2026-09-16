@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-16T00:57:48.649Z",
+  "updatedAt": "2026-09-16T13:33:22.631Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -188,6 +188,85 @@
         }
       ],
       "videoUrl": "https://files2.heygen.ai/aws_pacific/avatar_tmp/0b1a7a35392943a6848bbf7b9d85a2f9/22087d401a4944c0993055ffae83043b.mp4?Expires=1790121912&Signature=jJfvpHLRwEOLYkLPGeCv8tG44mBSWTPDr0QT4HW3IdBP7A1oY19KPzDUUNjM-6n7n3seITqrzj0xnb9gbODi~WSEuAG7K-MFyEqpHp-TWC5vjlCDBwlVjoOJX4IYPygaeBpn1RmY9Zn-Xofx232wNIEEwB~c20-71rH7j9WyZKC6P1ZACG0Pg-wF3486k~w1~gak2RyjEZHPrXjejpJo3kh-rJwgtHL5IhVAXs95Dy4TE5vDxgKx5bI~Ns57mI~NO15UL8yHVns90UuWEPZqKoB7FzniHjgNmxm7qqBKHZAOrV86O1mRaBM9nOsmS4fAWUkh37zspr5RBo7d-vbl~w__&Key-Pair-Id=K38HBHX5LX3X2H"
+    },
+    {
+      "id": "nextassist:follow-up-orcamento-assistencia-tecnica",
+      "workspaceId": "nextassist",
+      "slug": "follow-up-orcamento-assistencia-tecnica",
+      "title": "Follow up de orçamento assistência técnica: como cobrar sem pressão",
+      "blogUrl": "https://www.nextassist-app.com.br/blog/follow-up-orcamento-assistencia-tecnica",
+      "caption": "Orçamento parado não precisa virar cobrança chata\n\nQual mensagem você usa quando o cliente não responde?\n\nSalve essa cadência para usar hoje.\n\n📖 Aprofunde no blog (link na bio): https://www.nextassist-app.com.br/blog/follow-up-orcamento-assistencia-tecnica\n\n#followupdeorcamento #atendimentoaocliente #assistenciatecnica #gestaodeorcamentos #whatsapp #nextassist",
+      "provider": "heygen-api",
+      "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+      "voiceId": "e75248a57197482d80ca91826b2b7f72",
+      "status": "rendering",
+      "createdAt": "2026-09-16T13:33:17.664Z",
+      "updatedAt": "2026-09-16T13:33:19.130Z",
+      "audit": [
+        {
+          "from": null,
+          "to": "queued",
+          "at": "2026-09-16T13:33:17.664Z",
+          "actor": "pipeline",
+          "note": "Reel enfileirado para renderização."
+        },
+        {
+          "from": "queued",
+          "to": "rendering",
+          "at": "2026-09-16T13:33:17.666Z",
+          "actor": "system",
+          "note": "Renderização iniciada no HeyGen API."
+        }
+      ],
+      "timelineSteps": [
+        {
+          "step": "roteiro_gerado",
+          "at": "2026-09-16T13:33:17.666Z"
+        },
+        {
+          "step": "cenas_montadas",
+          "at": "2026-09-16T13:33:17.668Z"
+        },
+        {
+          "step": "enviado_heygen",
+          "at": "2026-09-16T13:33:19.130Z"
+        }
+      ],
+      "videoId": "cb2739647d5153827f4eec21dcd37c31",
+      "scenes": [
+        {
+          "type": "avatar_video",
+          "label": "Abertura (avatar)"
+        },
+        {
+          "type": "video",
+          "label": "Cadastrando cliente",
+          "assetId": "a57085f1b24243079df14ec23f6b13bf"
+        },
+        {
+          "type": "video",
+          "label": "Salvando a OS",
+          "assetId": "ed6e56e360f94998ba68c704b2316aaf"
+        },
+        {
+          "type": "avatar_video",
+          "label": "Transição (avatar)"
+        },
+        {
+          "type": "video",
+          "label": "Aprovação de manutenção",
+          "assetId": "eb2eeff63cce403e889e6daa852b2055"
+        },
+        {
+          "type": "video",
+          "label": "Fechamento de OS",
+          "assetId": "8d08e75c81d34ea3b066d2db18ed72c5"
+        },
+        {
+          "type": "avatar_video",
+          "label": "Fechamento / CTA (avatar)"
+        }
+      ]
     }
   ]
 }

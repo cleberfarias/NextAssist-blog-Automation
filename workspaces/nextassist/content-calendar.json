@@ -261,11 +261,12 @@
     {
       "tema": "Como fazer follow-up de orçamento sem pressionar o cliente",
       "palavraChaveAlvo": "follow up de orçamento assistência técnica",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-28T17:25:37.849Z",
       "reason": "Ajuda a recuperar serviços parados antes da aprovação e abre espaço para apresentar histórico, lembretes e acompanhamento centralizado.",
-      "priority": "high"
+      "priority": "high",
+      "publicadoEm": "2026-09-16T13:33:21.860Z"
     },
     {
       "tema": "LGPD na assistência técnica: como proteger os dados do cliente e do aparelho",

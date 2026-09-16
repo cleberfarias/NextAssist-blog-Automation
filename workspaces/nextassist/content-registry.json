@@ -163,5 +163,16 @@
     "publicadoEm": "2026-09-16T00:03:00.106Z",
     "status": "published",
     "url": "https://www.nextassist-app.com.br/blog/lucro-por-ordem-de-servico"
+  },
+  {
+    "contentId": "follow-up-orcamento-assistencia-tecnica",
+    "campaignId": null,
+    "tema": "Como fazer follow-up de orçamento sem pressionar o cliente",
+    "formato": "blog",
+    "channel": "blog",
+    "funnelStage": "meio",
+    "publicadoEm": "2026-09-16T13:33:21.862Z",
+    "status": "published",
+    "url": "https://www.nextassist-app.com.br/blog/follow-up-orcamento-assistencia-tecnica"
   }
 ]
