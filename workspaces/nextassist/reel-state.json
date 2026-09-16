@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-16T13:33:22.631Z",
+  "updatedAt": "2026-09-16T14:25:49.699Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -199,9 +199,9 @@
       "provider": "heygen-api",
       "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
       "voiceId": "e75248a57197482d80ca91826b2b7f72",
-      "status": "rendering",
+      "status": "pending_approval",
       "createdAt": "2026-09-16T13:33:17.664Z",
-      "updatedAt": "2026-09-16T13:33:19.130Z",
+      "updatedAt": "2026-09-16T14:25:48.960Z",
       "audit": [
         {
           "from": null,
@@ -216,6 +216,13 @@
           "at": "2026-09-16T13:33:17.666Z",
           "actor": "system",
           "note": "Renderização iniciada no HeyGen API."
+        },
+        {
+          "from": "rendering",
+          "to": "pending_approval",
+          "at": "2026-09-16T14:25:48.958Z",
+          "actor": "system",
+          "note": "HeyGen concluiu a renderização."
         }
       ],
       "timelineSteps": [
@@ -230,6 +237,10 @@
         {
           "step": "enviado_heygen",
           "at": "2026-09-16T13:33:19.130Z"
+        },
+        {
+          "step": "video_concluido",
+          "at": "2026-09-16T14:25:48.960Z"
         }
       ],
       "videoId": "cb2739647d5153827f4eec21dcd37c31",
@@ -266,7 +277,8 @@
           "type": "avatar_video",
           "label": "Fechamento / CTA (avatar)"
         }
-      ]
+      ],
+      "videoUrl": "https://files2.heygen.ai/aws_pacific/avatar_tmp/0b1a7a35392943a6848bbf7b9d85a2f9/cb2739647d5153827f4eec21dcd37c31.mp4?Expires=1790171095&Signature=ElX55UIcYWC3-re7bOa5HqSissvZfl45fRwlC3wDCzNttbDSKe9o682oRlkKJtYbnRMMA7Bq0ZW3XCoeb~RcsNt-hD-7sb3thFjQbVPR96M8ISZbdTeOwWBexndQSQ2vYYlDywwaJf4vBTbuMmFVePE7A-HBPBbXSuaK4JsVplCHETKGuiWMvNTgkH~QtS-0V5uYEeJgBTPAbdfN0G80C7QGHtij92bUwmtRbZGK6vRYwlm~dZ9abKy7~D55dwLur3aDYQgNqNhwLn9tV3EkleitOiFPb8Fm1~7q844LLTa04Ae~xziozHnA8lPqEUuxpNQTR~8S8fVpCNe3zl10sA__&Key-Pair-Id=K38HBHX5LX3X2H"
     }
   ]
 }
