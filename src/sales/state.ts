@@ -32,8 +32,16 @@ export async function saveSalesState(
 
   const merged = entries.map((entry) => {
     const old = previousByLead.get(entry.lead.leadId);
+    // Reatacha a review recém-lida do disco (não a que o loop tinha em
+    // memória desde o início do run) SOMENTE quando o rascunho ao qual ela
+    // pertence é o mesmo: assim uma aprovação/edição humana concorrente,
+    // feita enquanto o loop ainda rodava, não é sobrescrita pelo snapshot
+    // antigo do loop. Se o rascunho mudou (recomposição — caso da Task 6),
+    // a review antiga continua descartada de propósito.
+    const sameDraft = Boolean(old?.outreach && entry.outreach && old.outreach.message === entry.outreach.message);
     return {
       ...entry,
+      ...(sameDraft && old?.review ? { review: old.review } : {}),
       ...(old?.executions?.length ? { executions: old.executions } : {}),
     };
   });

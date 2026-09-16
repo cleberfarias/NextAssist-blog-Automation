@@ -6,7 +6,7 @@ import type { MarketingWorkspace } from "../workspace.js";
 import type { SecretProvider } from "../lib/secrets.js";
 import { createTempWorkspace } from "../testing/tempWorkspace.js";
 import { runWorkspaceSalesCopilot, shouldComposeOutreach } from "./pipeline.js";
-import { getSalesState } from "./state.js";
+import { getSalesState, reviewSalesDraft } from "./state.js";
 import type { SalesAssessment, SalesLeadContext, SalesOutreachDraft } from "./types.js";
 
 test("gera abordagem apenas para lead de alta intenção que pede contato humano", () => {
@@ -183,6 +183,65 @@ test("falha ao compor abordagem de um lead não descarta os rascunhos já compos
     const persistedSuccess = persisted?.entries.find((e) => e.lead.leadId === "lead-2");
     assert.equal(persistedFailed?.outreach, undefined);
     assert.equal(persistedSuccess?.outreach?.message, "Rascunho para lead-2");
+  } finally {
+    await temp.cleanup();
+  }
+});
+
+test("revisão humana concorrente (aprovação/edição) durante o run não é sobrescrita por saveSalesState no fim do loop", async () => {
+  const hotLeadEventsFor = (anonymousId: string) => [
+    { name: "page_view", anonymousId, path: "/", createdAt: "2026-09-14T09:00:00.000Z" },
+    { name: "page_view", anonymousId, path: "/precos", createdAt: "2026-09-14T09:30:00.000Z" },
+    { name: "trial_started", anonymousId, createdAt: "2026-09-14T10:00:00.000Z" },
+    { name: "contact_submit", anonymousId, createdAt: "2026-09-14T10:05:00.000Z" },
+  ];
+  const temp = await createTempWorkspace("acme", {
+    "conversion-events.json": [...hotLeadEventsFor("lead-a"), ...hotLeadEventsFor("lead-b")],
+    // Lead A já tem rascunho pendente — será REAPROVEITADO pelo loop (não
+    // recomposto). Lead B é novo, sem estado anterior — vai pelo composer.
+    "sales-state.json": {
+      updatedAt: "2026-09-14T10:05:00.000Z",
+      entries: [{
+        lead: { leadId: "lead-a", anonymousId: "lead-a", signals: [] },
+        assessment: { leadId: "lead-a", score: 75, intent: "high", nextAction: "request_human_contact", reasons: [] },
+        outreach: { leadId: "lead-a", channel: "human", message: "Rascunho original de A", rationale: "r", requiresHumanApproval: true },
+        review: { status: "pending", message: "Rascunho original de A", updatedAt: "2026-09-14T10:05:00.000Z" },
+      }],
+    },
+  });
+  try {
+    const ctx = await buildWorkspaceContext(baseWorkspace(), fakeSecrets(), { workspacesRoot: temp.root, requireAiProvider: false });
+
+    // Simula a concorrência de verdade: enquanto o loop ainda está DENTRO da
+    // chamada de composição do lead B (ainda não chegou no saveSalesState do
+    // fim do run), um humano aprova e edita o rascunho do lead A via
+    // reviewSalesDraft — que persiste direto no disco, por fora do loop.
+    const composeOutreachFn = async (
+      _ctx: WorkspaceContext,
+      lead: SalesLeadContext,
+    ): Promise<SalesOutreachDraft> => {
+      if (lead.leadId === "lead-b") {
+        await reviewSalesDraft(ctx, {
+          leadId: "lead-a",
+          status: "approved",
+          message: "texto editado pelo humano",
+        });
+      }
+      return { leadId: lead.leadId, channel: "human", message: `Rascunho para ${lead.leadId}`, rationale: "r", requiresHumanApproval: true };
+    };
+
+    await runWorkspaceSalesCopilot(ctx, { composeOutreach: true, composeOutreachFn });
+
+    const persisted = await getSalesState(ctx);
+    const leadA = persisted?.entries.find((e) => e.lead.leadId === "lead-a");
+
+    // A aprovação/edição do humano precisa sobreviver — não pode ser
+    // revertida para o "pending" antigo que o loop tinha em memória desde o
+    // início do run.
+    assert.equal(leadA?.review?.status, "approved");
+    assert.equal(leadA?.review?.message, "texto editado pelo humano");
+    // O rascunho reaproveitado de A continua intocado — só a review mudou.
+    assert.equal(leadA?.outreach?.message, "Rascunho original de A");
   } finally {
     await temp.cleanup();
   }
