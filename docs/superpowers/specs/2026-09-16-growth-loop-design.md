@@ -108,6 +108,10 @@ export interface ReplenishContentBacklogOptions {
   count: number;
   /** Texto livre do Revenue Director injetado no prompt do Marketing Director. */
   steering?: string;
+  /** Proveniência estruturada (item 2) — estampada em cada oportunidade aceita. */
+  growthLoopMeta?: { bottleneck: RevenueBottleneck; action: RevenueAction; runId: string };
+  /** `GrowthLoopState.runId`, repassado como `causedBy` até o trace do Harness (item 4a). */
+  causedBy?: string;
   generate?: (ctx: WorkspaceContext, options: GenerateContentBacklogOptions) => Promise<ContentOpportunity[]>;
 }
 
@@ -135,6 +139,18 @@ Todas as pautas geradas devem atacar diretamente esse gargalo — não gere
 pautas genéricas de reforço de marca enquanto esse direcionamento estiver
 ativo.
 ```
+
+Proveniência é estruturada, não inferida do texto do `reason`:
+`ContentOpportunity` e `CalendarTopic` ganham um campo opcional
+`growthLoop?: { bottleneck: RevenueBottleneck; action: RevenueAction; runId: string }`,
+distinto de `source` (que continua descrevendo o *sinal* usado — Search
+Console, concorrente etc. — não *quem* disparou a geração). `reason`
+continua sendo a explicação em prosa para humanos; `growthLoop` é o campo
+que permite, depois, medir "das pautas ordenadas pelo Revenue Director,
+quantas geraram trial/cliente?" sem parsear texto. `replenishContentBacklog`
+recebe `growthLoopMeta?: { bottleneck; action; runId }` além de `steering` e
+estampa esse valor em toda oportunidade aceita antes de persistir
+(`validateOpportunities`/`addTopics` passam o campo adiante sem alterá-lo).
 
 `SYSTEM_TEMPLATE` ganha framing de especialista (mantém 100% das 5 regras de
 priorização existentes — essas já são boas e auditáveis, não mexer):
@@ -166,18 +182,52 @@ pendente — reescrevendo o texto que a pessoa está prestes a revisar. Isso
 passa a rodar 1x/dia via o loop, então o risco fica real. Correção: antes de
 compor abordagem nova, olha o `sales-state.json` anterior; se o lead já tem
 `outreach` com `review` ausente/`pending`/`approved` (ainda não rejeitado),
-mantém o rascunho existente em vez de gerar outro:
+mantém o rascunho existente em vez de gerar outro. Essa checagem já é a
+proteção de idempotência do branch de Sales — não precisa de nenhum
+mecanismo adicional (diferente do branch de Marketing, ver item 6).
+
+O retorno passa a distinguir rascunho novo de rascunho reaproveitado — sem
+isso o painel não consegue dizer "preparou 2 abordagens" quando na verdade
+reaproveitou 6 antigas e só escreveu 2 novas:
 
 ```ts
-const previous = await getSalesState(ctx);
-const previousByLead = new Map((previous?.entries ?? []).map((e) => [e.lead.leadId, e] as const));
-// ...
-const prior = previousByLead.get(lead.leadId);
-const hasUnresolvedDraft = Boolean(prior?.outreach) && prior?.review?.status !== "rejected";
-if (options.composeOutreach && shouldComposeOutreach(assessment)) {
-  entry.outreach = hasUnresolvedDraft ? prior!.outreach : await runSalesOutreachCopilot(ctx, lead, assessment, options.steering);
+export interface SalesPipelineRunResult {
+  entries: SalesPipelineEntry[];
+  outreachCreated: number;
+  outreachReused: number;
+}
+
+// SalesPipelineOptions ganha `causedBy?: string`, repassado a runSalesCopilot/
+// runSalesOutreachCopilot (item 4a) — omitido no options existente hoje.
+
+export async function runWorkspaceSalesCopilot(
+  ctx: WorkspaceContext,
+  options: SalesPipelineOptions = {},
+): Promise<SalesPipelineRunResult> {
+  const previous = await getSalesState(ctx);
+  const previousByLead = new Map((previous?.entries ?? []).map((e) => [e.lead.leadId, e] as const));
+  let outreachCreated = 0;
+  let outreachReused = 0;
+  // ...
+  const prior = previousByLead.get(lead.leadId);
+  const hasUnresolvedDraft = Boolean(prior?.outreach) && prior?.review?.status !== "rejected";
+  if (options.composeOutreach && shouldComposeOutreach(assessment)) {
+    if (hasUnresolvedDraft) {
+      entry.outreach = prior!.outreach;
+      outreachReused++;
+    } else {
+      entry.outreach = await runSalesOutreachCopilot(ctx, lead, assessment, options.steering);
+      outreachCreated++;
+    }
+  }
+  // ...
+  return { entries: sorted, outreachCreated, outreachReused };
 }
 ```
+
+(`runWorkspaceSalesCopilot` não tem nenhum outro chamador em produção hoje —
+mudar o tipo de retorno é seguro; só `src/sales/pipeline.test.ts` precisa
+acompanhar.)
 
 ### 4. `src/harness/salesAgentRuntime.ts` + `src/harness/skills/salesOutreachSkills.ts`
 
@@ -193,6 +243,18 @@ antes de vender: você lê os sinais de comportamento do lead e escreve como
 quem já entendeu o contexto dele, nunca como script genérico de disparo em
 massa.
 ```
+
+### 4a. `src/harness/types.ts` + `src/harness/runtime.ts` — correlação entre runs
+
+Mudança pequena e aditiva: `AgentRunRequest`/`AgentTrace` ganham
+`causedBy?: string` (o `runId` do Growth Loop que disparou este agente).
+`AgentHarnessRuntime.run()` copia `request.causedBy` para `trace.causedBy`
+sem alterar nenhum comportamento existente (campo opcional, ausente = hoje).
+`runMarketingDirectorBacklog`, `runSalesCopilot` e `runSalesOutreachCopilot`
+ganham um parâmetro opcional `causedBy?: string` que repassam para
+`runtime.run({ ..., causedBy })`. Sem isso, depois de uma semana rodando é
+impossível responder "quais chamadas de IA este Growth Loop específico
+gerou?" olhando `harness-traces.json` — cada trace fica órfão.
 
 ### 5. Revenue Director — sem mudança de lógica
 
@@ -212,11 +274,15 @@ function buildSteering(decision: RevenueDecision): string {
 ```ts
 export type GrowthLoopOutcome =
   | ({ type: "marketing" } & BacklogResult)
-  | { type: "sales"; leadsAssessed: number; outreachComposed: number }
+  | { type: "marketing_skipped"; reason: string } // mesma decisão já atendida, ver idempotência abaixo
+  | { type: "sales"; leadsAssessed: number; outreachCreated: number; outreachReused: number }
   | { type: "no_owner"; note: string }
   | { type: "no_action" };
 
 export interface GrowthLoopState {
+  runId: string;
+  startedAt: string;
+  completedAt: string;
   updatedAt: string;
   snapshot: RevenueSnapshot;
   decision: RevenueDecision;
@@ -225,28 +291,58 @@ export interface GrowthLoopState {
 
 const GROWTH_LOOP_CONTENT_COUNT = 3; // pautas por rodada quando acionado por gargalo — não é reabastecimento de calendário, é correção pontual
 
+/**
+ * Idempotência do branch de Marketing: se já existe algum tópico pendente
+ * (não publicado) no calendário gerado para este MESMO bottleneck+action,
+ * não gera de novo. Checa direto no calendário — não no histórico de
+ * `growth-loop-state.json` — de propósito: depois de um `marketing_skipped`,
+ * o último estado persistido deixaria de referenciar o `runId` original das
+ * pautas ainda pendentes, e comparar contra "a última rodada" só protegeria
+ * a execução seguinte, não a terceira em diante. Assim que uma pauta gerada
+ * é publicada (ou removida), ela para de bloquear novas rodadas. Protege
+ * contra `workflow_dispatch` manual duplicado ou reexecução do cron no
+ * mesmo dia — o branch de Sales não precisa do mesmo mecanismo porque a
+ * checagem por lead do item 3 já é uma proteção mais precisa.
+ */
+async function marketingAlreadyHandled(ctx: WorkspaceContext, decision: RevenueDecision): Promise<boolean> {
+  const allTopics = await getAllTopics(ctx);
+  return allTopics.some(
+    (t) => !t.publicado && t.growthLoop?.bottleneck === decision.bottleneck && t.growthLoop?.action === decision.action,
+  );
+}
+
 export async function runGrowthLoop(ctx: WorkspaceContext, onEvent?: OnEvent): Promise<GrowthLoopState> {
+  const runId = randomUUID();
+  const startedAt = new Date().toISOString();
   const { snapshot, decision } = await runRevenueDirector(ctx);
   const route = routeDecision(decision); // tabela de roteamento acima
 
   const outcome: GrowthLoopOutcome = await (async () => {
     if (route.owner === "marketing") {
-      const result = await replenishContentBacklog(ctx, { count: GROWTH_LOOP_CONTENT_COUNT, steering: route.steering }, onEvent);
+      if (await marketingAlreadyHandled(ctx, decision)) {
+        return { type: "marketing_skipped", reason: "Mesmo gargalo já tratado e pautas anteriores ainda pendentes." };
+      }
+      const growthLoopMeta = { bottleneck: decision.bottleneck, action: decision.action, runId };
+      const result = await replenishContentBacklog(ctx, { count: GROWTH_LOOP_CONTENT_COUNT, steering: route.steering, growthLoopMeta, causedBy: runId }, onEvent);
       return { type: "marketing", ...result };
     }
     if (route.owner === "sales") {
-      const entries = await runWorkspaceSalesCopilot(ctx, { composeOutreach: true, steering: route.steering });
-      return { type: "sales", leadsAssessed: entries.length, outreachComposed: entries.filter((e) => e.outreach).length };
+      const { entries, outreachCreated, outreachReused } = await runWorkspaceSalesCopilot(ctx, { composeOutreach: true, steering: route.steering, causedBy: runId });
+      return { type: "sales", leadsAssessed: entries.length, outreachCreated, outreachReused };
     }
     if (decision.action === "do_nothing") return { type: "no_action" };
     return { type: "no_owner", note: route.note };
   })();
 
-  const state: GrowthLoopState = { updatedAt: new Date().toISOString(), snapshot, decision, outcome };
+  const state: GrowthLoopState = { runId, startedAt, completedAt: new Date().toISOString(), updatedAt: new Date().toISOString(), snapshot, decision, outcome };
   await saveGrowthLoopState(ctx, state);
   return state;
 }
 ```
+
+`CalendarTopic` (item 2) precisa do campo `growthLoop` justamente para essa
+checagem funcionar — é por isso que a proveniência estruturada do item 2 não
+é só "boa observabilidade", é um pré-requisito funcional da idempotência.
 
 ### 7. `src/growthLoop.ts` (novo) — persistência
 
@@ -324,12 +420,13 @@ concluído — só plugar o campo `growthLoop` novo do `GET /api/revenue`.
   CTA), não edita conteúdo live. Editar exigiria uma skill de mutação em
   conteúdo publicado com aprovação humana — decisão explícita de adiar
   (ver pergunta "Escopo CTA" respondida no brainstorming).
-- **Cooldown configurável por workspace**: a decisão de não desperdiçar
-  chamadas de IA já está coberta por dois mecanismos existentes/corrigidos
-  (gate de `minimumPendingTopics` para o reabastecimento comum, e a correção
-  do item 3 para não sobrescrever rascunho de vendas pendente) — não
-  introduz um novo bloco de configuração `growthLoop` no `workspace.json`
-  nesta rodada.
+- **Cooldown configurável por workspace**: a idempotência do item 6
+  (`marketingAlreadyHandled`) e a checagem por lead do item 3 já evitam
+  desperdício de IA sem precisar de configuração nova — não introduz um
+  bloco `growthLoop` no `workspace.json` nesta rodada. (Correção em relação
+  à primeira versão deste spec: o gate de `minimumPendingTopics` **não**
+  cobre o branch de Marketing do loop — ele é deliberadamente ignorado
+  nesse caminho, ver item 1 — por isso o item 6 tem sua própria checagem.)
 - **Skills de envio** (`sales.send_email`, `sales.send_whatsapp`) e
   publicação automática: continuam exigindo aprovação humana exatamente como
   hoje; este spec não toca `salesExecutionRuntime.ts` nem `publisher.ts`.
@@ -351,13 +448,22 @@ detalhe de uma rodada específica.
 - [ ] `runGrowthLoop` roda Revenue Director, roteia pela tabela de ações, e
       persiste `growth-loop-state.json`.
 - [ ] Bottleneck `traffic`/`trial_conversion` aciona Marketing Director com
-      `steering` preenchido; pautas geradas citam o gargalo no `reason`.
+      `steering` preenchido; pautas geradas carregam `growthLoop` estruturado
+      e explicam o gargalo em prosa no `reason`.
 - [ ] Bottleneck `sales_followup`/`sales_conversion` aciona Sales Agent com
       `steering` preenchido; nenhuma mensagem é enviada, só rascunho.
 - [ ] Bottleneck `activation` e `none` não chamam nenhum agente, só
       registram o resultado.
 - [ ] Rodar o loop duas vezes seguidas não sobrescreve um rascunho de venda
-      com `review` pendente/aprovado.
+      com `review` pendente/aprovado — retorno distingue `outreachCreated`
+      de `outreachReused`.
+- [ ] Rodar o loop duas vezes seguidas com o mesmo bottleneck/action não gera
+      pautas duplicadas enquanto as da rodada anterior ainda estão pendentes
+      (`marketing_skipped`).
+- [ ] Pautas geradas pelo loop carregam `growthLoop.runId` rastreável até o
+      `GrowthLoopState` que as originou.
+- [ ] Traces de Marketing/Sales disparados pelo loop têm `causedBy` igual ao
+      `runId` do `GrowthLoopState`.
 - [ ] `ensureContentBacklog` mantém exatamente o comportamento atual (testes
       existentes de `backlog.test.ts` continuam passando sem alteração).
 - [ ] `GET /api/revenue` inclui `growthLoop` sem custo de IA adicional.
@@ -366,5 +472,7 @@ detalhe de uma rodada específica.
 - [ ] `npm run build` passa.
 - [ ] `npm test` passa, com testes novos para: `routeDecision` (todas as
       combinações bottleneck/action), `replenishContentBacklog` isolada de
-      `ensureContentBacklog`, a correção de rascunho pendente em
-      `runWorkspaceSalesCopilot`, e `runGrowthLoop` fim-a-fim com fakes.
+      `ensureContentBacklog`, `marketingAlreadyHandled` (mesma decisão com
+      pauta pendente vs. já publicada/descartada), a correção de rascunho
+      pendente em `runWorkspaceSalesCopilot` (created vs. reused), e
+      `runGrowthLoop` fim-a-fim com fakes.
