@@ -40,6 +40,7 @@ export class AgentHarnessRuntime {
       status: "completed",
       steps: [],
       costUsd: 0,
+      causedBy: request.causedBy,
     };
 
     const executionContext: SkillExecutionContext<TContext> = {

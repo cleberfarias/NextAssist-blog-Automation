@@ -27,6 +27,7 @@ export interface AgentTrace {
   steps: TraceStep[];
   costUsd: number;
   error?: string;
+  causedBy?: string;
 }
 
 export interface AgentRunRequest<TContext = unknown> {
@@ -36,6 +37,8 @@ export interface AgentRunRequest<TContext = unknown> {
   context: TContext;
   allowedSkills: string[];
   budget: AgentBudget;
+  /** `GrowthLoopState.runId` quando este run foi disparado pelo Loop de Crescimento. */
+  causedBy?: string;
 }
 
 export interface AgentRunResult<TOutput = unknown> {

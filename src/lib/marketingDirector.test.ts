@@ -90,3 +90,26 @@ test("SYSTEM_TEMPLATE cita MIN_TRIALS_FOR_RATE deterministicamente — o LLM é 
   assert.match(system, new RegExp(`${MIN_TRIALS_FOR_RATE}`), "o valor numérico precisa aparecer no texto que vai pro LLM");
   assert.match(system, /amostra insuficiente/i, "a regra de confiabilidade precisa estar em linguagem explícita, não implícita");
 });
+
+test("buildPrompt inclui o direcionamento do Revenue Director quando steering está presente", () => {
+  const ctx = { workspace: baseWorkspace } as any;
+  const prompt = buildPrompt(
+    ctx,
+    { count: 3, existingThemes: [], existingKeywords: [], publishedTitles: [], steering: "Gargalo identificado: trial_conversion. Ação recomendada: improve_cta." },
+    null, null, [],
+  );
+  assert.match(prompt, /Direcionamento prioritário desta rodada \(Revenue Director\)/);
+  assert.match(prompt, /trial_conversion/);
+});
+
+test("buildPrompt sem steering não menciona Revenue Director — comportamento atual não muda", () => {
+  const ctx = { workspace: baseWorkspace } as any;
+  const prompt = buildPrompt(ctx, { count: 3, existingThemes: [], existingKeywords: [], publishedTitles: [] }, null, null, []);
+  assert.doesNotMatch(prompt, /Revenue Director/);
+});
+
+test("SYSTEM_TEMPLATE tem framing de especialista de mercado", () => {
+  const ctx = { workspace: baseWorkspace } as any;
+  const system = SYSTEM_TEMPLATE(ctx);
+  assert.match(system, /Head of Content\/Growth/);
+});
