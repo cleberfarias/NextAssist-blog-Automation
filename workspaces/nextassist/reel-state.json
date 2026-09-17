@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-16T20:24:41.597Z",
+  "updatedAt": "2026-09-17T13:34:50.574Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -370,6 +370,85 @@
         }
       ],
       "videoUrl": "https://files2.heygen.ai/aws_pacific/avatar_tmp/0b1a7a35392943a6848bbf7b9d85a2f9/75777a15f953dabefcfeb856111b3971.mp4?Expires=1790193272&Signature=ncZYCN0sihQOO1-uOD-k9VMVhYWJm10FpSLjqT5-Cd0IW9bxqiPvl61l0l~ZINfnmlMjV00VqrlF7CKo~YurD8mN~b5vbp16e84uxY9hj6K8ULf4QUxb~lxv2~mfLc6gXQxOEPEqnT5kyexp0oACA9DwXwmn7kYgkhYyg~UnOmiG-w0tUl6Lsom6SouYBWEHu5PtnVvUc6lStwQ5lFaQ0f5qdNY8i61xJ833zwU-dOqjo8-86XL-SHE8yWR4FdxCpPckNJ~Ix~vuYX6jmaXDSjGpwFgeqFW6lI0sh8f8gAsLEn94wS8sf5QQoQkb88cyezzC6J8Kf3LNdcIoF9-lOw__&Key-Pair-Id=K38HBHX5LX3X2H"
+    },
+    {
+      "id": "nextassist:senha-celular-ordem-servico",
+      "workspaceId": "nextassist",
+      "slug": "senha-celular-ordem-servico",
+      "title": "Senha do celular na ordem de serviço: protocolo seguro",
+      "blogUrl": "https://www.nextassist-app.com.br/blog/senha-celular-ordem-servico",
+      "caption": "A senha do cliente nunca deve ficar nas observações\n\nComo sua assistência coleta e descarta a senha do cliente hoje?\n\nConta aqui seu protocolo.\n\n📖 Aprofunde no blog (link na bio): https://www.nextassist-app.com.br/blog/senha-celular-ordem-servico\n\n#ordemdeservico #segurancadedados #lgpd #gestaodeassistenciatecnica #nextassist",
+      "provider": "heygen-api",
+      "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+      "voiceId": "e75248a57197482d80ca91826b2b7f72",
+      "status": "rendering",
+      "createdAt": "2026-09-17T13:34:43.534Z",
+      "updatedAt": "2026-09-17T13:34:45.177Z",
+      "audit": [
+        {
+          "from": null,
+          "to": "queued",
+          "at": "2026-09-17T13:34:43.534Z",
+          "actor": "pipeline",
+          "note": "Reel enfileirado para renderização."
+        },
+        {
+          "from": "queued",
+          "to": "rendering",
+          "at": "2026-09-17T13:34:43.535Z",
+          "actor": "system",
+          "note": "Renderização iniciada no HeyGen API."
+        }
+      ],
+      "timelineSteps": [
+        {
+          "step": "roteiro_gerado",
+          "at": "2026-09-17T13:34:43.536Z"
+        },
+        {
+          "step": "cenas_montadas",
+          "at": "2026-09-17T13:34:43.538Z"
+        },
+        {
+          "step": "enviado_heygen",
+          "at": "2026-09-17T13:34:45.177Z"
+        }
+      ],
+      "videoId": "7866bbe699f35012cc6c8d97f2271248",
+      "scenes": [
+        {
+          "type": "avatar_video",
+          "label": "Abertura (avatar)"
+        },
+        {
+          "type": "video",
+          "label": "Salvando a OS",
+          "assetId": "ed6e56e360f94998ba68c704b2316aaf"
+        },
+        {
+          "type": "video",
+          "label": "Fechamento de OS",
+          "assetId": "8d08e75c81d34ea3b066d2db18ed72c5"
+        },
+        {
+          "type": "avatar_video",
+          "label": "Transição (avatar)"
+        },
+        {
+          "type": "video",
+          "label": "Simulação RR Info",
+          "assetId": "4beb92ff4a39403389f636f2963c5e88"
+        },
+        {
+          "type": "video",
+          "label": "Aprovação de manutenção",
+          "assetId": "eb2eeff63cce403e889e6daa852b2055"
+        },
+        {
+          "type": "avatar_video",
+          "label": "Fechamento / CTA (avatar)"
+        }
+      ]
     }
   ]
 }

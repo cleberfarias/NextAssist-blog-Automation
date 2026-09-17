@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-09-17T13:29:21.541Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-17T13:29:21.541Z",
+    "finalizadoEm": "2026-09-17T13:34:49.790Z",
+    "tema": "Senha do celular na ordem de serviço: como solicitar e armazenar com segurança",
+    "status": "publicado",
+    "slug": "senha-celular-ordem-servico",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Senha do celular na ordem de serviço: como solicitar e armazenar com segurança",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-17T13:29:21.557Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A abordagem dominante é operacional, não de segurança:** GestãoPro, JEA Web, mixOS e Vynix apresentam PIN, senha ou padrão apenas como campo da OS/checklist. O GestãoPro chega a sugerir a **impressão da OS contendo a senha**, prática qu",
+        "timestamp": "2026-09-17T13:30:45.374Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-17T13:30:45.375Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Senha do celular na ordem de serviço: protocolo seguro",
+        "timestamp": "2026-09-17T13:31:00.965Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-17T13:31:00.965Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Registrar a senha do celular na ordem de serviço pode ser necessário para testar câmera, áudio, sensores, carregamento e outras funções depois do reparo. Mas isso não significa que toda assistência de...",
+        "timestamp": "2026-09-17T13:32:25.241Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-17T13:32:25.242Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: senha-celular-ordem-servico · Tags: Ordem de serviço, Segurança de dados, LGPD, Gestão de assistência técnica",
+        "timestamp": "2026-09-17T13:33:26.480Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-17T13:33:26.481Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/senha-celular-ordem-servico",
+        "timestamp": "2026-09-17T13:34:22.777Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-17T13:34:22.778Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "submitted — Reel enviado ao HeyGen, aguardando renderização. videoId=7866bbe699f35012cc6c8d97f2271248",
+        "timestamp": "2026-09-17T13:34:45.177Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-17T13:34:45.178Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-17T13:34:49.785Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 40104,
+      "outputTokens": 10067,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.311317,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 10,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 10,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-16T19:47:09.368Z",
     "origem": "action",
     "iniciadoEm": "2026-09-16T19:47:09.368Z",

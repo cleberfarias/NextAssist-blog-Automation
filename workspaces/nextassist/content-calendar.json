@@ -281,11 +281,12 @@
     {
       "tema": "Senha do celular na ordem de serviço: como solicitar e armazenar com segurança",
       "palavraChaveAlvo": "senha do celular na ordem de serviço",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-28T17:25:37.849Z",
       "reason": "Resolve uma dúvida prática sobre testes no aparelho e ajuda a demonstrar a importância de registrar informações sensíveis com controle.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-09-17T13:34:49.787Z"
     },
     {
       "tema": "Como registrar IMEI e número de série na entrada do aparelho",
