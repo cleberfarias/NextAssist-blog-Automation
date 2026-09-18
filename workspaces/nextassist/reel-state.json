@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-17T14:26:55.600Z",
+  "updatedAt": "2026-09-18T13:33:07.966Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -461,6 +461,44 @@
         }
       ],
       "videoUrl": "https://files2.heygen.ai/aws_pacific/avatar_tmp/0b1a7a35392943a6848bbf7b9d85a2f9/7866bbe699f35012cc6c8d97f2271248.mp4?Expires=1790257241&Signature=h-aYdAFFhjYn3PqoJZIxPBJ~6toShSTQoay3KIT86DxGFoqnbXT9jiCHBBrEBztmzvc0oR1FjEAWsGXsPMNekGMhwUQm-ffG6l1SwfjCSrkaIW6zZgKBIJ5qnY3RvpjpyUqwI6fVnwMKrn~9tgybNC5P~gfHTnn24~qNJKcGK8aOObH4BNJ6bQGTtEMC3IbBr8MFstGLQCC442utgU0FydnkDl2mDXkI28rVPVfvEwHODmG1C9uEqbawJ-jPYRlrkpSlrwypvemC-z0dsvCE7WWKNIgpM2BxA5xrs5nfdPafHvP1l6Wniv7~j1dPRu2T4YWaIs3ji0T--ayiZOq3Mg__&Key-Pair-Id=K38HBHX5LX3X2H"
+    },
+    {
+      "id": "nextassist:registrar-imei-ordem-servico",
+      "workspaceId": "nextassist",
+      "slug": "registrar-imei-ordem-servico",
+      "title": "Como registrar IMEI na ordem de serviço com segurança",
+      "blogUrl": "https://www.nextassist-app.com.br/blog/registrar-imei-ordem-servico",
+      "caption": "Como registrar IMEI na ordem de serviço com segurança\n\nAprenda a registrar IMEI na ordem de serviço, conferir dual SIM e eSIM e vincular fotos, acessórios e aceite para evitar contestações.\n\nSalve para consultar depois e compartilhe com alguém da sua equipe.\n\n📖 Aprofunde no blog (link na bio): https://www.nextassist-app.com.br/blog/registrar-imei-ordem-servico\n\n#ordemdeservico #imei #gestaodeassistenciatecnica #checklistdeentrada #nextassist",
+      "provider": "heygen-api",
+      "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+      "voiceId": "e75248a57197482d80ca91826b2b7f72",
+      "status": "failed",
+      "createdAt": "2026-09-18T13:33:04.739Z",
+      "updatedAt": "2026-09-18T13:33:04.742Z",
+      "audit": [
+        {
+          "from": null,
+          "to": "queued",
+          "at": "2026-09-18T13:33:04.739Z",
+          "actor": "pipeline",
+          "note": "Reel enfileirado para renderização."
+        },
+        {
+          "from": "queued",
+          "to": "rendering",
+          "at": "2026-09-18T13:33:04.741Z",
+          "actor": "system",
+          "note": "Renderização iniciada no HeyGen API."
+        },
+        {
+          "from": "rendering",
+          "to": "failed",
+          "at": "2026-09-18T13:33:04.742Z",
+          "actor": "system",
+          "note": "Falha ao enviar o Reel para o HeyGen."
+        }
+      ],
+      "error": "HeyGen API (Studio) exige o roteiro estruturado (brief) para montar as cenas."
     }
   ]
 }

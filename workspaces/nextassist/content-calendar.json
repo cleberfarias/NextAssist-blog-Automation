@@ -291,11 +291,12 @@
     {
       "tema": "Como registrar IMEI e número de série na entrada do aparelho",
       "palavraChaveAlvo": "registrar IMEI na ordem de serviço",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-28T17:25:37.849Z",
       "reason": "Evita troca de aparelhos e problemas de identificação, além de reforçar uma função essencial do cadastro de OS.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-09-18T13:33:07.155Z"
     },
     {
       "tema": "Checklist de entrega do celular consertado: testes e confirmação do cliente",

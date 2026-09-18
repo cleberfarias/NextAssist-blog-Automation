@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-09-18T13:27:38.054Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-18T13:27:38.054Z",
+    "finalizadoEm": "2026-09-18T13:33:07.157Z",
+    "tema": "Como registrar IMEI e número de série na entrada do aparelho",
+    "status": "publicado",
+    "slug": "registrar-imei-ordem-servico",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como registrar IMEI e número de série na entrada do aparelho",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-18T13:27:38.069Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **Ângulo dominante: proteção contra trocas e contestações.** GestãoClick e Single tratam IMEI/número de série como identificação “à prova de troca”, especialmente quando há aparelhos iguais na bancada. O registro deve ocorrer **antes de q",
+        "timestamp": "2026-09-18T13:28:19.347Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-18T13:28:19.348Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Como registrar IMEI na ordem de serviço com segurança",
+        "timestamp": "2026-09-18T13:28:36.139Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-18T13:28:36.140Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Registrar IMEI na ordem de serviço deve acontecer antes de abrir, testar ou desmontar o aparelho. Esse cuidado identifica exatamente qual celular entrou na assistência e reduz discussões sobre troca d...",
+        "timestamp": "2026-09-18T13:30:36.930Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-18T13:30:36.931Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: registrar-imei-ordem-servico · Tags: Ordem de serviço, IMEI, Gestão de assistência técnica, Checklist de entrada",
+        "timestamp": "2026-09-18T13:31:37.248Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-18T13:31:37.249Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/registrar-imei-ordem-servico",
+        "timestamp": "2026-09-18T13:32:28.933Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-18T13:32:28.934Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "error",
+        "message": "Reel bloqueado: HeyGen API (Studio) exige o roteiro estruturado (brief) para montar as cenas.",
+        "timestamp": "2026-09-18T13:33:04.743Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-18T13:33:04.743Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-18T13:33:07.153Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 36438,
+      "outputTokens": 11273,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0.30840900000000004,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 9,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 9,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-17T13:29:21.541Z",
     "origem": "action",
     "iniciadoEm": "2026-09-17T13:29:21.541Z",

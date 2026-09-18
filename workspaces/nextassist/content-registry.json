@@ -196,5 +196,16 @@
     "publicadoEm": "2026-09-17T13:34:49.789Z",
     "status": "published",
     "url": "https://www.nextassist-app.com.br/blog/senha-celular-ordem-servico"
+  },
+  {
+    "contentId": "registrar-imei-ordem-servico",
+    "campaignId": null,
+    "tema": "Como registrar IMEI e número de série na entrada do aparelho",
+    "formato": "blog",
+    "channel": "blog",
+    "funnelStage": "meio",
+    "publicadoEm": "2026-09-18T13:33:07.156Z",
+    "status": "published",
+    "url": "https://www.nextassist-app.com.br/blog/registrar-imei-ordem-servico"
   }
 ]
