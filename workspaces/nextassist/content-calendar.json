@@ -301,11 +301,12 @@
     {
       "tema": "Checklist de entrega do celular consertado: testes e confirmação do cliente",
       "palavraChaveAlvo": "checklist entrega celular consertado",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-28T17:25:37.849Z",
       "reason": "Complementa o processo após o reparo, reduz contestações e incentiva o registro da conclusão e entrega do serviço.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-09-19T13:29:47.257Z"
     },
     {
       "tema": "Como reduzir retornos e retrabalho na assistência técnica",

@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-09-19T13:25:55.813Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-19T13:25:55.813Z",
+    "finalizadoEm": "2026-09-19T13:29:47.259Z",
+    "tema": "Checklist de entrega do celular consertado: testes e confirmação do cliente",
+    "status": "publicado",
+    "slug": "checklist-entrega-celular-consertado",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Checklist de entrega do celular consertado: testes e confirmação do cliente",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-19T13:25:55.830Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "**Busca realizada em 19 de setembro de 2026:**\n\n- **A MarkupEmpresa tem a cobertura mais direta do tema:** recomenda testar a função reparada, realizar um teste geral, verificar novos defeitos, limpar o aparelho e mudar a OS para “pronto pa",
+        "timestamp": "2026-09-19T13:26:38.143Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-19T13:26:38.144Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Checklist entrega celular consertado: testes e aceite",
+        "timestamp": "2026-09-19T13:27:00.106Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-19T13:27:00.107Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Um bom checklist entrega celular consertado evita a situação clássica: o aparelho entra com a tela quebrada, sai com a tela nova e, na retirada, o cliente reclama que a câmera “já não estava funcionan...",
+        "timestamp": "2026-09-19T13:27:55.892Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-19T13:27:55.893Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: checklist-entrega-celular-consertado · Tags: ordem de serviço, checklist de entrega, assistência técnica de celular, garantia de conserto",
+        "timestamp": "2026-09-19T13:28:35.112Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-19T13:28:35.113Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/checklist-entrega-celular-consertado",
+        "timestamp": "2026-09-19T13:29:31.110Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-19T13:29:31.110Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "done",
+        "message": "submitted — Reel enviado ao HeyGen, aguardando renderização. videoId=61d4a7496ba1e4e33a759fdaf8c1cc51",
+        "timestamp": "2026-09-19T13:29:42.651Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-19T13:29:42.652Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-19T13:29:47.256Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 44080,
+      "outputTokens": 10832,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 5,
+      "estimatedUsd": 0.34471999999999997,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 8,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 8,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-18T13:27:38.054Z",
     "origem": "action",
     "iniciadoEm": "2026-09-18T13:27:38.054Z",
