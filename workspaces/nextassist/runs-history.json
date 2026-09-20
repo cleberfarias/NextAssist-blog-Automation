@@ -1,5 +1,87 @@
 [
   {
+    "id": "2026-09-20T13:25:59.834Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-20T13:25:59.834Z",
+    "finalizadoEm": "2026-09-20T13:28:47.924Z",
+    "tema": "Como reduzir retornos e retrabalho na assistência técnica",
+    "status": "falhou",
+    "slug": null,
+    "erro": "O título e a meta description precisam conter a palavra-chave alvo.",
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como reduzir retornos e retrabalho na assistência técnica",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-20T13:25:59.848Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **O mercado trata o retrabalho mais como falha de processo do que de habilidade técnica.** A MarkupEmpresa aponta como causas recorrentes: registro incompleto do defeito, diagnóstico superficial, falta de aprovação formal, comunicação dis",
+        "timestamp": "2026-09-20T13:26:29.199Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-20T13:26:29.200Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Como reduzir retrabalho na assistência técnica em 7 passos",
+        "timestamp": "2026-09-20T13:26:48.140Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-20T13:26:48.141Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Para reduzir retrabalho na assistência técnica, não basta pedir “mais atenção” ao técnico. É preciso descobrir quantos aparelhos retornam, quanto cada retorno custa e quais etapas do processo estão fa...",
+        "timestamp": "2026-09-20T13:27:46.368Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-20T13:27:46.369Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "O título e a meta description precisam conter a palavra-chave alvo.",
+        "timestamp": "2026-09-20T13:28:47.922Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 44519,
+      "outputTokens": 11649,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.348292,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 7,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 7,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-19T13:25:55.813Z",
     "origem": "action",
     "iniciadoEm": "2026-09-19T13:25:55.813Z",
