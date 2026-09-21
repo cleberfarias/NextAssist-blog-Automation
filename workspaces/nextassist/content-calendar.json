@@ -311,11 +311,12 @@
     {
       "tema": "Como reduzir retornos e retrabalho na assistência técnica",
       "palavraChaveAlvo": "reduzir retrabalho assistência técnica",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-28T17:25:37.849Z",
       "reason": "Retrabalho consome peças e horas sem gerar nova receita; a pauta pode mostrar como histórico, testes e responsáveis ajudam a encontrar as causas.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-09-21T13:36:11.952Z"
     },
     {
       "tema": "Como calcular a taxa de aprovação de orçamentos da assistência técnica",
