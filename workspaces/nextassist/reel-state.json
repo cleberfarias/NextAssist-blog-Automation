@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-21T14:27:06.756Z",
+  "updatedAt": "2026-09-22T13:36:05.481Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -681,6 +681,44 @@
         }
       ],
       "videoUrl": "https://files2.heygen.ai/aws_pacific/avatar_tmp/0b1a7a35392943a6848bbf7b9d85a2f9/722439e8e98051e08f0390d9cefe25f7.mp4?Expires=1790602784&Signature=ozjE1rTRf21y6u2oy7-PlMUiDYFse1uOoVzV7~oDlpKjBLXsmr~QQFumZht3ZTjagOfYOsTsmltvh-s9IQfbKRfaiFzfNW-l7wnVeVy4bnHS9WWu5EwehM3EDWrf955kznROV~3o1QAMStN5N7oj4caxb83XSURdn6FeGaRpBxdf9Aaimc2P5jl6rLu4qIhW-82IcG0X-jd5Gccyz~dfOiGm8H5nSnLlX5Hoa0UUdh~DLS-m4x0u9DUv-T9GOiKO-Qr3~fAEmWYkq10tZ-ma7ZTLHpXH3O5CLHkJ3ZoZq5D7vR2U5PbTnglmZ116z9rawpHkHUNQNUXhfe~~0EtcPg__&Key-Pair-Id=K38HBHX5LX3X2H"
+    },
+    {
+      "id": "nextassist:taxa-aprovacao-orcamento-assistencia-tecnica",
+      "workspaceId": "nextassist",
+      "slug": "taxa-aprovacao-orcamento-assistencia-tecnica",
+      "title": "Como calcular a taxa de aprovação de orçamento assistência técnica",
+      "blogUrl": "https://www.nextassist-app.com.br/blog/taxa-aprovacao-orcamento-assistencia-tecnica",
+      "caption": "Como calcular a taxa de aprovação de orçamento assistência técnica\n\nAprenda a calcular a taxa de aprovação, tratar pendências e recusas e estimar o impacto de cada ponto percentual no faturamento.\n\nSalve para consultar depois e compartilhe com alguém da sua equipe.\n\n📖 Aprofunde no blog (link na bio): https://www.nextassist-app.com.br/blog/taxa-aprovacao-orcamento-assistencia-tecnica\n\n#gestaodeorcamentos #assistenciatecnica #indicadoresdedesempenho #faturamento #ordemdeservico #nextassist",
+      "provider": "heygen-api",
+      "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+      "voiceId": "e75248a57197482d80ca91826b2b7f72",
+      "status": "failed",
+      "createdAt": "2026-09-22T13:36:01.940Z",
+      "updatedAt": "2026-09-22T13:36:01.942Z",
+      "audit": [
+        {
+          "from": null,
+          "to": "queued",
+          "at": "2026-09-22T13:36:01.940Z",
+          "actor": "pipeline",
+          "note": "Reel enfileirado para renderização."
+        },
+        {
+          "from": "queued",
+          "to": "rendering",
+          "at": "2026-09-22T13:36:01.941Z",
+          "actor": "system",
+          "note": "Renderização iniciada no HeyGen API."
+        },
+        {
+          "from": "rendering",
+          "to": "failed",
+          "at": "2026-09-22T13:36:01.942Z",
+          "actor": "system",
+          "note": "Falha ao enviar o Reel para o HeyGen."
+        }
+      ],
+      "error": "HeyGen API (Studio) exige o roteiro estruturado (brief) para montar as cenas."
     }
   ]
 }

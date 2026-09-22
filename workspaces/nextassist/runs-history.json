@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-09-22T13:30:41.956Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-22T13:30:41.956Z",
+    "finalizadoEm": "2026-09-22T13:36:04.590Z",
+    "tema": "Como calcular a taxa de aprovação de orçamentos da assistência técnica",
+    "status": "publicado",
+    "slug": "taxa-aprovacao-orcamento-assistencia-tecnica",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como calcular a taxa de aprovação de orçamentos da assistência técnica",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-22T13:30:41.984Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "- **A fórmula encontrada é simples e pouco aprofundada:** AssistênciaPro e OnlineOS definem o indicador como **orçamentos aprovados ÷ orçamentos enviados × 100**. Exemplo: 42 aprovações em 60 propostas resultam em 70%. A cobertura explica o",
+        "timestamp": "2026-09-22T13:31:37.062Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-22T13:31:37.063Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Como calcular a taxa de aprovação de orçamento assistência técnica",
+        "timestamp": "2026-09-22T13:32:02.527Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-22T13:32:02.527Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "A taxa de aprovação de orçamento da assistência técnica mostra quantos orçamentos enviados realmente viraram serviços autorizados. O cálculo parece simples, mas pode ficar distorcido quando orçamentos...",
+        "timestamp": "2026-09-22T13:33:15.158Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-22T13:33:15.159Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: taxa-aprovacao-orcamento-assistencia-tecnica · Tags: gestão de orçamentos, assistência técnica, indicadores de desempenho, faturamento, ordem de serviço",
+        "timestamp": "2026-09-22T13:34:27.590Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-22T13:34:27.590Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/taxa-aprovacao-orcamento-assistencia-tecnica",
+        "timestamp": "2026-09-22T13:35:29.496Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-22T13:35:29.497Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "error",
+        "message": "Reel bloqueado: HeyGen API (Studio) exige o roteiro estruturado (brief) para montar as cenas.",
+        "timestamp": "2026-09-22T13:36:01.943Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-22T13:36:01.943Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-22T13:36:04.587Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 36501,
+      "outputTokens": 12698,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 3,
+      "estimatedUsd": 0.32997299999999996,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 6,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 6,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-21T13:30:23.549Z",
     "origem": "action",
     "iniciadoEm": "2026-09-21T13:30:23.549Z",
