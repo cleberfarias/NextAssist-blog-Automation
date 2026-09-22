@@ -10,6 +10,7 @@ const EMPTY_REVENUE: RevenueDashboardResponse = {
   runId: "r1", monthlyCustomerTarget: null,
   snapshot: { visits: 0, trials: 0, activated: 0, customers: 0, hotLeads: 0, pendingSalesApprovals: 0, visitToTrialRate: 0, trialToActivationRate: 0, activationToCustomerRate: 0 },
   decision: { objective: "increase_paying_customers", bottleneck: "none", action: "do_nothing", priority: "low", reason: "", evidence: [], requiresHumanApproval: false },
+  growthLoop: null,
 };
 
 describe("deriveAgentOperations", () => {

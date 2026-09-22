@@ -19,6 +19,8 @@ export interface GenerateContentBacklogOptions {
   existingThemes: string[];
   existingKeywords: string[];
   publishedTitles: string[];
+  /** Texto do Revenue Director quando esta rodada foi disparada por um gargalo específico do funil (Loop de Crescimento), em vez de calendário baixo. */
+  steering?: string;
 }
 
 const PRIORITIES = new Set(["high", "medium", "low"]);
@@ -54,6 +56,7 @@ export function parseContentOpportunities(raw: unknown): ContentOpportunity[] {
 }
 
 export const SYSTEM_TEMPLATE = (ctx: WorkspaceContext) => `Você é o Marketing Director do ${ctx.workspace.brand.name} — ${ctx.workspace.brand.description}
+Você atua como um Head of Content/Growth de mercado: mais de uma década lançando estratégias de conteúdo B2B SaaS que geram pipeline comercial mensurável, não apenas tráfego. Você pensa em clusters temáticos e autoridade de tópico (não posts isolados), em intenção de busca por estágio de funil, e nunca aprova uma pauta sem conseguir explicar, em uma frase, que resultado de negócio ela deve mover.
 Tom de voz: ${ctx.workspace.brand.toneOfVoice}
 Público-alvo: ${ctx.workspace.brand.targetAudience.join(", ") || "não especificado"}
 Concorrentes diretos: ${ctx.workspace.brand.competitors.join(", ") || "não especificado"}
@@ -61,7 +64,8 @@ Propostas de valor: ${(ctx.workspace.brand.valuePropositions ?? []).join(", ") |
 Objetivo principal do workspace: ${ctx.workspace.goals.primary}
 
 Sua responsabilidade é perceber quando o backlog de pautas do blog está
-ficando baixo e propor novas oportunidades de conteúdo com potencial real de
+ficando baixo — ou quando o Revenue Director sinalizar um gargalo específico
+do funil — e propor novas oportunidades de conteúdo com potencial real de
 impacto nesse objetivo — nunca gere temas aleatórios ou genéricos.
 
 Priorize, nesta ordem, sempre que houver dado suficiente:
@@ -70,6 +74,11 @@ Priorize, nesta ordem, sempre que houver dado suficiente:
 3. Entre os que ainda não ativaram ninguém, os com mais trials.
 4. Taxas de conversão calculadas com menos de ${MIN_TRIALS_FOR_RATE} trials têm amostra insuficiente — NÃO as use para priorizar, mesmo que pareçam altas.
 5. Só quando não houver sinal comercial suficiente (poucos ou nenhum dado de atribuição), use Search Console, concorrentes ou clusters de conteúdo como critério.
+
+Antes de responder, audite cada pauta: (1) ela ataca um gargalo real, não
+uma hipótese? (2) o público-alvo reconheceria a dor descrita? (3) ela não
+compete por atenção com um cluster já publicado? Descarte qualquer ideia que
+falhe nesse teste em vez de incluí-la.
 
 Responda SOMENTE com um array JSON, sem texto antes ou depois, no formato:
 [
@@ -110,8 +119,12 @@ export function buildPrompt(
     .map((q) => `- "${q.query}" (${q.impressions} impressões, posição média ${q.position.toFixed(1)}, ${q.clicks} cliques)`)
     .join("\n") || "(Search Console não configurado ou sem dados)";
 
-  return `Gere até ${options.count} novas oportunidades de pauta para o blog.
+  const steeringBlock = options.steering
+    ? `\nDirecionamento prioritário desta rodada (Revenue Director): ${options.steering}\nTodas as pautas geradas devem atacar diretamente esse gargalo — não gere pautas genéricas de reforço de marca enquanto esse direcionamento estiver ativo.\n`
+    : "";
 
+  return `Gere até ${options.count} novas oportunidades de pauta para o blog.
+${steeringBlock}
 Temas já existentes no calendário (pendentes ou publicados) — NÃO repita nem gere algo muito parecido:
 ${options.existingThemes.map((t) => `- ${t}`).join("\n") || "(nenhum)"}
 

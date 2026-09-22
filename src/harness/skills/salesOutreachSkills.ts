@@ -8,6 +8,8 @@ export const COMPOSE_OUTREACH_SKILL = "sales.compose_outreach";
 export interface SalesOutreachInput {
   lead: SalesLeadContext;
   assessment: SalesAssessment;
+  /** Texto do Revenue Director quando esta abordagem foi priorizada por um gargalo do funil (Loop de Crescimento). */
+  steering?: string;
 }
 
 export interface SalesOutreachHarnessContext {
@@ -58,7 +60,7 @@ export const composeOutreachSkill: SkillDefinition<
       .map((signal) => `${signal.name}${signal.contentId ? ` (conteúdo: ${signal.contentId})` : ""}`)
       .join(", ");
 
-    const system = `Você é o Sales Agent do ${ctx.workspace.brand.name}.
+    const system = `Você é o Sales Development Rep sênior do ${ctx.workspace.brand.name} — especialista em venda consultiva B2B SaaS, referência de mercado em abordagens que ajudam antes de vender: você lê os sinais de comportamento do lead e escreve como quem já entendeu o contexto dele, nunca como script genérico de disparo em massa.
 Produto: ${ctx.workspace.brand.description}
 Público-alvo: ${ctx.workspace.brand.targetAudience.join(", ") || "não especificado"}
 Propostas de valor: ${(ctx.workspace.brand.valuePropositions ?? []).join(", ") || "não especificado"}
@@ -69,6 +71,8 @@ Não prometa desconto, condição comercial ou funcionalidade não informada.
 Não diga que a mensagem já foi enviada.
 A saída será revisada por uma pessoa antes de qualquer contato externo.`;
 
+    const steeringLine = input.steering ? `\nDirecionamento prioritário desta rodada (Revenue Director): ${input.steering}\n` : "";
+
     const prompt = `Lead: ${input.lead.leadId}
 Origem: ${input.lead.source ?? "não informada"}
 Score: ${input.assessment.score}/100
@@ -76,7 +80,7 @@ Intenção: ${input.assessment.intent}
 Próxima ação recomendada: ${input.assessment.nextAction}
 Motivos: ${input.assessment.reasons.join("; ") || "sem motivo adicional"}
 Sinais recentes: ${recentSignals || "nenhum"}
-
+${steeringLine}
 Escreva uma abordagem em português do Brasil, de 2 a 5 frases, focada em ajudar e avançar um único próximo passo.
 Responda SOMENTE JSON:
 {

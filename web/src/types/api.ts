@@ -290,11 +290,41 @@ export interface RevenueDecision {
   requiresHumanApproval: boolean;
 }
 
+export interface BacklogOutcome {
+  type: "marketing";
+  skipped: boolean;
+  pendingBefore: number;
+  generated: number;
+  discardedDuplicates: number;
+  discardedForbidden: number;
+  discardedInvalid: number;
+  pendingAfter: number;
+  error: string | null;
+}
+
+export type GrowthLoopOutcome =
+  | BacklogOutcome
+  | { type: "marketing_skipped"; reason: string }
+  | { type: "sales"; leadsAssessed: number; outreachCreated: number; outreachReused: number; outreachFailed: number }
+  | { type: "no_owner"; note: string }
+  | { type: "no_action" };
+
+export interface GrowthLoopState {
+  runId: string;
+  startedAt: string;
+  completedAt: string;
+  updatedAt: string;
+  snapshot: RevenueSnapshot;
+  decision: RevenueDecision;
+  outcome: GrowthLoopOutcome;
+}
+
 export interface RevenueDashboardResponse {
   runId: string;
   monthlyCustomerTarget: number | null;
   snapshot: RevenueSnapshot;
   decision: RevenueDecision;
+  growthLoop: GrowthLoopState | null;
 }
 
 export type ReelStatus = "queued" | "rendering" | "pending_approval" | "approved" | "rejected" | "publishing" | "published" | "failed";

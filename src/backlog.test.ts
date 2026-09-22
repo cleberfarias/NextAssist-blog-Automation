@@ -6,7 +6,7 @@ import type { MarketingWorkspace } from "./workspace.js";
 import type { SecretProvider } from "./lib/secrets.js";
 import { createTempWorkspace } from "./testing/tempWorkspace.js";
 import { getAllTopics, countPendingTopics } from "./contentCalendar.js";
-import { ensureContentBacklog, validateOpportunities } from "./backlog.js";
+import { ensureContentBacklog, validateOpportunities, replenishContentBacklog } from "./backlog.js";
 import type { ContentOpportunity } from "./lib/marketingDirector.js";
 import type { PipelineEvent } from "./pipelineEvents.js";
 
@@ -175,6 +175,54 @@ test("falha do Director: registra erro, não altera o calendário, pipeline pode
     const all = await getAllTopics(ctx);
     assert.equal(all.length, 1);
     assert.equal(all[0].tema, "Tema pendente antigo");
+  } finally {
+    await cleanup();
+  }
+});
+
+test("replenishContentBacklog ignora o gate de minimumPendingTopics — gera mesmo com calendário cheio", async () => {
+  const workspace = baseWorkspace({ contentStrategy: { minimumPendingTopics: 1, replenishAmount: 5 } });
+  const { ctx, cleanup } = await contextWithCalendar(workspace, [
+    { tema: "Já tem de sobra", palavraChaveAlvo: "sobra", publicado: false },
+  ]);
+  try {
+    const result = await replenishContentBacklog(ctx, {
+      count: 3,
+      generate: async () => [opportunity({ tema: "Pauta do Growth Loop", palavraChaveAlvo: "growth loop" })],
+    });
+    assert.equal(result.generated, 1);
+    assert.equal(await countPendingTopics(ctx), 2);
+  } finally {
+    await cleanup();
+  }
+});
+
+test("replenishContentBacklog estampa growthLoopMeta nas pautas aceitas", async () => {
+  const workspace = baseWorkspace({ contentStrategy: { minimumPendingTopics: 1, replenishAmount: 5 } });
+  const { ctx, cleanup } = await contextWithCalendar(workspace, []);
+  try {
+    await replenishContentBacklog(ctx, {
+      count: 3,
+      growthLoopMeta: { bottleneck: "traffic", action: "create_content", runId: "run-abc" },
+      generate: async () => [opportunity({ tema: "Pauta do Growth Loop", palavraChaveAlvo: "growth loop" })],
+    });
+    const all = await getAllTopics(ctx);
+    assert.deepEqual(all[0]?.growthLoop, { bottleneck: "traffic", action: "create_content", runId: "run-abc" });
+  } finally {
+    await cleanup();
+  }
+});
+
+test("replenishContentBacklog sem growthLoopMeta não estampa nada — comportamento atual não muda", async () => {
+  const workspace = baseWorkspace({ contentStrategy: { minimumPendingTopics: 1, replenishAmount: 5 } });
+  const { ctx, cleanup } = await contextWithCalendar(workspace, []);
+  try {
+    await replenishContentBacklog(ctx, {
+      count: 3,
+      generate: async () => [opportunity({ tema: "Pauta comum", palavraChaveAlvo: "comum" })],
+    });
+    const all = await getAllTopics(ctx);
+    assert.equal(all[0]?.growthLoop, undefined);
   } finally {
     await cleanup();
   }

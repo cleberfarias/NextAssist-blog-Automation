@@ -21,6 +21,7 @@ web/node_modules/
 
 # --- Estado gerado em runtime (métricas geradas sob demanda no painel) ---
 **/post-performance.json
+**/growth-loop-state.json
 
 # --- Logs ---
 *.log

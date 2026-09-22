@@ -54,6 +54,8 @@ export async function runSalesOutreachCopilot(
   ctx: WorkspaceContext,
   lead: SalesLeadContext,
   assessment: SalesAssessment,
+  steering?: string,
+  causedBy?: string,
 ): Promise<SalesOutreachDraft> {
   const registry = new SkillRegistry()
     .register(assessLeadSkill)
@@ -72,8 +74,9 @@ export async function runSalesOutreachCopilot(
       context: harnessContext,
       allowedSkills: [COMPOSE_OUTREACH_SKILL],
       budget: SALES_AGENT_BUDGET,
+      causedBy,
     },
-    ({ invoke }) => invoke(COMPOSE_OUTREACH_SKILL, { lead, assessment }),
+    ({ invoke }) => invoke(COMPOSE_OUTREACH_SKILL, { lead, assessment, steering }),
   );
 
   await saveHarnessTrace(ctx, result.trace);
