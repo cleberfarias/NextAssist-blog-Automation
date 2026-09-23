@@ -331,11 +331,12 @@
     {
       "tema": "Controle de compras de peças: como evitar pedidos duplicados e urgências",
       "palavraChaveAlvo": "controle de compras de peças celular",
-      "publicado": false,
+      "publicado": true,
       "generatedBy": "marketing-director",
       "createdAt": "2026-08-28T17:25:37.849Z",
       "reason": "Ataca a etapa anterior ao estoque e mostra como relacionar compras, fornecedores e ordens de serviço abertas.",
-      "priority": "medium"
+      "priority": "medium",
+      "publicadoEm": "2026-09-23T13:33:44.586Z"
     },
     {
       "tema": "Como cadastrar e avaliar fornecedores de peças para celular",

@@ -1,5 +1,123 @@
 [
   {
+    "id": "2026-09-23T13:29:34.713Z",
+    "origem": "action",
+    "iniciadoEm": "2026-09-23T13:29:34.713Z",
+    "finalizadoEm": "2026-09-23T13:33:44.589Z",
+    "tema": "Controle de compras de peças: como evitar pedidos duplicados e urgências",
+    "status": "publicado",
+    "slug": "controle-compras-pecas-celular",
+    "erro": null,
+    "eventos": [
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Controle de compras de peças: como evitar pedidos duplicados e urgências",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-09-23T13:29:34.731Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "done",
+        "message": "**Busca realizada em 23 de setembro de 2026:**\n\n- **AtmusOS tem a cobertura mais específica do tema.** O conteúdo de 11/09/2026 separa a compra em duas filas: reposição normal, baseada no estoque mínimo, e compras urgentes vinculadas às OS ",
+        "timestamp": "2026-09-23T13:30:18.398Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "working",
+        "message": "Definindo título, ângulo e estrutura...",
+        "timestamp": "2026-09-23T13:30:18.399Z"
+      },
+      {
+        "agent": "pesquisa-pauta",
+        "status": "done",
+        "message": "Título: Controle de compras de peças celular sem pedidos duplicados",
+        "timestamp": "2026-09-23T13:30:33.773Z"
+      },
+      {
+        "agent": "redator",
+        "status": "working",
+        "message": "Escrevendo o rascunho...",
+        "timestamp": "2026-09-23T13:30:33.774Z"
+      },
+      {
+        "agent": "redator",
+        "status": "done",
+        "message": "Na rotina da assistência, o controle de compras de peças celular precisa responder a uma pergunta simples: quanto realmente falta comprar? Olhar apenas o saldo da prateleira não basta. É necessário co...",
+        "timestamp": "2026-09-23T13:31:47.598Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "working",
+        "message": "Revisando e adicionando links internos...",
+        "timestamp": "2026-09-23T13:31:47.600Z"
+      },
+      {
+        "agent": "editor-seo",
+        "status": "done",
+        "message": "Slug: controle-compras-pecas-celular · Tags: Controle de compras, Estoque de peças, Ordens de serviço, Gestão de assistência técnica, Ponto de reposição",
+        "timestamp": "2026-09-23T13:32:37.555Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "working",
+        "message": "Gerando capa e publicando no blog...",
+        "timestamp": "2026-09-23T13:32:37.555Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "done",
+        "message": "Publicado em /blog/controle-compras-pecas-celular",
+        "timestamp": "2026-09-23T13:33:37.765Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "working",
+        "message": "Gerando Reel a partir do conteúdo publicado...",
+        "timestamp": "2026-09-23T13:33:37.765Z"
+      },
+      {
+        "agent": "instagram",
+        "status": "error",
+        "message": "Reel bloqueado: HeyGen API (Studio) exige o roteiro estruturado (brief) para montar as cenas.",
+        "timestamp": "2026-09-23T13:33:41.897Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "working",
+        "message": "Notificando o Google e reenviando o sitemap...",
+        "timestamp": "2026-09-23T13:33:41.898Z"
+      },
+      {
+        "agent": "indexador",
+        "status": "done",
+        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
+        "timestamp": "2026-09-23T13:33:44.585Z"
+      }
+    ],
+    "usage": {
+      "model": "gpt-5.6",
+      "inputTokens": 44843,
+      "outputTokens": 10335,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 4,
+      "estimatedUsd": 0.32955399999999996,
+      "fallbackCount": 0,
+      "provider": "openai"
+    },
+    "backlog": {
+      "skipped": true,
+      "pendingBefore": 5,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 5,
+      "error": null
+    }
+  },
+  {
     "id": "2026-09-22T13:30:41.956Z",
     "origem": "action",
     "iniciadoEm": "2026-09-22T13:30:41.956Z",

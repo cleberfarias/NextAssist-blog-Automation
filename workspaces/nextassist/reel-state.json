@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-22T13:36:05.481Z",
+  "updatedAt": "2026-09-23T13:33:45.495Z",
   "entries": [
     {
       "id": "nextassist:ordem-servico-online-assistencia-tecnica",
@@ -714,6 +714,44 @@
           "from": "rendering",
           "to": "failed",
           "at": "2026-09-22T13:36:01.942Z",
+          "actor": "system",
+          "note": "Falha ao enviar o Reel para o HeyGen."
+        }
+      ],
+      "error": "HeyGen API (Studio) exige o roteiro estruturado (brief) para montar as cenas."
+    },
+    {
+      "id": "nextassist:controle-compras-pecas-celular",
+      "workspaceId": "nextassist",
+      "slug": "controle-compras-pecas-celular",
+      "title": "Controle de compras de peças celular: evite pedidos duplicados",
+      "blogUrl": "https://www.nextassist-app.com.br/blog/controle-compras-pecas-celular",
+      "caption": "Controle de compras de peças celular: evite pedidos duplicados\n\nAprenda a calcular a necessidade real de peças considerando estoque, pedidos abertos, reservas de OS e ponto de reposição.\n\nSalve para consultar depois e compartilhe com alguém da sua equipe.\n\n📖 Aprofunde no blog (link na bio): https://www.nextassist-app.com.br/blog/controle-compras-pecas-celular\n\n#controledecompras #estoquedepecas #ordensdeservico #gestaodeassistenciatecnica #pontodereposicao #nextassist",
+      "provider": "heygen-api",
+      "avatarId": "a3eaa10abbca48ada4b5e97b8aec052b",
+      "voiceId": "e75248a57197482d80ca91826b2b7f72",
+      "status": "failed",
+      "createdAt": "2026-09-23T13:33:41.893Z",
+      "updatedAt": "2026-09-23T13:33:41.896Z",
+      "audit": [
+        {
+          "from": null,
+          "to": "queued",
+          "at": "2026-09-23T13:33:41.893Z",
+          "actor": "pipeline",
+          "note": "Reel enfileirado para renderização."
+        },
+        {
+          "from": "queued",
+          "to": "rendering",
+          "at": "2026-09-23T13:33:41.894Z",
+          "actor": "system",
+          "note": "Renderização iniciada no HeyGen API."
+        },
+        {
+          "from": "rendering",
+          "to": "failed",
+          "at": "2026-09-23T13:33:41.896Z",
           "actor": "system",
           "note": "Falha ao enviar o Reel para o HeyGen."
         }
