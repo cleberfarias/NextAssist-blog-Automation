@@ -1,5 +1,62 @@
 [
   {
+    "id": "2026-10-05T13:40:16.510Z",
+    "origem": "action",
+    "iniciadoEm": "2026-10-05T13:40:16.510Z",
+    "finalizadoEm": "2026-10-05T13:40:25.087Z",
+    "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 4 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace via Agent Harness...",
+        "timestamp": "2026-10-05T13:40:16.528Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "error",
+        "message": "Falha ao gerar backlog de conteúdo: Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-05T13:40:21.964Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-10-05T13:40:21.967Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-05T13:40:25.086Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 4,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 4,
+      "error": "Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+    }
+  },
+  {
     "id": "2026-10-04T15:00:48.542Z",
     "origem": "action",
     "iniciadoEm": "2026-10-04T15:00:48.542Z",
@@ -7228,91 +7285,6 @@
         "status": "done",
         "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
         "timestamp": "2026-07-23T15:31:11.542Z"
-      }
-    ]
-  },
-  {
-    "id": "2026-07-23T14:28:16.035Z",
-    "origem": "action",
-    "iniciadoEm": "2026-07-23T14:28:16.035Z",
-    "finalizadoEm": "2026-07-23T14:31:45.642Z",
-    "tema": "Erros mais comuns na gestão de estoque de peças de celular",
-    "status": "publicado",
-    "slug": "7-erros-gestao-estoque-pecas-celular",
-    "erro": null,
-    "eventos": [
-      {
-        "agent": "pesquisa-mercado",
-        "status": "working",
-        "tema": "Erros mais comuns na gestão de estoque de peças de celular",
-        "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-07-23T14:28:16.046Z"
-      },
-      {
-        "agent": "pesquisa-mercado",
-        "status": "done",
-        "message": "## Resumo da concorrência sobre \"Erros na gestão de estoque de peças de celular\"\n\n- **GestãoClick** publica com frequência conteúdo genérico de gestão de estoque adaptado para o nicho: \no erro mais crítico apontado é não realizar um control",
-        "timestamp": "2026-07-23T14:28:45.467Z"
-      },
-      {
-        "agent": "pesquisa-pauta",
-        "status": "working",
-        "message": "Definindo título, ângulo e estrutura...",
-        "timestamp": "2026-07-23T14:28:45.467Z"
-      },
-      {
-        "agent": "pesquisa-pauta",
-        "status": "done",
-        "message": "Título: 7 Erros na Gestão de Estoque de Peças de Celular que Estão Corroendo o Lucro da Sua Assistência",
-        "timestamp": "2026-07-23T14:28:54.823Z"
-      },
-      {
-        "agent": "redator",
-        "status": "working",
-        "message": "Escrevendo o rascunho...",
-        "timestamp": "2026-07-23T14:28:54.823Z"
-      },
-      {
-        "agent": "redator",
-        "status": "done",
-        "message": "Por que o estoque de peças de celular é diferente de qualquer outro varejo\n\nSe você já tentou aplicar um curso de gestão de estoque \"genérico\" na sua assistência, provavelmente percebeu que boa parte ...",
-        "timestamp": "2026-07-23T14:29:46.400Z"
-      },
-      {
-        "agent": "editor-seo",
-        "status": "working",
-        "message": "Revisando, adicionando schema e links internos...",
-        "timestamp": "2026-07-23T14:29:46.400Z"
-      },
-      {
-        "agent": "editor-seo",
-        "status": "done",
-        "message": "Slug: 7-erros-gestao-estoque-pecas-celular · Tags: gestão de estoque, assistência técnica, peças de celular, curva ABC, controle financeiro",
-        "timestamp": "2026-07-23T14:30:58.161Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "working",
-        "message": "Gerando capa e publicando no blog...",
-        "timestamp": "2026-07-23T14:30:58.161Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "done",
-        "message": "Publicado em /blog/7-erros-gestao-estoque-pecas-celular",
-        "timestamp": "2026-07-23T14:31:45.272Z"
-      },
-      {
-        "agent": "indexador",
-        "status": "working",
-        "message": "Notificando o Google e reenviando o sitemap...",
-        "timestamp": "2026-07-23T14:31:45.272Z"
-      },
-      {
-        "agent": "indexador",
-        "status": "done",
-        "message": "Indexing API: notificada · sitemap reenviado",
-        "timestamp": "2026-07-23T14:31:45.640Z"
       }
     ]
   }
