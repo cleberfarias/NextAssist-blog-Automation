@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-08T13:37:10.043Z",
+  "updatedAt": "2026-10-09T13:35:35.062Z",
   "traces": [
     {
       "runId": "3c82d42b-9ebe-4e51-90f6-5c5f399e1333",
@@ -314,6 +314,27 @@
       ],
       "costUsd": 0,
       "finishedAt": "2026-10-08T13:37:10.042Z",
+      "error": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+    },
+    {
+      "runId": "3c61ddff-ad28-4ccc-8845-2cb2debe61e1",
+      "workspaceId": "nextassist",
+      "agent": "marketing-director",
+      "goal": "replenish_content_backlog",
+      "startedAt": "2026-10-09T13:35:28.366Z",
+      "status": "failed",
+      "steps": [
+        {
+          "index": 1,
+          "skill": "marketing.generate_content_backlog",
+          "startedAt": "2026-10-09T13:35:28.366Z",
+          "finishedAt": "2026-10-09T13:35:35.062Z",
+          "status": "failed",
+          "error": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+        }
+      ],
+      "costUsd": 0,
+      "finishedAt": "2026-10-09T13:35:35.062Z",
       "error": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
     }
   ]

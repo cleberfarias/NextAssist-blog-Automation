@@ -1,5 +1,62 @@
 [
   {
+    "id": "2026-10-09T13:35:28.319Z",
+    "origem": "action",
+    "iniciadoEm": "2026-10-09T13:35:28.319Z",
+    "finalizadoEm": "2026-10-09T13:35:39.175Z",
+    "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 4 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace via Agent Harness...",
+        "timestamp": "2026-10-09T13:35:28.338Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "error",
+        "message": "Falha ao gerar backlog de conteúdo: Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-09T13:35:35.063Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-10-09T13:35:35.065Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-09T13:35:39.174Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 4,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 4,
+      "error": "Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+    }
+  },
+  {
     "id": "2026-10-08T13:37:04.017Z",
     "origem": "action",
     "iniciadoEm": "2026-10-08T13:37:04.017Z",
@@ -7166,42 +7223,5 @@
       "webSearchRequests": 3,
       "estimatedUsd": 0.27267399999999997
     }
-  },
-  {
-    "id": "2026-07-26T14:45:43.832Z",
-    "origem": "action",
-    "iniciadoEm": "2026-07-26T14:45:43.832Z",
-    "finalizadoEm": "2026-07-26T14:46:23.490Z",
-    "tema": "Garantia em conserto de celular: o que a lei exige e como se proteger",
-    "status": "falhou",
-    "slug": null,
-    "erro": "Expected double-quoted property name in JSON at position 294 (line 3 column 177)",
-    "eventos": [
-      {
-        "agent": "pesquisa-mercado",
-        "status": "working",
-        "tema": "Garantia em conserto de celular: o que a lei exige e como se proteger",
-        "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-07-26T14:45:44.080Z"
-      },
-      {
-        "agent": "pesquisa-mercado",
-        "status": "done",
-        "message": "# Análise de Concorrência — \"Garantia em conserto de celular\"\n\nCom base na pesquisa, aqui está o panorama do que já existe publicado:\n\n- **MarkupEmpresa** aborda o tema de forma técnica e estruturada, com formato de FAQ direto (Sim/Não). De",
-        "timestamp": "2026-07-26T14:46:11.281Z"
-      },
-      {
-        "agent": "pesquisa-pauta",
-        "status": "working",
-        "message": "Definindo título, ângulo e estrutura...",
-        "timestamp": "2026-07-26T14:46:11.281Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "error",
-        "message": "Expected double-quoted property name in JSON at position 294 (line 3 column 177)",
-        "timestamp": "2026-07-26T14:46:23.490Z"
-      }
-    ]
   }
 ]
