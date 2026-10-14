@@ -1,5 +1,62 @@
 [
   {
+    "id": "2026-10-14T13:29:24.899Z",
+    "origem": "action",
+    "iniciadoEm": "2026-10-14T13:29:24.899Z",
+    "finalizadoEm": "2026-10-14T13:29:33.546Z",
+    "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 4 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace via Agent Harness...",
+        "timestamp": "2026-10-14T13:29:24.922Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "error",
+        "message": "Falha ao gerar backlog de conteúdo: Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-14T13:29:30.025Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-10-14T13:29:30.027Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-14T13:29:33.545Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 4,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 4,
+      "error": "Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+    }
+  },
+  {
     "id": "2026-10-13T13:42:12.822Z",
     "origem": "action",
     "iniciadoEm": "2026-10-13T13:42:12.822Z",
@@ -7180,42 +7237,6 @@
       "cacheCreationInputTokens": 0,
       "cacheReadInputTokens": 0,
       "webSearchRequests": 3,
-      "estimatedUsd": 0,
-      "fallbackCount": 0
-    }
-  },
-  {
-    "id": "2026-07-29T18:39:18.323Z",
-    "origem": "action",
-    "iniciadoEm": "2026-07-29T18:39:18.323Z",
-    "finalizadoEm": "2026-07-29T18:39:18.346Z",
-    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
-    "status": "falhou",
-    "slug": null,
-    "erro": "Cannot convert argument to a ByteString because the character at index 7 has a value of 65279 which is greater than 255.",
-    "eventos": [
-      {
-        "agent": "pesquisa-mercado",
-        "status": "working",
-        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
-        "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-07-29T18:39:18.333Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "error",
-        "message": "Cannot convert argument to a ByteString because the character at index 7 has a value of 65279 which is greater than 255.",
-        "timestamp": "2026-07-29T18:39:18.345Z"
-      }
-    ],
-    "usage": {
-      "provider": "openai",
-      "model": "gpt-5.6",
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "cacheCreationInputTokens": 0,
-      "cacheReadInputTokens": 0,
-      "webSearchRequests": 0,
       "estimatedUsd": 0,
       "fallbackCount": 0
     }
