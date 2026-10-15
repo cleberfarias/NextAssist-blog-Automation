@@ -117,3 +117,24 @@ test("addTopics com lista vazia não altera o calendário", async () => {
     await cleanup();
   }
 });
+
+test("addTopics propaga growthLoop quando informado, e não exige o campo quando ausente", async () => {
+  const temp = await createTempWorkspace("acme", { "content-calendar.json": { topicos: [] } });
+  try {
+    const ctx = await buildWorkspaceContext(workspace, fakeSecrets(), { workspacesRoot: temp.root, requireAiProvider: false });
+
+    await addTopics(ctx, [
+      { tema: "Tema com proveniência", palavraChaveAlvo: "k1", growthLoop: { bottleneck: "traffic", action: "create_content", runId: "run-1" } },
+      { tema: "Tema sem proveniência", palavraChaveAlvo: "k2" },
+    ]);
+
+    const all = await getAllTopics(ctx);
+    const withProvenance = all.find((t) => t.tema === "Tema com proveniência");
+    const withoutProvenance = all.find((t) => t.tema === "Tema sem proveniência");
+
+    assert.deepEqual(withProvenance?.growthLoop, { bottleneck: "traffic", action: "create_content", runId: "run-1" });
+    assert.equal(withoutProvenance?.growthLoop, undefined);
+  } finally {
+    await temp.cleanup();
+  }
+});

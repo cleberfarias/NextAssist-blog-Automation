@@ -30,6 +30,7 @@ export interface MarketingDirectorHarnessResult {
 export async function runMarketingDirectorBacklog(
   ctx: WorkspaceContext,
   options: GenerateContentBacklogOptions,
+  causedBy?: string,
 ): Promise<MarketingDirectorHarnessResult> {
   const registry = new SkillRegistry().register(generateContentBacklogSkill);
   const runtime = new AgentHarnessRuntime({
@@ -46,6 +47,7 @@ export async function runMarketingDirectorBacklog(
       context: harnessContext,
       allowedSkills: [GENERATE_CONTENT_BACKLOG_SKILL],
       budget: MARKETING_DIRECTOR_BUDGET,
+      causedBy,
     },
     ({ invoke }) => invoke<GenerateContentBacklogOptions, ContentOpportunity[]>(GENERATE_CONTENT_BACKLOG_SKILL, options),
   );

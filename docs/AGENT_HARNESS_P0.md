@@ -97,7 +97,7 @@ A pontuação é determinística e auditável. O LLM não altera score nem está
 2. Expor leads quentes + rascunhos no painel do Marketing AI Office.
 3. Adicionar contatos reais/consentimento vindos do produto/CRM sem colocar PII em logs desnecessários.
 4. Criar `sales.send_email` / `sales.send_whatsapp` com aprovação humana obrigatória.
-5. Adicionar Revenue Director acima de Marketing + Sales.
+5. ~~Adicionar Revenue Director acima de Marketing + Sales.~~ (feito — ver `docs/superpowers/specs/2026-09-16-growth-loop-design.md`)
 6. Evoluir decisões do Marketing Director além de `create_article` para `update_article`, `change_cta`, `create_social` e `do_nothing`.
 
 ## Regra arquitetural

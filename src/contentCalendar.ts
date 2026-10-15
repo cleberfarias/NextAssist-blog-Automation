@@ -1,6 +1,7 @@
 // src/contentCalendar.ts
 import { readFile, writeFile } from "node:fs/promises";
 import type { WorkspaceContext } from "./context.js";
+import type { GrowthLoopProvenance } from "./revenue/types.js";
 
 export interface CalendarTopic {
   tema: string;
@@ -12,6 +13,7 @@ export interface CalendarTopic {
   createdAt?: string;
   reason?: string;
   priority?: "high" | "medium" | "low";
+  growthLoop?: GrowthLoopProvenance;
 }
 
 /** O que o Marketing Director (ou qualquer outro gerador futuro) precisa fornecer para virar um `CalendarTopic`. */
@@ -20,6 +22,7 @@ export interface NewTopicInput {
   palavraChaveAlvo: string;
   reason?: string;
   priority?: "high" | "medium" | "low";
+  growthLoop?: GrowthLoopProvenance;
 }
 
 interface Calendar {
@@ -80,6 +83,7 @@ export async function addTopics(ctx: WorkspaceContext, inputs: NewTopicInput[]):
     createdAt,
     reason: input.reason,
     priority: input.priority,
+    growthLoop: input.growthLoop,
   }));
   calendar.topicos.push(...newTopics);
   await save(ctx, calendar);

@@ -35,3 +35,10 @@ export interface RevenueDecision {
   evidence: string[];
   requiresHumanApproval: boolean;
 }
+
+/** Proveniência estruturada de algo gerado pelo Loop de Crescimento — usada para medir depois "das pautas ordenadas pelo Revenue Director, quantas geraram trial/cliente?" sem parsear texto livre. */
+export interface GrowthLoopProvenance {
+  bottleneck: RevenueBottleneck;
+  action: RevenueAction;
+  runId: string;
+}
