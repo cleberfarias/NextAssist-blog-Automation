@@ -1,5 +1,62 @@
 [
   {
+    "id": "2026-10-16T13:31:25.253Z",
+    "origem": "action",
+    "iniciadoEm": "2026-10-16T13:31:25.253Z",
+    "finalizadoEm": "2026-10-16T13:31:34.746Z",
+    "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 4 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace via Agent Harness...",
+        "timestamp": "2026-10-16T13:31:25.262Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "error",
+        "message": "Falha ao gerar backlog de conteúdo: Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-16T13:31:31.062Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-10-16T13:31:31.063Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-16T13:31:34.745Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 4,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 4,
+      "error": "Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+    }
+  },
+  {
     "id": "2026-10-15T13:32:40.461Z",
     "origem": "action",
     "iniciadoEm": "2026-10-15T13:32:40.461Z",
@@ -7147,78 +7204,6 @@
       "model": "gpt-5.6",
       "inputTokens": 30909,
       "outputTokens": 2295,
-      "cacheCreationInputTokens": 0,
-      "cacheReadInputTokens": 0,
-      "webSearchRequests": 3,
-      "estimatedUsd": 0,
-      "fallbackCount": 0
-    }
-  },
-  {
-    "id": "2026-07-30T15:26:11.895Z",
-    "origem": "action",
-    "iniciadoEm": "2026-07-30T15:26:11.895Z",
-    "finalizadoEm": "2026-07-30T15:29:17.081Z",
-    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
-    "status": "falhou",
-    "slug": null,
-    "erro": "Título fora do intervalo recomendado de 20 a 70 caracteres.",
-    "eventos": [
-      {
-        "agent": "pesquisa-mercado",
-        "status": "working",
-        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
-        "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-07-30T15:26:11.908Z"
-      },
-      {
-        "agent": "pesquisa-mercado",
-        "status": "done",
-        "message": "- **GestãoClick traz o ângulo mais concreto de ROI.** No conteúdo atualizado em **6 de julho de 2026**, considera a planilha adequada para operação individual com menos de 50 lançamentos mensais. O gatilho de migração aparece quando há sald",
-        "timestamp": "2026-07-30T15:26:49.534Z"
-      },
-      {
-        "agent": "pesquisa-pauta",
-        "status": "working",
-        "message": "Definindo título, ângulo e estrutura...",
-        "timestamp": "2026-07-30T15:26:49.534Z"
-      },
-      {
-        "agent": "pesquisa-pauta",
-        "status": "done",
-        "message": "Título: Sistema para assistência técnica de celular: quando migrar da planilha?",
-        "timestamp": "2026-07-30T15:27:02.449Z"
-      },
-      {
-        "agent": "redator",
-        "status": "working",
-        "message": "Escrevendo o rascunho...",
-        "timestamp": "2026-07-30T15:27:02.449Z"
-      },
-      {
-        "agent": "redator",
-        "status": "done",
-        "message": "A planilha costuma funcionar bem no começo. O problema aparece quando o dono passa mais tempo procurando informações, corrigindo estoque e cobrando serviços do que acompanhando a bancada. Nessa fase, ...",
-        "timestamp": "2026-07-30T15:28:07.512Z"
-      },
-      {
-        "agent": "editor-seo",
-        "status": "working",
-        "message": "Revisando, adicionando schema e links internos...",
-        "timestamp": "2026-07-30T15:28:07.512Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "error",
-        "message": "Título fora do intervalo recomendado de 20 a 70 caracteres.",
-        "timestamp": "2026-07-30T15:29:17.081Z"
-      }
-    ],
-    "usage": {
-      "provider": "openai",
-      "model": "gpt-5.6",
-      "inputTokens": 36198,
-      "outputTokens": 11782,
       "cacheCreationInputTokens": 0,
       "cacheReadInputTokens": 0,
       "webSearchRequests": 3,
