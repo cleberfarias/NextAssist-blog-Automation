@@ -16,6 +16,7 @@ import { summarizeOverview } from "./analyticsOverview.js";
 import { getSalesState, reviewSalesDraft } from "./sales/state.js";
 import { runRevenueDirector } from "./harness/revenueDirectorRuntime.js";
 import { getHarnessTraces } from "./harness/traceStore.js";
+import { getGrowthLoopState } from "./growthLoop.js";
 import { triggerDailyPostWorkflow } from "./lib/githubDispatch.js";
 import { listWorkspaces, loadWorkspace, saveWorkspace, type MarketingWorkspace } from "./workspace.js";
 import { getSecretsStatus } from "./secretsStatus.js";
@@ -218,8 +219,10 @@ app.get("/api/revenue", asyncHandler(async (req, res) => {
   if (!workspaceId) return;
   const ctx = await contextFor(workspaceId);
   const result = await runRevenueDirector(ctx);
+  const growthLoop = await getGrowthLoopState(ctx);
   res.json({
     ...result,
+    growthLoop,
     monthlyCustomerTarget: ctx.workspace.goals.monthlyCustomerTarget ?? null,
   });
 }));

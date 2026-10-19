@@ -68,3 +68,21 @@ test("skill crítica exige aprovação", async () => {
   assert.equal(result.status, "blocked");
   assert.match(result.trace.error ?? "", /aprovação/);
 });
+
+test("propaga causedBy do request pro trace quando informado", async () => {
+  const registry = new SkillRegistry().register({ name: "echo", async execute() { return true; } });
+  const runtime = new AgentHarnessRuntime({ registry });
+
+  const result = await runtime.run(request({ causedBy: "growth-loop-run-123" }), async ({ invoke }) => invoke("echo", {}));
+
+  assert.equal(result.trace.causedBy, "growth-loop-run-123");
+});
+
+test("causedBy fica undefined quando não informado — comportamento atual não muda", async () => {
+  const registry = new SkillRegistry().register({ name: "echo", async execute() { return true; } });
+  const runtime = new AgentHarnessRuntime({ registry });
+
+  const result = await runtime.run(request(), async ({ invoke }) => invoke("echo", {}));
+
+  assert.equal(result.trace.causedBy, undefined);
+});
