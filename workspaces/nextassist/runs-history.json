@@ -1,5 +1,62 @@
 [
   {
+    "id": "2026-10-20T13:32:27.182Z",
+    "origem": "action",
+    "iniciadoEm": "2026-10-20T13:32:27.182Z",
+    "finalizadoEm": "2026-10-20T13:32:36.956Z",
+    "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 4 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace via Agent Harness...",
+        "timestamp": "2026-10-20T13:32:27.197Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "error",
+        "message": "Falha ao gerar backlog de conteúdo: Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-20T13:32:32.874Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-10-20T13:32:32.877Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-20T13:32:36.955Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 4,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 4,
+      "error": "Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+    }
+  },
+  {
     "id": "2026-10-19T13:35:31.321Z",
     "origem": "action",
     "iniciadoEm": "2026-10-19T13:35:31.321Z",
@@ -7212,42 +7269,6 @@
         "status": "error",
         "message": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011CdhxeAQK8raN3et1JqQKY\"}",
         "timestamp": "2026-08-04T15:39:55.627Z"
-      }
-    ],
-    "usage": {
-      "provider": "openai",
-      "model": "gpt-5.6",
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "cacheCreationInputTokens": 0,
-      "cacheReadInputTokens": 0,
-      "webSearchRequests": 0,
-      "estimatedUsd": 0,
-      "fallbackCount": 0
-    }
-  },
-  {
-    "id": "2026-08-03T15:57:14.971Z",
-    "origem": "action",
-    "iniciadoEm": "2026-08-03T15:57:14.971Z",
-    "finalizadoEm": "2026-08-03T15:57:25.337Z",
-    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
-    "status": "falhou",
-    "slug": null,
-    "erro": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011Cdg6AdhXaBevxqGrv9mu7\"}",
-    "eventos": [
-      {
-        "agent": "pesquisa-mercado",
-        "status": "working",
-        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
-        "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-08-03T15:57:14.978Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "error",
-        "message": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011Cdg6AdhXaBevxqGrv9mu7\"}",
-        "timestamp": "2026-08-03T15:57:25.337Z"
       }
     ],
     "usage": {
