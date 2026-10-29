@@ -1,5 +1,62 @@
 [
   {
+    "id": "2026-10-29T13:25:44.697Z",
+    "origem": "action",
+    "iniciadoEm": "2026-10-29T13:25:44.697Z",
+    "finalizadoEm": "2026-10-29T13:25:53.732Z",
+    "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 4 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace via Agent Harness...",
+        "timestamp": "2026-10-29T13:25:44.705Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "error",
+        "message": "Falha ao gerar backlog de conteúdo: Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-29T13:25:50.291Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-10-29T13:25:50.293Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-10-29T13:25:53.731Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 4,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 4,
+      "error": "Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+    }
+  },
+  {
     "id": "2026-10-28T13:25:00.065Z",
     "origem": "action",
     "iniciadoEm": "2026-10-28T13:25:00.065Z",
@@ -7411,42 +7468,6 @@
       "cacheCreationInputTokens": 0,
       "cacheReadInputTokens": 0,
       "webSearchRequests": 3,
-      "estimatedUsd": 0,
-      "fallbackCount": 0
-    }
-  },
-  {
-    "id": "2026-08-11T18:48:08.911Z",
-    "origem": "action",
-    "iniciadoEm": "2026-08-11T18:48:08.911Z",
-    "finalizadoEm": "2026-08-11T18:48:09.163Z",
-    "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
-    "status": "falhou",
-    "slug": null,
-    "erro": "401 Incorrect API key provided: sk-proj-********************************************************************************************************************************************************-_AA. You can find your API key at https://platform.openai.com/account/api-keys.",
-    "eventos": [
-      {
-        "agent": "pesquisa-mercado",
-        "status": "working",
-        "tema": "Planilha vs sistema de gestão: quando vale a pena migrar",
-        "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-08-11T18:48:08.919Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "error",
-        "message": "401 Incorrect API key provided: sk-proj-********************************************************************************************************************************************************-_AA. You can find your API key at https://platform.openai.com/account/api-keys.",
-        "timestamp": "2026-08-11T18:48:09.162Z"
-      }
-    ],
-    "usage": {
-      "provider": "openai",
-      "model": "gpt-5.6",
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "cacheCreationInputTokens": 0,
-      "cacheReadInputTokens": 0,
-      "webSearchRequests": 0,
       "estimatedUsd": 0,
       "fallbackCount": 0
     }
