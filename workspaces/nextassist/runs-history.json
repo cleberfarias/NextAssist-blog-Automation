@@ -1,5 +1,62 @@
 [
   {
+    "id": "2026-11-07T13:22:33.807Z",
+    "origem": "action",
+    "iniciadoEm": "2026-11-07T13:22:33.807Z",
+    "finalizadoEm": "2026-11-07T13:22:42.753Z",
+    "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 4 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace via Agent Harness...",
+        "timestamp": "2026-11-07T13:22:33.818Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "error",
+        "message": "Falha ao gerar backlog de conteúdo: Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-11-07T13:22:39.456Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-11-07T13:22:39.458Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-11-07T13:22:42.752Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 4,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 4,
+      "error": "Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+    }
+  },
+  {
     "id": "2026-11-06T13:23:10.728Z",
     "origem": "action",
     "iniciadoEm": "2026-11-06T13:23:10.728Z",
@@ -7359,35 +7416,6 @@
         "status": "error",
         "message": "Nenhum tópico pendente no calendário.",
         "timestamp": "2026-08-12T21:35:06.378Z"
-      }
-    ],
-    "usage": {
-      "provider": "openai",
-      "model": "gpt-5.6",
-      "inputTokens": 0,
-      "outputTokens": 0,
-      "cacheCreationInputTokens": 0,
-      "cacheReadInputTokens": 0,
-      "webSearchRequests": 0,
-      "estimatedUsd": 0,
-      "fallbackCount": 0
-    }
-  },
-  {
-    "id": "2026-08-12T13:51:03.980Z",
-    "origem": "action",
-    "iniciadoEm": "2026-08-12T13:51:03.980Z",
-    "finalizadoEm": "2026-08-12T13:51:03.986Z",
-    "tema": null,
-    "status": "sem-tema",
-    "slug": null,
-    "erro": null,
-    "eventos": [
-      {
-        "agent": "pesquisa-pauta",
-        "status": "error",
-        "message": "Nenhum tópico pendente no calendário.",
-        "timestamp": "2026-08-12T13:51:03.986Z"
       }
     ],
     "usage": {
