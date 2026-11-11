@@ -1,5 +1,62 @@
 [
   {
+    "id": "2026-11-11T13:22:49.935Z",
+    "origem": "action",
+    "iniciadoEm": "2026-11-11T13:22:49.935Z",
+    "finalizadoEm": "2026-11-11T13:22:57.680Z",
+    "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 4 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace via Agent Harness...",
+        "timestamp": "2026-11-11T13:22:49.950Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "error",
+        "message": "Falha ao gerar backlog de conteúdo: Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-11-11T13:22:54.725Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-11-11T13:22:54.727Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-11-11T13:22:57.679Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 4,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 4,
+      "error": "Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+    }
+  },
+  {
     "id": "2026-11-10T13:22:53.240Z",
     "origem": "action",
     "iniciadoEm": "2026-11-10T13:22:53.240Z",
@@ -7316,114 +7373,6 @@
       "cacheCreationInputTokens": 0,
       "cacheReadInputTokens": 0,
       "webSearchRequests": 3,
-      "estimatedUsd": 0,
-      "fallbackCount": 0
-    }
-  },
-  {
-    "id": "2026-08-13T00:21:46.754Z",
-    "origem": "action",
-    "iniciadoEm": "2026-08-13T00:21:46.754Z",
-    "finalizadoEm": "2026-08-13T00:25:23.334Z",
-    "tema": "Como precificar o conserto de celular sem perder margem",
-    "status": "publicado",
-    "slug": "como-precificar-conserto-celular",
-    "erro": null,
-    "eventos": [
-      {
-        "agent": "pesquisa-mercado",
-        "status": "working",
-        "tema": "Como precificar o conserto de celular sem perder margem",
-        "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-08-13T00:21:46.803Z"
-      },
-      {
-        "agent": "pesquisa-mercado",
-        "status": "done",
-        "message": "- **AnaDita — abordagem simples e específica para celulares:** no artigo publicado em **26/06/2026** e atualizado em **05/07/2026**, recomenda formar o preço com **peça + mão de obra + reserva para garantia**. Usa como referência mão de obr",
-        "timestamp": "2026-08-13T00:22:17.346Z"
-      },
-      {
-        "agent": "pesquisa-pauta",
-        "status": "working",
-        "message": "Definindo título, ângulo e estrutura...",
-        "timestamp": "2026-08-13T00:22:17.347Z"
-      },
-      {
-        "agent": "pesquisa-pauta",
-        "status": "done",
-        "message": "Título: Como precificar conserto de celular sem perder margem",
-        "timestamp": "2026-08-13T00:22:27.534Z"
-      },
-      {
-        "agent": "redator",
-        "status": "working",
-        "message": "Escrevendo o rascunho...",
-        "timestamp": "2026-08-13T00:22:27.534Z"
-      },
-      {
-        "agent": "redator",
-        "status": "done",
-        "message": "Saber como precificar conserto de celular exige mais do que somar a peça e colocar uma porcentagem por cima. O preço precisa pagar o frete, o tempo real da bancada, os períodos sem serviço, os imposto...",
-        "timestamp": "2026-08-13T00:23:28.004Z"
-      },
-      {
-        "agent": "editor-seo",
-        "status": "working",
-        "message": "Revisando, adicionando schema e links internos...",
-        "timestamp": "2026-08-13T00:23:28.004Z"
-      },
-      {
-        "agent": "editor-seo",
-        "status": "done",
-        "message": "Slug: como-precificar-conserto-celular · Tags: Precificação, Assistência técnica, Gestão financeira, Ordem de serviço, Conserto de celular",
-        "timestamp": "2026-08-13T00:24:18.753Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "working",
-        "message": "Gerando capa e publicando no blog...",
-        "timestamp": "2026-08-13T00:24:18.753Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "done",
-        "message": "Publicado em /blog/como-precificar-conserto-celular",
-        "timestamp": "2026-08-13T00:25:07.695Z"
-      },
-      {
-        "agent": "instagram",
-        "status": "working",
-        "message": "Publicando no Instagram...",
-        "timestamp": "2026-08-13T00:25:07.696Z"
-      },
-      {
-        "agent": "instagram",
-        "status": "done",
-        "message": "Publicado no Instagram: https://www.instagram.com/p/Db9cg0ojS-B/",
-        "timestamp": "2026-08-13T00:25:21.296Z"
-      },
-      {
-        "agent": "indexador",
-        "status": "working",
-        "message": "Notificando o Google e reenviando o sitemap...",
-        "timestamp": "2026-08-13T00:25:21.296Z"
-      },
-      {
-        "agent": "indexador",
-        "status": "done",
-        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
-        "timestamp": "2026-08-13T00:25:23.333Z"
-      }
-    ],
-    "usage": {
-      "provider": "openai",
-      "model": "gpt-5.6",
-      "inputTokens": 34082,
-      "outputTokens": 11130,
-      "cacheCreationInputTokens": 0,
-      "cacheReadInputTokens": 0,
-      "webSearchRequests": 4,
       "estimatedUsd": 0,
       "fallbackCount": 0
     }
