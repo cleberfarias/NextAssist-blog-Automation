@@ -1,5 +1,62 @@
 [
   {
+    "id": "2026-11-17T21:49:12.037Z",
+    "origem": "action",
+    "iniciadoEm": "2026-11-17T21:49:12.037Z",
+    "finalizadoEm": "2026-11-17T21:49:21.434Z",
+    "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+    "status": "falhou",
+    "slug": null,
+    "erro": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+    "eventos": [
+      {
+        "agent": "marketing-director",
+        "status": "working",
+        "message": "Backlog com 4 tópico(s) pendente(s) (mínimo: 5) — analisando contexto do workspace via Agent Harness...",
+        "timestamp": "2026-11-17T21:49:12.057Z"
+      },
+      {
+        "agent": "marketing-director",
+        "status": "error",
+        "message": "Falha ao gerar backlog de conteúdo: Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-11-17T21:49:17.059Z"
+      },
+      {
+        "agent": "pesquisa-mercado",
+        "status": "working",
+        "tema": "Como cadastrar e avaliar fornecedores de peças para celular",
+        "message": "Buscando o que os concorrentes publicaram...",
+        "timestamp": "2026-11-17T21:49:17.060Z"
+      },
+      {
+        "agent": "publicador",
+        "status": "error",
+        "message": "429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.",
+        "timestamp": "2026-11-17T21:49:21.433Z"
+      }
+    ],
+    "usage": {
+      "model": "claude-sonnet-5",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "webSearchRequests": 0,
+      "estimatedUsd": 0,
+      "fallbackCount": 0
+    },
+    "backlog": {
+      "skipped": false,
+      "pendingBefore": 4,
+      "generated": 0,
+      "discardedDuplicates": 0,
+      "discardedForbidden": 0,
+      "discardedInvalid": 0,
+      "pendingAfter": 4,
+      "error": "Marketing Director bloqueado pelo Harness: 429 You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/."
+    }
+  },
+  {
     "id": "2026-11-16T22:55:57.066Z",
     "origem": "action",
     "iniciadoEm": "2026-11-16T22:55:57.066Z",
@@ -7010,114 +7067,6 @@
       "cacheCreationInputTokens": 0,
       "cacheReadInputTokens": 0,
       "webSearchRequests": 0,
-      "estimatedUsd": 0,
-      "fallbackCount": 0
-    }
-  },
-  {
-    "id": "2026-08-15T13:30:39.532Z",
-    "origem": "action",
-    "iniciadoEm": "2026-08-15T13:30:39.532Z",
-    "finalizadoEm": "2026-08-15T13:35:55.407Z",
-    "tema": "Atendimento via WhatsApp: como organizar o fluxo sem perder cliente",
-    "status": "publicado",
-    "slug": "atendimento-whatsapp-assistencia-tecnica",
-    "erro": null,
-    "eventos": [
-      {
-        "agent": "pesquisa-mercado",
-        "status": "working",
-        "tema": "Atendimento via WhatsApp: como organizar o fluxo sem perder cliente",
-        "message": "Buscando o que os concorrentes publicaram...",
-        "timestamp": "2026-08-15T13:30:39.541Z"
-      },
-      {
-        "agent": "pesquisa-mercado",
-        "status": "done",
-        "message": "- **GestãoClick cobre a organização básica do WhatsApp Business:** número empresarial separado, perfil completo, etiquetas como “Novo cliente” e “Pedido pendente”, respostas rápidas, mensagens automáticas e catálogo. O conteúdo foi atualiza",
-        "timestamp": "2026-08-15T13:31:11.879Z"
-      },
-      {
-        "agent": "pesquisa-pauta",
-        "status": "working",
-        "message": "Definindo título, ângulo e estrutura...",
-        "timestamp": "2026-08-15T13:31:11.879Z"
-      },
-      {
-        "agent": "pesquisa-pauta",
-        "status": "done",
-        "message": "Título: Atendimento WhatsApp assistência técnica: fluxo completo",
-        "timestamp": "2026-08-15T13:31:23.063Z"
-      },
-      {
-        "agent": "redator",
-        "status": "working",
-        "message": "Escrevendo o rascunho...",
-        "timestamp": "2026-08-15T13:31:23.063Z"
-      },
-      {
-        "agent": "redator",
-        "status": "done",
-        "message": "No dia a dia, o atendimento WhatsApp assistência técnica não pode depender da memória do dono ou de conversas marcadas como não lidas. Cada cliente precisa ocupar uma etapa clara da fila, ter um respo...",
-        "timestamp": "2026-08-15T13:32:23.936Z"
-      },
-      {
-        "agent": "editor-seo",
-        "status": "working",
-        "message": "Revisando, adicionando schema e links internos...",
-        "timestamp": "2026-08-15T13:32:23.937Z"
-      },
-      {
-        "agent": "editor-seo",
-        "status": "done",
-        "message": "Slug: atendimento-whatsapp-assistencia-tecnica · Tags: Atendimento pelo WhatsApp, Assistência técnica, Ordem de serviço, Gestão de atendimento, Experiência do cliente",
-        "timestamp": "2026-08-15T13:33:11.122Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "working",
-        "message": "Gerando capa e publicando no blog...",
-        "timestamp": "2026-08-15T13:33:11.123Z"
-      },
-      {
-        "agent": "publicador",
-        "status": "done",
-        "message": "Publicado em /blog/atendimento-whatsapp-assistencia-tecnica",
-        "timestamp": "2026-08-15T13:34:09.260Z"
-      },
-      {
-        "agent": "instagram",
-        "status": "working",
-        "message": "Publicando no Instagram...",
-        "timestamp": "2026-08-15T13:34:09.260Z"
-      },
-      {
-        "agent": "instagram",
-        "status": "done",
-        "message": "Reel publicado no Instagram: https://www.instagram.com/reel/DcEAiQFEXIs/",
-        "timestamp": "2026-08-15T13:35:53.435Z"
-      },
-      {
-        "agent": "indexador",
-        "status": "working",
-        "message": "Notificando o Google e reenviando o sitemap...",
-        "timestamp": "2026-08-15T13:35:53.435Z"
-      },
-      {
-        "agent": "indexador",
-        "status": "done",
-        "message": "URL pública: confirmada · URL no sitemap: confirmada · sitemap enviado ao Search Console · indexação: aguardando decisão do Google",
-        "timestamp": "2026-08-15T13:35:55.404Z"
-      }
-    ],
-    "usage": {
-      "provider": "openai",
-      "model": "gpt-5.6",
-      "inputTokens": 41983,
-      "outputTokens": 10918,
-      "cacheCreationInputTokens": 0,
-      "cacheReadInputTokens": 0,
-      "webSearchRequests": 4,
       "estimatedUsd": 0,
       "fallbackCount": 0
     }
